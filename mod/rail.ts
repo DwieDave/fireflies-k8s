@@ -17,31 +17,43 @@ import { isBuiltin, kindInfo, titleOf } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
 import type { Tone } from "./rows.ts";
 
-/** The rail, `w` wide (null: fills its column). */
+/** The rail: the contexts as tall as their rows (at most five shown), the namespaces and the
+ *  kinds sharing the rest, each scrolling, the cursor's row kept in sight. */
 export function rail(v: K8s, t: Theme): Element {
   const items = railItems(v);
   const active = v.panel === "rail";
   const rows = items.map((item, i) => railRow(v, t, item, i, active && i === v.railAt));
   const of = (part: RailItem["part"]) => rows.filter((_, i) => items[i]?.part === part);
   const custom = customOfCluster(v.data).length;
+  const cursor = items[v.railAt];
+  const nContexts = items.filter((x) => x.part === "context").length;
+  const firstOf = (part: RailItem["part"]) => items.findIndex((x) => x.part === part);
+
+  if (active && cursor?.part === "namespace") v.nsScroll.scroll_to_item(v.railAt - firstOf("namespace"));
+
+  if (active && cursor?.part === "kind") v.kindsScroll.scroll_to_item(v.railAt - firstOf("kind"));
+
+  const kinds = v_flex().id("rail-kinds-list").size_full().pt(4).pb(2).overflow_y_scroll().track_scroll(v.kindsScroll).children(of("kind"))
+    .when(custom > 0, (el) => el.child(div().id("rail-custom").h(20).flex_none().px(10).flex().items_center().text_size(11).text_color(t.dim).cursor_pointer()
+      .on_click((_e, cx) => {
+        v.typing = { what: "kind", text: "" };
+        cx.notify();
+      })
+      .child(`+ ${custom} custom kinds (: or ctrl-a)`)));
 
   return v_flex().id("k8s-rail").size_full().gap(12)
-    .child(panel(t, "rail-ctx", "Context", active && items[v.railAt]?.part === "context", v_flex().pt(4).pb(2).children(of("context")), { num: "1" }))
-    .child(panel(t, "rail-ns", "Namespaces", active && items[v.railAt]?.part === "namespace", v_flex().id("rail-ns-list").pt(4).pb(2).max_h(330).overflow_y_scroll().children(of("namespace")), { num: "2", right: v.namespace === null ? "all" : null }))
-    .child(div().flex_1().min_h(0).flex().flex_col().child(panel(t, "rail-kinds", "Kinds", active && items[v.railAt]?.part === "kind",
-      v_flex().id("rail-kinds-list").pt(4).pb(2).size_full().overflow_y_scroll().children(of("kind")).when(custom > 0, (el) => el.child(div().id("rail-custom").h(20).px(10).flex().items_center().text_size(11).text_color(t.dim).cursor_pointer()
-        .on_click((_e, cx) => {
-          v.typing = { what: "kind", text: "" };
-          cx.notify();
-        })
-        .child(`+ ${custom} custom kinds (: or ctrl-a)`))),
-      { num: "3", right: ": jump" }).flex_1()));
+    .child(v_flex().h(28 + Math.min(5, Math.max(1, nContexts)) * 20).flex_none()
+      .child(panel(t, "rail-ctx", "Context", active && cursor?.part === "context", v_flex().id("rail-ctx-list").size_full().pt(4).overflow_y_scroll().children(of("context")), { num: "1" })))
+    .child(v_flex().flex_1().min_h(0)
+      .child(panel(t, "rail-ns", "Namespaces", active && cursor?.part === "namespace", v_flex().id("rail-ns-list").size_full().pt(4).pb(2).overflow_y_scroll().track_scroll(v.nsScroll).children(of("namespace")), { num: "2", right: v.namespace === null ? "all" : null })))
+    .child(v_flex().flex_1().min_h(0)
+      .child(panel(t, "rail-kinds", "Kinds", active && cursor?.part === "kind", kinds, { num: "3", right: ": jump" })));
 }
 
 function railRow(v: K8s, t: Theme, item: RailItem, i: number, cursor: boolean): Element {
   const chosen = item.part === "context" ? item.context.name === v.context : item.part === "namespace" ? item.strip.name === v.namespace : item.kind === v.kind;
 
-  const row = div().id(`rail-${i}`).relative().px(8).cursor_pointer().text_size(11)
+  const row = div().id(`rail-${i}`).relative().flex_none().px(8).cursor_pointer().text_size(11)
     .hover((s) => s.bg(`${t.ansi0}55`))
     .on_mouse_down("left", stop)
     .on_click((_e, cx) => {

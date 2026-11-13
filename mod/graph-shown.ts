@@ -7,7 +7,7 @@ import type { default as K8s } from "./main.ts";
 import type { Graph } from "./graph.ts";
 import { workloadGraph } from "./graph.ts";
 import type { Laid, Placed } from "./graph-layout.ts";
-import { columnsOf, dimsFor, layout, readingOrder } from "./graph-layout.ts";
+import { fit, layout, readingOrder } from "./graph-layout.ts";
 import { appGraph } from "./argo.ts";
 import { EMPTY } from "./snapshot.ts";
 import { selectedRow, shownApp } from "./nav.ts";
@@ -30,7 +30,7 @@ function memo(map: WeakMap<K8s, Memo<Shown | null>>, v: K8s): Memo<Shown | null>
   return m;
 }
 
-const laidOut = (g: Graph, width: number): Shown => ({ graph: g, laid: layout(g, dimsFor(width, columnsOf(g))) });
+const laidOut = (g: Graph, width: number): Shown => ({ graph: g, laid: layout(g, fit(g, width)) });
 
 /** The selected row's workload graph, laid out for `width`. */
 export function rowGraph(v: K8s, width: number): Shown | null {

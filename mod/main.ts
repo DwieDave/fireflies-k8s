@@ -31,6 +31,7 @@ import type { ArgoPanel, DetailView, Drill, Menu, Note, Panel, Tab, Typing } fro
 import type { Diffed } from "./argo-actions.ts";
 import { DATABASES_MOD } from "./forwards.ts";
 import { Memo } from "./derive.ts";
+import type { View as CanvasView } from "./graph-view.ts";
 import { appNamespace, listRows, selectedRow } from "./nav.ts";
 import { checkEdits } from "./edit.ts";
 import { frame } from "./frame.ts";
@@ -78,9 +79,13 @@ export default class K8s extends View {
   size = { width: 1100, height: 720 };
   handle: FocusHandle | null = null;
   tableScroll = ScrollHandle.new();
+  nsScroll = ScrollHandle.new();
+  kindsScroll = ScrollHandle.new();
   text: EditorState | null = null;
   shownText = "";
   rowsMemo = new Memo<readonly Row[]>();
+  /** Each graph canvas's size and pan (graph-view.ts). */
+  canvases = new Map<string, CanvasView>();
   closed = false;
   /** No kubectl call before the settings are read (they name which kubectl). */
   loaded = false;

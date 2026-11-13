@@ -13,20 +13,79 @@ import type { Theme } from "herdr";
 import type { default as K8s } from "./main.ts";
 import type { Shown } from "./graph-shown.ts";
 import type { Dims, Placed } from "./graph-layout.ts";
-import { dimsFor, columnsOf } from "./graph-layout.ts";
-import { dither, icon, pip, spark, stop, toneColor } from "./kit.ts";
+import { dither, icon, pip, spark, stop, toneColor, unzoom } from "./kit.ts";
 import { marks } from "./table.ts";
 
 /** What a box press does: select (`open` false) or open (a double click, enter). */
 export type OnBox = (b: Placed, open: boolean, cx: Context) => void;
 
-/** The graph's canvas, scrolled when bigger than its panel. */
-export function canvas(v: K8s, t: Theme, s: Shown, width: number, sel: string | null, active: boolean, onBox: OnBox, id: string): Element {
-  const d = dimsFor(width, columnsOf(s.graph));
-  const l = s.laid;
+/** A canvas's place: its size as drawn, the pan the wheel added, the box it last followed. */
+export interface View {
+  w: number;
+  h: number;
+  x: number;
+  y: number;
+  follow: string | null;
+}
 
-  return div().id(id).size_full().overflow_scroll()
-    .child(div().relative().w(l.width).h(l.height)
+/** How far the picture is moved left and up inside its canvas. */
+export interface Offset {
+  readonly x: number;
+  readonly y: number;
+}
+
+/** The offset that shows the picture inside the canvas: when the selection moves to a box out of
+ *  sight it's brought to the middle; the wheel's pan otherwise; always inside the picture. */
+export function offset(s: Shown, sel: string | null, view: View): Offset {
+  const l = s.laid;
+  const d = l.d;
+  const b = l.boxes.find((x) => x.node.key === sel) ?? null;
+
+  const seen = b !== null && b.x >= view.x && b.x + d.w <= view.x + view.w && b.y >= view.y && b.y + d.h <= view.y + view.h;
+
+  if (sel !== view.follow) {
+    view.follow = sel;
+
+    if (b && !seen) {
+      view.x = b.x + d.w / 2 - view.w / 2;
+      view.y = b.y + d.h / 2 - view.h / 2;
+    }
+  }
+
+  view.x = Math.max(0, Math.min(Math.max(0, l.width - view.w), view.x));
+  view.y = Math.max(0, Math.min(Math.max(0, l.height - view.h), view.y));
+
+  return { x: Math.round(view.x), y: Math.round(view.y) };
+}
+
+/** The graph's canvas: the picture moved to keep the selected box in view, the wheel pans it. */
+export function canvas(v: K8s, t: Theme, s: Shown, _width: number, sel: string | null, active: boolean, onBox: OnBox, id: string): Element {
+  const l = s.laid;
+  const d = l.d;
+  const view = v.canvases.get(id) ?? { w: 400, h: 300, x: 0, y: 0, follow: null };
+
+  v.canvases.set(id, view);
+
+  const at = offset(s, sel ?? s.graph.root.key, view);
+
+  return div().id(id).relative().size_full().overflow_hidden()
+    .on_size_change((size, cx) => {
+      const w = Math.round(unzoom(size.width));
+      const h = Math.round(unzoom(size.height));
+
+      if (w !== view.w || h !== view.h) {
+        view.w = w;
+        view.h = h;
+        view.follow = null;
+        cx.notify();
+      }
+    })
+    .on_scroll_wheel((e, cx) => {
+      view.x += unzoom(-e.delta.x);
+      view.y += unzoom(-e.delta.y);
+      cx.notify();
+    })
+    .child(div().absolute().left(-at.x).top(-at.y).w(l.width).h(l.height)
       .children(l.segs.map((g, i) => div().id(`${id}-s${i}`).absolute().left(g.x).top(g.y).w(Math.max(1, g.w)).h(Math.max(1, g.h)).child(dither(g.live ? t.working : t.ansi8, 1))))
       .children(l.segs.filter((g) => g.live && g.h === 1 && g.w > 8).map((g, i) => div().id(`${id}-p${i}`).absolute().top(g.y - 1).w(5).h(3).bg(t.working).loop("left", { from: g.x, to: g.x + g.w - 5, period: 1100, easing: "linear" })))
       .children(l.boxes.map((b) => box(v, t, b, d, b.node.key === sel, active, onBox, id))));

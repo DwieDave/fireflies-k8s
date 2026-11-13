@@ -18,11 +18,26 @@ export interface Dims {
 
 export const DIMS: Dims = { w: 168, h: 38, gx: 30, gy: 10, pad: 14 };
 
-/** A narrower box for narrow panels. */
-export function dimsFor(width: number, columns: number): Dims {
-  const fit = Math.floor((width - 2 * DIMS.pad - (columns - 1) * DIMS.gx) / Math.max(1, columns));
+/** How a graph fits a width: its box size, and whether the feeders (ingress, service) go in a
+ *  row above the tree instead of columns before it (a narrow panel: the pods stay in view). */
+export interface Fit {
+  readonly d: Dims;
+  readonly stack: boolean;
+}
 
-  return { ...DIMS, w: Math.max(118, Math.min(DIMS.w, fit)) };
+/** The widest boxes that fit `width`: columns as drawn when they fit at 118 px, else the feeders
+ *  stacked in a row over a tree of fewer columns, the boxes no narrower than 96 px. */
+export function fit(g: Graph, width: number): Fit {
+  const cols = columnsOf(g);
+  const room = (n: number, gx: number) => Math.floor((width - 2 * DIMS.pad - (n - 1) * gx) / Math.max(1, n));
+  const wide = room(cols, DIMS.gx);
+
+  if (wide >= 118 || !g.feeders.length) return { d: { ...DIMS, w: Math.max(96, Math.min(DIMS.w, wide)) }, stack: false };
+
+  const tree = cols - lead(g.feeders);
+  const gx = 22;
+
+  return { d: { ...DIMS, gx, w: Math.max(96, Math.min(DIMS.w, room(tree, gx))) }, stack: true };
 }
 
 /** A box placed. */
@@ -41,12 +56,15 @@ export interface Seg {
   readonly live: boolean;
 }
 
-/** The whole picture: boxes, lines, and its size. */
+/** The whole picture: boxes, lines, its size, and the box size it was laid out with. */
 export interface Laid {
   readonly boxes: readonly Placed[];
   readonly segs: readonly Seg[];
   readonly width: number;
   readonly height: number;
+  readonly d: Dims;
+  /** Where the tree starts when the feeders sit in a row over it (else 0). */
+  readonly top: number;
 }
 
 const liveTone = (t: Tone): boolean => t === "wk" || t === "bad";
@@ -62,12 +80,15 @@ function lead(feeders: readonly Feeder[]): number {
   return Math.max(0, ...feeders.map((f) => f.depth));
 }
 
-/** Lays a graph out. */
-export function layout(g: Graph, d: Dims = DIMS): Laid {
+/** Lays a graph out (`f`: from fit; columns at full size by default). */
+export function layout(g: Graph, f: Fit = { d: DIMS, stack: false }): Laid {
+  const d = f.d;
   const boxes: Placed[] = [];
   const segs: Seg[] = [];
   const at = new Map<string, Placed>();
-  const first = lead(g.feeders);
+  const first = f.stack ? 0 : lead(g.feeders);
+  // Stacked feeders take a row over the tree.
+  const top = f.stack ? d.h + 3 * d.gy : 0;
   let row = 0;
 
   const place = (n: GNode, depth: number): number => {
@@ -75,7 +96,7 @@ export function layout(g: Graph, d: Dims = DIMS): Laid {
     let y: number;
 
     if (!n.children.length) {
-      y = d.pad + row * (d.h + d.gy);
+      y = d.pad + top + row * (d.h + d.gy);
       row++;
     } else {
       const ys = n.children.map((c) => place(c, depth + 1));
@@ -93,6 +114,12 @@ export function layout(g: Graph, d: Dims = DIMS): Laid {
 
   const rootY = place(g.root, first);
 
+  if (f.stack) {
+    feederRow(g, d, at, boxes, segs);
+
+    return finish(g, d, at, boxes, segs, d.pad + top);
+  }
+
   // Feeders: each column stacked, centred on the root.
   for (let depth = 1; depth <= first; depth++) {
     const col = g.feeders.filter((f) => f.depth === depth);
@@ -106,19 +133,63 @@ export function layout(g: Graph, d: Dims = DIMS): Laid {
     });
   }
 
-  treeLines(g.root, at, d, segs);
-
-  for (const f of g.feeders) {
-    const from = at.get(f.node.key);
-    const to = f.to.flatMap((k) => at.get(k) ?? []);
+  for (const fd of g.feeders) {
+    const from = at.get(fd.node.key);
+    const to = fd.to.flatMap((k) => at.get(k) ?? []);
 
     if (from && to.length) elbow(from, to, d, segs);
   }
 
+  return finish(g, d, at, boxes, segs);
+}
+
+/** The tree's lines, and the picture's size. */
+function finish(g: Graph, d: Dims, at: ReadonlyMap<string, Placed>, boxes: readonly Placed[], segs: Seg[], top = 0): Laid {
+  treeLines(g.root, at, d, segs);
+
   const width = Math.max(0, ...boxes.map((b) => b.x + d.w)) + d.pad;
   const height = Math.max(0, ...boxes.map((b) => b.y + d.h)) + d.pad;
 
-  return { boxes, segs, width, height };
+  return { boxes, segs, width, height, d, top };
+}
+
+/** The feeders in one row over the tree, outermost first (ingress, then service), each line
+ *  running right along the row, and down from a service into the tree's root. */
+function feederRow(g: Graph, d: Dims, at: Map<string, Placed>, boxes: Placed[], segs: Seg[]): void {
+  const order = [...g.feeders].sort((a, b) => b.depth - a.depth);
+
+  order.forEach((fd, i) => {
+    const p = { node: fd.node, x: d.pad + i * (d.w + d.gx), y: d.pad };
+
+    boxes.push(p);
+    at.set(fd.node.key, p);
+  });
+
+  for (const fd of order) {
+    const from = at.get(fd.node.key);
+
+    if (!from) continue;
+
+    for (const k of fd.to) {
+      const to = at.get(k);
+
+      if (!to) continue;
+
+      if (to.y === from.y) segs.push({ x: Math.min(from.x, to.x) + d.w, y: from.y + Math.round(d.h / 2), w: Math.abs(to.x - from.x) - d.w, h: 1, live: false });
+      else drop(from, to, d, segs);
+    }
+  }
+}
+
+/** From under a box in the row down into a box of the tree (its top's middle). */
+function drop(from: Placed, to: Placed, d: Dims, segs: Seg[]): void {
+  const fx = Math.round(from.x + d.w / 2);
+  const tx = Math.round(to.x + d.w / 2);
+  const mid = Math.round(from.y + d.h + d.gy * 1.5);
+
+  segs.push({ x: fx, y: from.y + d.h, w: 1, h: mid - (from.y + d.h), live: false });
+  segs.push({ x: Math.min(fx, tx), y: mid, w: Math.abs(fx - tx) + 1, h: 1, live: false });
+  segs.push({ x: tx, y: mid, w: 1, h: to.y - mid, live: false });
 }
 
 function treeLines(n: GNode, at: ReadonlyMap<string, Placed>, d: Dims, segs: Seg[]): void {
@@ -150,7 +221,9 @@ export function boxAt(l: Laid, x: number, y: number, d: Dims = DIMS): Placed | n
   return l.boxes.find((b) => x >= b.x && x <= b.x + d.w && y >= b.y && y <= b.y + d.h) ?? null;
 }
 
-/** The boxes in reading order (column by column, top to bottom): what arrows walk. */
+/** The boxes in reading order (a row over the tree first, then column by column, top to bottom): what arrows walk. */
 export function readingOrder(l: Laid): readonly Placed[] {
-  return [...l.boxes].sort((a, b) => a.x - b.x || a.y - b.y);
+  const band = (p: Placed) => (p.y < l.top ? 0 : 1);
+
+  return [...l.boxes].sort((a, b) => band(a) - band(b) || a.x - b.x || a.y - b.y);
 }
