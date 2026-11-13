@@ -64,7 +64,7 @@ export function askKey(a: Ask, twice: boolean, key: string, char: string | null)
   if (a.step === 1) {
     if (key === "y" || key === "enter") return twice ? { act: "next" } : { act: "run" };
 
-    if (key === "n") return { act: "cancel" };
+    if (key === "n" || key === "q") return { act: "cancel" };
 
     return { act: "none" };
   }

@@ -169,6 +169,19 @@ describe("asking before writes", () => {
     expect(writes(log)).toEqual([["--context", "nightjar-dev", "-n", "lantern", "delete", "pods", row?.ref.name ?? ""]]);
   });
 
+  test("q closes the ask (its first step), a menu and the keys overview; in the typed name it types", async () => {
+    const { v, press } = await open();
+    await press("ctrl-d", "q");
+    expect(v.ask).toBeNull();
+    await press("m", "q");
+    expect(v.menu).toBeNull();
+    await press("?", "q");
+    expect(v.help).toBe(false);
+    await press("ctrl-d", "y", "q");
+    expect(v.ask?.typed).toBe("q");
+    expect(writes(log)).toEqual([]);
+  });
+
   test("esc or n says no: nothing runs", async () => {
     const { press } = await open();
     await press("ctrl-d", "n");
