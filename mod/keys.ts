@@ -112,6 +112,7 @@ export const WINDOW_KEYS = [
   ["g G", "first / last (in a list)"],
   ["f", "forwards"],
   ["r", "read again"],
+  ["M", "metrics: read every 2s, 5s, 15s, 30s or paused (metrics-server measures about every 15s)"],
   ["ctrl-t", "into a pane / out to a window"],
   ["esc", "back"],
   ["?", "keys"],

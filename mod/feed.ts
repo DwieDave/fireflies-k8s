@@ -30,10 +30,16 @@ export class Feed<T> {
   private started = 0;
   private took = 0;
 
-  readonly every: number;
+  /** The pace in ms (the metrics' changes with M). */
+  every: number;
 
   constructor(every: number) {
     this.every = every;
+  }
+
+  /** A new pace: the next read is due `ms` after the last one started (a read running now isn't doubled). */
+  pace(ms: number): void {
+    this.every = ms;
   }
 
   /** The wait before the next read. */

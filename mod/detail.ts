@@ -23,6 +23,7 @@ import type { KEvent } from "./objects.ts";
 import { age, instant } from "./time.ts";
 import { cpuText, memText } from "./quantity.ts";
 import { allocatable } from "./rows-kinds.ts";
+import { paceChip } from "./metrics-pace.ts";
 
 const VIEWS: readonly (readonly [DetailView, string, string])[] = [["graph", "g", "graph"], ["describe", "d", "describe"], ["yaml", "y", "yaml"], ["events", "v", "events"]];
 
@@ -80,13 +81,14 @@ function graphView(v: K8s, t: Theme, row: Row, width: number, active: boolean): 
 
       if (open && r) showRef(v, r.kind, r.name, r.namespace);
     }, ROW_CANVAS) : div().p(12).text_size(11).text_color(t.dim).child("reading…")))
-    .when(line.length > 0 && !v.data.metricsMissing, (el) => el.child(metrics(t, line.map((x) => x.cpu), line.map((x) => x.mem), width, keys.length)))
+    .when(line.length > 0 && !v.data.metricsMissing, (el) => el.child(metrics(v, t, line.map((x) => x.cpu), line.map((x) => x.mem), width, keys.length)))
     .child(rule(t, "events"))
     .child(eventList(t, (v.data.selEvents.value ?? []).slice(0, 4), v.data.selEvents.at === 0).h(78).flex_none());
 }
 
-/** CPU and memory over the readings since the window opened (15 s apart). */
-function metrics(t: Theme, cpu: readonly number[], mem: readonly number[], width: number, pods: number): Element {
+/** CPU and memory over the samples since the window opened (each a new one from metrics-server), and how
+ *  often they're read (the chip, M). */
+function metrics(v: K8s, t: Theme, cpu: readonly number[], mem: readonly number[], width: number, pods: number): Element {
   const w = Math.max(80, Math.floor((width - 48) / 2));
   const last = (xs: readonly number[]) => xs[xs.length - 1] ?? 0;
 
@@ -94,9 +96,11 @@ function metrics(t: Theme, cpu: readonly number[], mem: readonly number[], width
     .child(h_flex().text_size(10).child(div().text_color(t.dim).child(label)).child(div().flex_1()).child(div().text_color(t.foreground).child(now)))
     .child(spark(t, `${id}-g`, xs, w, 26, color));
 
-  return h_flex().flex_none().px(8).pt(6).pb(8).gap(14)
-    .child(block("m-cpu", pods > 1 ? `cpu · ${pods} pods` : "cpu", cpuText(last(cpu)), cpu, t.accent))
-    .child(block("m-mem", "memory", memText(last(mem)), mem, t.ansi5));
+  return v_flex().flex_none().px(8).pt(2).pb(8).gap(2)
+    .child(h_flex().h(20).items_center().child(div().flex_1()).child(paceChip(v, t, "m-pace")))
+    .child(h_flex().gap(14)
+      .child(block("m-cpu", pods > 1 ? `cpu · ${pods} pods` : "cpu", cpuText(last(cpu)), cpu, t.accent))
+      .child(block("m-mem", "memory", memText(last(mem)), mem, t.ansi5)));
 }
 
 /** Events, newest first: age, reason (warnings yellow, failures red), message. */
@@ -126,5 +130,5 @@ function nodeLoad(v: K8s, t: Theme, row: Row, width: number): Element {
   return v_flex().flex_none().px(8).py(6).gap(3)
     .child(line("nl-cpu", "cpu", last?.cpu ?? 0, cap.cpu, `${cpuText(last?.cpu ?? 0)} of ${cpuText(cap.cpu)}`, t.accent))
     .child(line("nl-mem", "memory", last?.mem ?? 0, cap.mem, `${memText(last?.mem ?? 0)} of ${memText(cap.mem)}`, t.ansi5))
-    .child(div().text_size(10).text_color(t.dim).child(`${pods} pods run on it`));
+    .child(h_flex().items_center().child(div().flex_1().text_size(10).text_color(t.dim).child(`${pods} pods run on it`)).child(paceChip(v, t, "nl-pace")));
 }

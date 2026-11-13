@@ -23,6 +23,7 @@ import { ROW_KEYS, applies } from "./keys.ts";
 import { looksProd } from "./contexts.ts";
 import { clusterOf } from "./writes.ts";
 import { hasArgo } from "./derive.ts";
+import { paceText } from "./metrics.ts";
 
 /** The top bar. In a window it's where the window drags from: presses on it aren't stopped. */
 export function header(v: K8s, t: Theme): Element {
@@ -100,6 +101,7 @@ export function keyBar(v: K8s, t: Theme): Element {
   return bar.child(div().flex_none().text_size(10).text_color(t.ansi8).child(barTitle(v).toUpperCase()))
     .children(keys.map(([k, w], i) => hint(t, `kb-${i}`, k, w)))
     .child(div().flex_1())
+    .when(!v.narrow() && v.tab === "resources" && !v.data.metricsMissing, (el) => el.child(hint(t, "kb-pace", "M", `metrics ${paceText(v.data.metricsEvery)}`)))
     .when(!v.narrow(), (el) => el.child(hint(t, "kb-colon", ":", "kind")).child(hint(t, "kb-slash", "/", "filter")))
     .child(keysHint(t, "kb-help", v.help, (cx) => {
       v.help = !v.help;

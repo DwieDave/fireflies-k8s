@@ -97,6 +97,11 @@ mock.module("herdr", () => ({
   window: () => ({ platform: "macos" }),
   nextCommand: () => Promise.reject(new Error("no commands in tests")),
   readTextFile: (p: string) => Promise.resolve(env.files.get(p) ?? null),
+  writeTextFile: (p: string, t: string, expected: string | null) => {
+    if ((env.files.get(p) ?? null) !== expected) return Promise.reject(new Error("stale"));
+    env.files.set(p, t);
+    return Promise.resolve(null);
+  },
   appHome: () => "/home/test/.config/herdr-app",
 }));
 

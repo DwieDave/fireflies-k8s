@@ -125,6 +125,7 @@ export default class K8s extends View {
   load(cx: AsyncContext): void {
     cx.spawn(async (cx) => {
       this.settings = parseSettings(await readTextFile(`${appHome()}/${SETTINGS_PATH}`).catch(() => null));
+      this.data.paceMetrics(this.settings.metrics);
       this.databases = (await readTextFile(`${appHome()}/${DATABASES_MOD}`).catch(() => null)) !== null;
       this.loaded = true;
       cx.notify();

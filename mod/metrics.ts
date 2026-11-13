@@ -1,6 +1,16 @@
 // Metrics from `kubectl top` (metrics-server): each pod's and node's CPU and
 // memory, kept as short histories for the dithered lines. A cluster without
 // metrics-server answers an error once; the lines are then left out.
+//
+// How often to read is the person's pick (M: METRIC_PACES); metrics-server
+// only measures about every 15 s (its --metric-resolution), so a read is
+// added to the lines only when its numbers are new (data.ts).
+
+/** The paces M offers, in seconds (0: paused). */
+export const METRIC_PACES: readonly number[] = [2, 5, 15, 30, 0];
+
+/** A pace as the strip and the menu say it. */
+export const paceText = (s: number): string => (s === 0 ? "paused" : `${s}s`);
 
 import { bytes, millicores } from "./quantity.ts";
 
@@ -10,7 +20,7 @@ export interface Sample {
   readonly mem: number;
 }
 
-/** How many readings a line keeps (15 s apart: ten minutes). */
+/** How many readings a line keeps (each a new sample: metrics-server's are about 15 s apart, ten minutes). */
 export const KEEP = 40;
 
 /** `kubectl top pods [-A] --no-headers`: "[ns] name 12m 34Mi" lines, keyed "ns/name"

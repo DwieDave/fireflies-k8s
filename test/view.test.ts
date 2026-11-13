@@ -439,3 +439,32 @@ describe("the workload graph's direction and pan", () => {
     for (const w of ["move", "centre", "turn"]) expect(texts(draw())).toContain(w);
   });
 });
+
+describe("the metrics' pace", () => {
+  test("M opens the paces; picking 2s reads at 2s, keeps it in settings.json beside the other fields, the strip and bar say it", async () => {
+    const { v, press, draw } = await open();
+    await press(":", "d", "e", "p", "l", "o", "y", "enter", "g");
+    expect(texts(draw())).toContain("every 15s");
+    await press("M");
+    expect(v.menu?.title).toBe("read cpu and memory every");
+    expect(v.menu?.rows.map((r) => r.label)).toEqual(["every 2s", "every 5s", "every 15s  ·  now", "every 30s", "paused"]);
+    expect(v.menu?.rows[0]?.sub).toContain("metrics-server measures about every 15s");
+    await press("1");
+    expect(v.data.metricsEvery).toBe(2);
+    expect(v.data.topPods.every).toBe(2000);
+    const kept = JSON.parse(env.files.get(`${HOME}/k8s/settings.json`) ?? "{}");
+    expect(kept).toMatchObject({ metrics: 2, favourites: ["lantern", "moth"] });
+    v.note = null;
+    const shown = texts(draw());
+    expect(shown).toContain("every 2s");
+    expect(shown).toContain("metrics 2s");
+  });
+
+  test("a kept pace is read with the settings; paused reads no top at all", async () => {
+    settings({ metrics: 0 });
+    const { v, draw } = await open();
+    expect(v.data.metricsEvery).toBe(0);
+    expect(v.data.topPods.at).toBe(0);
+    expect(texts(draw())).toContain("metrics paused");
+  });
+});

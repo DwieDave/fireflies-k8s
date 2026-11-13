@@ -2,6 +2,11 @@
 // second by the view with what it shows now (`Wants`). Only what's on screen
 // is read; a feed whose answer didn't change bumps nothing and redraws
 // nothing (`version` counts the changes, derive.ts caches on it).
+//
+// The metrics (`kubectl top`) go at the pace picked with M (2 s to 30 s, or
+// paused). metrics-server itself measures about every 15 s, so a faster pace
+// often answers the numbers it gave before: those aren't added to the lines
+// (no made-up movement), and `metricsSame` says so in the strip.
 
 import type { Context as Cx } from "gpui-kit";
 import type { Context } from "./contexts.ts";
@@ -60,23 +65,34 @@ export class Data {
   version = 0;
   /** metrics-server answered no: the lines are left out. */
   metricsMissing = false;
+  /** The last metrics read answered the numbers of the one before (metrics-server hadn't measured again). */
+  metricsSame = false;
+  /** Seconds between metrics reads; 0: paused. */
+  metricsEvery = 15;
   exec: Exec;
 
   constructor(exec: Exec) {
     this.exec = exec;
   }
 
+  /** The metrics' pace (M): seconds between reads, 0 to pause them. */
+  paceMetrics(seconds: number): void {
+    this.metricsEvery = seconds;
+    this.metricsSame = false;
+
+    for (const f of [this.topPods, this.topNodes]) f.pace(Math.max(1, seconds) * 1000);
+  }
+
   /** Every feed due now for what's shown starts its read. */
   tick(w: Wants, cx: Cx, now = Date.now()): void {
-    const go = <T>(feed: Feed<T>, scope: string, read: () => Promise<Answer<T>>, sign: (v: T) => string, after: ((v: T | null) => void) | null = null): void => {
+    const go = <T>(feed: Feed<T>, scope: string, read: () => Promise<Answer<T>>, sign: (v: T) => string, after: After<T> | null = null): void => {
       if (!feed.due(scope, now)) return;
 
       cx.spawn(async (cx) => {
         const changed = await feed.run(scope, { read, sign });
+        const redraw = after?.(feed.value, changed) ?? false;
 
-        after?.(feed.value);
-
-        if (changed) {
+        if (changed || redraw) {
           this.version++;
           cx.notify();
         }
@@ -104,7 +120,8 @@ export class Data {
     go(this.namespaces, context, () => readList(this.exec, listArgs(all, "namespaces"), isNamespace), versions);
     go(this.pods, context, () => readList(this.exec, listArgs(all, "pods"), isPod), versions);
     go(this.snap, key(here), () => this.readSnapshot(here), snapSign);
-    go(this.topPods, context, () => readText(this.exec, topPodsArgs(all)), (v) => v, (v) => this.takeTopPods(v));
+
+    if (this.metricsEvery > 0) go(this.topPods, context, () => readText(this.exec, topPodsArgs(all)), (v) => v, (v, changed) => this.takeTopPods(v, changed));
 
     if (resources && kind === "secrets") go(this.secrets, key(here), async () => {
       const r = await readText(this.exec, secretListArgs(here));
@@ -116,7 +133,8 @@ export class Data {
 
     if (resources && kind === "nodes") {
       go(this.nodes, context, () => readList(this.exec, listArgs(all, "nodes"), isNode), versions);
-      go(this.topNodes, context, () => readText(this.exec, topNodesArgs(context)), (v) => v, (v) => this.takeTopNodes(v));
+
+      if (this.metricsEvery > 0) go(this.topNodes, context, () => readText(this.exec, topNodesArgs(context)), (v) => v, (v, changed) => this.takeTopNodes(v, changed));
     }
 
     const custom = customOf(kind);
@@ -168,17 +186,29 @@ export class Data {
     return list ? { ok: true, value: sortSnapshot(list.items) } : { ok: false, error: "kubectl's answer wasn't a list" };
   }
 
-  private takeTopPods(v: string | null): void {
+  /** A `kubectl top pods` answer: a new sample goes on the lines; the same numbers again only flip
+   *  `metricsSame` (a redraw when it flips, none otherwise). */
+  private takeTopPods(v: string | null, changed: boolean): boolean {
     if (this.topPods.error && !this.history.any()) this.metricsMissing = true;
 
-    if (v !== null && !this.topPods.error) {
-      this.metricsMissing = false;
-      this.history.push(parseTopPods(v, null), "");
-    }
+    if (v === null || this.topPods.error) return false;
+
+    this.metricsMissing = false;
+
+    const same = !changed;
+    const flipped = same !== this.metricsSame;
+
+    this.metricsSame = same;
+
+    if (changed) this.history.push(parseTopPods(v, null), "");
+
+    return flipped;
   }
 
-  private takeTopNodes(v: string | null): void {
-    if (v !== null && !this.topNodes.error) this.history.push(new Map(parseTopNodes(v)), "node:");
+  private takeTopNodes(v: string | null, changed: boolean): boolean {
+    if (v !== null && !this.topNodes.error && changed) this.history.push(new Map(parseTopNodes(v)), "node:");
+
+    return false;
   }
 
   /** `r`: everything read again at once. */
@@ -187,7 +217,10 @@ export class Data {
   }
 }
 
-type Go = <T>(feed: Feed<T>, scope: string, read: () => Promise<Answer<T>>, sign: (v: T) => string, after?: ((v: T | null) => void) | null) => void;
+/** What runs after a read: given its value and whether it changed; true asks for a redraw anyway. */
+type After<T> = (v: T | null, changed: boolean) => boolean;
+
+type Go = <T>(feed: Feed<T>, scope: string, read: () => Promise<Answer<T>>, sign: (v: T) => string, after?: After<T> | null) => void;
 
 const key = (w: Where): string => `${w.context}/${w.namespace ?? "*"}`;
 
