@@ -117,6 +117,15 @@ export const WINDOW_KEYS = [
   ["?", "keys"],
 ] as const;
 
+/** A graph's keys (the detail panel's, the Argo tree's), with the keyboard there. */
+export const GRAPH_KEYS = [
+  ["j k h l", "walk the boxes (the way the graph reads)"],
+  ["H J K L", "move the graph (or drag it, or the wheel)"],
+  ["c", "centre the selected box (or double-click the empty graph)"],
+  ["O", "turn the graph: top to bottom / left to right (kept)"],
+  ["enter", "open the box's object (or double-click it)"],
+] as const;
+
 /** The Argo tab's keys. */
 export const ARGO_KEYS = [
   ["S", "sync"],

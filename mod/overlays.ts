@@ -10,7 +10,7 @@ import type { default as K8s } from "./main.ts";
 import { popupScrim, stop } from "./kit.ts";
 import { keysView } from "./keyhelp.ts";
 import type { KeySection } from "./keyhelp.ts";
-import { ARGO_KEYS, FORWARD_KEYS, ROW_KEYS, WINDOW_KEYS } from "./keys.ts";
+import { ARGO_KEYS, FORWARD_KEYS, GRAPH_KEYS, ROW_KEYS, WINDOW_KEYS } from "./keys.ts";
 import { asksTwice, whereOf } from "./confirm.ts";
 import { clusterOf, runAsk } from "./writes.ts";
 import { looksProd } from "./contexts.ts";
@@ -100,8 +100,10 @@ export function helpPanel(v: K8s, t: Theme): Element | null {
     : v.tab === "forwards" ? { title: "forwards", keys: FORWARD_KEYS }
     : { title: "the selected row", keys: ROW_KEYS.map(([k, , w]) => [k, w] as const) };
 
+  const graph: readonly KeySection[] = v.tab === "forwards" ? [] : [{ title: "a graph", keys: v.tab === "argo" ? GRAPH_KEYS.filter(([k]) => k !== "O") : GRAPH_KEYS }];
+
   return div().id("k8s-help").absolute().inset_0().bg(t.background).child(keysView(t, {
-    id: "k8s-keys-view", title: "Kubernetes", list: [tab, { title: "window", keys: WINDOW_KEYS }], close: () => {
+    id: "k8s-keys-view", title: "Kubernetes", list: [tab, ...graph, { title: "window", keys: WINDOW_KEYS }], close: () => {
       v.help = false;
     },
   }));

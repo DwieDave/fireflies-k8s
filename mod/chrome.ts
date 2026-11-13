@@ -14,7 +14,8 @@ import { titleOf } from "./kinds.ts";
 import { TABS } from "./state.ts";
 import type { Panel } from "./state.ts";
 import { closeWindow, move } from "./host.ts";
-import { setTab, selectedRow } from "./nav.ts";
+import { hasGraph, setTab, selectedRow } from "./nav.ts";
+import type { Row } from "./rows.ts";
 import { contextMenu } from "./menus.ts";
 import { forwards } from "./integrate.ts";
 import { hint, keysHint } from "./keyhelp.ts";
@@ -114,7 +115,9 @@ function barTitle(v: K8s): string {
 
 /** The keys the bar shows for what has the keyboard (the row's actions that apply, the first few). */
 function barKeys(v: K8s): readonly (readonly [string, string])[] {
-  if (v.tab === "argo") return [["S", "sync"], ["r", "refresh"], ["D", "diff"], ["h", "history"], ["B", "rollback"], ["tab", "panel"]];
+  const graph: readonly (readonly [string, string])[] = [["H J K L", "move"], ["c", "centre"]];
+
+  if (v.tab === "argo") return [...(v.argoPanel === "tree" ? graph : []), ["S", "sync"], ["r", "refresh"], ["D", "diff"], ["h", "history"], ["B", "rollback"], ["tab", "panel"]];
 
   if (v.tab === "forwards") return [["enter", "leads"], ["w", "web"], ["b", "databases"], ["p", "peek"], ["x", "stop"]];
 
@@ -126,5 +129,11 @@ function barKeys(v: K8s): readonly (readonly [string, string])[] {
 
   const max = v.narrow() ? 3 : v.size.width < 1000 ? 6 : 9;
 
+  if (v.panel === "detail" && v.detail === "graph" && hasGraph(row.ref.kind)) return [...graph, ["O", "turn"], ...rowKeys(row, max - 3)];
+
+  return rowKeys(row, max);
+}
+
+function rowKeys(row: Row, max: number): readonly (readonly [string, string])[] {
   return ROW_KEYS.filter(([, a]) => applies(a, row) && a !== "describe" && a !== "yaml").slice(0, max).map(([k, , w]) => [k, w] as const);
 }

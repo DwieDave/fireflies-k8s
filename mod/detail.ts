@@ -12,7 +12,7 @@ import type { default as K8s } from "./main.ts";
 import { chip, meterBar, panel, spark } from "./kit.ts";
 import type { DetailView } from "./state.ts";
 import { hasGraph, selectedRow, showRef } from "./nav.ts";
-import { rowGraph } from "./graph-shown.ts";
+import { ROW_CANVAS, rowGraph } from "./graph-shown.ts";
 import { canvas, rule } from "./graph-view.ts";
 import type { Row } from "./rows.ts";
 import { secretValues } from "./table.ts";
@@ -79,7 +79,7 @@ function graphView(v: K8s, t: Theme, row: Row, width: number, active: boolean): 
       const r = b.node.ref;
 
       if (open && r) showRef(v, r.kind, r.name, r.namespace);
-    }, "g-row") : div().p(12).text_size(11).text_color(t.dim).child("reading…")))
+    }, ROW_CANVAS) : div().p(12).text_size(11).text_color(t.dim).child("reading…")))
     .when(line.length > 0 && !v.data.metricsMissing, (el) => el.child(metrics(t, line.map((x) => x.cpu), line.map((x) => x.mem), width, keys.length)))
     .child(rule(t, "events"))
     .child(eventList(t, (v.data.selEvents.value ?? []).slice(0, 4), v.data.selEvents.at === 0).h(78).flex_none());

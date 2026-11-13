@@ -9,7 +9,9 @@ import { rowActionFor } from "./keys.ts";
 import { moveRow, selectAt, listRows, rowIndex, selectedRow, apps, shownApp, showRef } from "./nav.ts";
 import { runRow, rowMenu } from "./actions.ts";
 import { railItems, pickRail } from "./menus.ts";
-import { appTree, detailWidth, rowGraph, sideBox, stepBox, treeWidth } from "./graph-shown.ts";
+import { APP_CANVAS, ROW_CANVAS, appTree, detailWidth, flipDirection, rowGraph, sideBox, stepBox, treeWidth } from "./graph-shown.ts";
+import { centreOn, panBy, panKey } from "./graph-pan.ts";
+import { saveCopy } from "./host.ts";
 import type { Shown } from "./graph-shown.ts";
 import { diffApp, pickedEntry, refreshApp, rollbackApp, syncApp } from "./argo-actions.ts";
 import { historyOf, sourceOf } from "./argo.ts";
@@ -45,7 +47,7 @@ export function resourcesKey(v: K8s, name: string, cx: Context): boolean {
 
   if (v.panel === "rail") return railKey(v, name);
 
-  if (v.panel === "detail" && detailKey(v, name, cx)) return true;
+  if (v.panel === "detail" && detailKey(v, name)) return true;
 
   return tableKey(v, name, cx);
 }
@@ -90,11 +92,11 @@ function tableKey(v: K8s, name: string, cx: Context): boolean {
 }
 
 /** The detail panel: arrows walk the graph's boxes (enter opens one), or scroll the text. */
-function detailKey(v: K8s, name: string, cx: Context): boolean {
+function detailKey(v: K8s, name: string): boolean {
   if (v.detail === "graph") {
     const s = rowGraph(v, detailWidth(v));
 
-    return s ? graphKey(v, s, name, cx, (b) => {
+    return s ? graphKey(v, s, name, ROW_CANVAS, (b) => {
       const r = b.node.ref;
 
       if (r) showRef(v, r.kind, r.name, r.namespace);
@@ -115,22 +117,44 @@ function detailKey(v: K8s, name: string, cx: Context): boolean {
   return false;
 }
 
-/** Arrows over a graph: j k walk the reading order, h l the next column. */
-function graphKey(v: K8s, s: Shown, name: string, _cx: Context, open: (b: Placed) => void): boolean {
+/** Keys over a graph: the arrows (j k h l) walk its boxes the way it reads (left to right: j k down the
+ *  reading order, h l to the next column; top to bottom: j k to the next row, h l along the rows), H J K L
+ *  move the picture, c centres the cursor's box, O turns the workload graph, enter opens. */
+function graphKey(v: K8s, s: Shown, name: string, canvasId: string, open: (b: Placed) => void): boolean {
   const at = v.tab === "argo" ? v.argoNode : v.graphSel;
-  let next: Placed | null = null;
+  const view = v.canvases.get(canvasId);
+  const pan = panKey(name);
 
-  if (name === "j" || name === "down") next = stepBox(s, at, 1);
-  else if (name === "k" || name === "up") next = stepBox(s, at, -1);
-  else if (name === "l" || name === "right") next = sideBox(s, at, 1);
-  else if (name === "h" || name === "left") next = sideBox(s, at, -1);
-  else if (name === "enter") {
+  if (pan) {
+    if (view) panBy(view, pan[0], pan[1]);
+
+    return true;
+  }
+
+  if (name === "c") {
+    if (view) centreOn(view, s.laid, at ?? s.graph.root.key);
+
+    return true;
+  }
+
+  if (name === "O" && canvasId === ROW_CANVAS) {
+    flipDirection(v);
+    saveCopy(v);
+
+    return true;
+  }
+
+  if (name === "enter") {
     const b = s.laid.boxes.find((x) => x.node.key === at);
 
     if (b) open(b);
 
     return Boolean(b);
-  } else return false;
+  }
+
+  const next = walk(s, at, name);
+
+  if (next === undefined) return false;
 
   if (next) {
     if (v.tab === "argo") v.argoNode = next.node.key;
@@ -138,6 +162,19 @@ function graphKey(v: K8s, s: Shown, name: string, _cx: Context, open: (b: Placed
   }
 
   return true;
+}
+
+/** Where an arrow goes from the box `at` (null: nowhere further), or undefined for a key that isn't one. */
+function walk(s: Shown, at: string | null, name: string): Placed | null | undefined {
+  const down = s.laid.dir === "down";
+  const fwd = name === "j" || name === "down" ? 1 : name === "k" || name === "up" ? -1 : 0;
+  const side = name === "l" || name === "right" ? 1 : name === "h" || name === "left" ? -1 : 0;
+
+  if (fwd) return down ? sideBox(s, at, fwd, "y") : stepBox(s, at, fwd);
+
+  if (side) return down ? stepBox(s, at, side) : sideBox(s, at, side);
+
+  return undefined;
 }
 
 export function argoKey(v: K8s, name: string, cx: Context): boolean {
@@ -183,10 +220,10 @@ export function argoKey(v: K8s, name: string, cx: Context): boolean {
     default: break;
   }
 
-  return argoPanelKey(v, name, cx);
+  return argoPanelKey(v, name);
 }
 
-function argoPanelKey(v: K8s, name: string, cx: Context): boolean {
+function argoPanelKey(v: K8s, name: string): boolean {
   const by = step(name);
   const a = shownApp(v);
 
@@ -208,7 +245,7 @@ function argoPanelKey(v: K8s, name: string, cx: Context): boolean {
   if (v.argoPanel === "tree") {
     const s = appTree(v, treeWidth(v));
 
-    return s ? graphKey(v, s, name, cx, (b) => {
+    return s ? graphKey(v, s, name, APP_CANVAS, (b) => {
       const r = b.node.ref;
 
       if (r && r.kind !== "applications") showRef(v, r.kind, r.name, r.namespace);

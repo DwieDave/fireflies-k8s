@@ -355,8 +355,10 @@ describe("fits", () => {
     const l = s!.laid;
     expect(l.width).toBeLessThanOrEqual(detailWidth(v) + 1);
     expect(l.boxes.every((b) => b.x + l.d.w <= detailWidth(v))).toBe(true);
-    // Narrow: the ingress and the service sit in a row over the tree.
-    if (detailWidth(v) < 700) expect(l.top).toBeGreaterThan(0);
+    // The detail column (wide window, or the one column under 640 px) is tall: the graph runs top to bottom;
+    // under the table (900 px) it's low and wide: left to right, the ingress and the service in a row over the tree.
+    expect(l.dir).toBe(width === 900 ? "right" : "down");
+    if (l.dir === "right" && detailWidth(v) < 700) expect(l.top).toBeGreaterThan(0);
   });
 
   test("the rail draws its three panels, the namespaces and kinds sharing the height", async () => {
@@ -377,5 +379,63 @@ describe("fits", () => {
     const { v, cx } = await open();
     command(v, 'open:{"as":"window","full":true,"kind":"pods"}', cx);
     expect(calls.find((c) => c.name === "openOverlay")?.args).toMatchObject({ mod: "k8s", width: 1, height: 1, props: { kind: "pods" } });
+  });
+});
+
+const { rowDirection, ROW_CANVAS } = await import("../mod/graph-shown.ts");
+const { readingOrder } = await import("../mod/graph-layout.ts");
+
+describe("the workload graph's direction and pan", () => {
+  test("O turns it and the turn is kept for the next opening; O again follows the panel", async () => {
+    const { v, press } = await open();
+    await press(":", "d", "e", "p", "l", "o", "y", "enter", "g", "tab");
+    expect(rowDirection(v)).toBe("down");
+    await press("O");
+    expect(v.graphDir).toBe("right");
+    expect(rowGraph(v, detailWidth(v))?.laid.dir).toBe("right");
+    expect((sharedMap.get("k8s.state") as { graph?: string }).graph).toBe("right");
+    const again = await open();
+    expect(again.v.graphDir).toBe("right");
+    await press("O");
+    expect(v.graphDir).toBe("auto");
+  });
+
+  test("top to bottom, j goes a row down (to the service under the ingress), l along the row", async () => {
+    const { v, press } = await open();
+    await press(":", "d", "e", "p", "l", "o", "y", "enter", "g", "tab");
+    v.graphSel = "ing";
+    const s = rowGraph(v, detailWidth(v))!;
+    const ing = s.laid.boxes.find((b) => b.node.kind === "ing")!;
+    v.graphSel = ing.node.key;
+    await press("j");
+    expect(s.laid.boxes.find((b) => b.node.key === v.graphSel)?.node.kind).toBe("svc");
+    await press("j", "j");
+    const rs = s.laid.boxes.find((b) => b.node.key === v.graphSel)!;
+    expect(rs.node.kind).toBe("rs");
+    // l reads on along the rows: the next box right of it, or the next row's first.
+    await press("l");
+    const order = readingOrder(s.laid);
+    expect(order.findIndex((b) => b.node.key === v.graphSel)).toBe(order.indexOf(rs) + 1);
+  });
+
+  test("H J K L pan the graph's canvas, c centres the selected box; the keys are listed in ?", async () => {
+    const { v, press, draw } = await open();
+    await press(":", "d", "e", "p", "l", "o", "y", "enter", "g", "tab");
+    draw();
+    const view = v.canvases.get(ROW_CANVAS)!;
+    view.w = 200;
+    view.h = 120;
+    view.x = 0;
+    view.y = 0;
+    await press("J", "L");
+    expect([view.x, view.y]).toEqual([80, 80]);
+    await press("c");
+    expect(view.follow).toBe(v.graphSel ?? selectedRow(v)?.key ?? null);
+    await press("?");
+    const help = texts(draw()).join(" ");
+    for (const w of ["H J K L", "move the graph (or drag it, or the wheel)", "turn the graph: top to bottom / left to right (kept)"]) expect(help).toContain(w);
+    await press("escape");
+    // The bar, with the graph's keys while it has the keyboard.
+    for (const w of ["move", "centre", "turn"]) expect(texts(draw())).toContain(w);
   });
 });

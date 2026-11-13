@@ -56,8 +56,12 @@ export interface Seg {
   readonly live: boolean;
 }
 
+/** Which way a graph reads: left to right (a column per rank), or top to bottom (a row per rank: graph-down.ts). */
+export type Direction = "right" | "down";
+
 /** The whole picture: boxes, lines, its size, and the box size it was laid out with. */
 export interface Laid {
+  readonly dir: Direction;
   readonly boxes: readonly Placed[];
   readonly segs: readonly Seg[];
   readonly width: number;
@@ -67,7 +71,7 @@ export interface Laid {
   readonly top: number;
 }
 
-const liveTone = (t: Tone): boolean => t === "wk" || t === "bad";
+export const liveTone = (t: Tone): boolean => t === "wk" || t === "bad";
 
 /** How many columns a graph takes (its feeders' plus its tree's depth). */
 export function columnsOf(g: Graph): number {
@@ -150,7 +154,7 @@ function finish(g: Graph, d: Dims, at: ReadonlyMap<string, Placed>, boxes: reado
   const width = Math.max(0, ...boxes.map((b) => b.x + d.w)) + d.pad;
   const height = Math.max(0, ...boxes.map((b) => b.y + d.h)) + d.pad;
 
-  return { boxes, segs, width, height, d, top };
+  return { dir: "right", boxes, segs, width, height, d, top };
 }
 
 /** The feeders in one row over the tree, outermost first (ingress, then service), each line
@@ -221,8 +225,11 @@ export function boxAt(l: Laid, x: number, y: number, d: Dims = DIMS): Placed | n
   return l.boxes.find((b) => x >= b.x && x <= b.x + d.w && y >= b.y && y <= b.y + d.h) ?? null;
 }
 
-/** The boxes in reading order (a row over the tree first, then column by column, top to bottom): what arrows walk. */
+/** The boxes in reading order (left to right: a row over the tree first, then column by column, top to
+ *  bottom; top to bottom: row by row, left to right): what arrows walk. */
 export function readingOrder(l: Laid): readonly Placed[] {
+  if (l.dir === "down") return [...l.boxes].sort((a, b) => a.y - b.y || a.x - b.x);
+
   const band = (p: Placed) => (p.y < l.top ? 0 : 1);
 
   return [...l.boxes].sort((a, b) => band(a) - band(b) || a.x - b.x || a.y - b.y);

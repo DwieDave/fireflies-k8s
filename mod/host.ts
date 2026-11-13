@@ -61,6 +61,7 @@ export function takeOpening(v: K8s): void {
     v.kind = asKind(kept.kind) ?? v.kind;
     v.tab = kept.tab ?? v.tab;
     v.detail = kept.detail ?? v.detail;
+    v.graphDir = kept.graph ?? v.graphDir;
   }
 
   const own = v.props.slot ? parseJson(storeGet(), isHandover) : undefined;
@@ -127,7 +128,7 @@ function storeGet(): string {
 
 /** Keeps this copy's state: the last state for the next opening, and a pane's own (per slot). */
 export function saveCopy(v: K8s): void {
-  writeShared(setShared, KEPT, { context: v.context, namespace: v.namespace, kind: v.kind, tab: v.tab, detail: v.detail });
+  writeShared(setShared, KEPT, { context: v.context, namespace: v.namespace, kind: v.kind, tab: v.tab, detail: v.detail, graph: v.graphDir });
 
   if (!v.props.slot) return;
 

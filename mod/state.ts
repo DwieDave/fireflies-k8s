@@ -23,6 +23,11 @@ export const isDetailView = literal("graph", "describe", "yaml", "events");
 /** What the detail panel shows of the selected row. */
 export type DetailView = Guarded<typeof isDetailView>;
 
+export const isGraphDir = literal("auto", "right", "down");
+
+/** The workload graph's direction: "auto" follows the detail panel's shape (graph-shown.ts). */
+export type GraphDir = Guarded<typeof isGraphDir>;
+
 /** The Argo tab's panels. */
 export type ArgoPanel = "apps" | "tree" | "side";
 
@@ -65,7 +70,7 @@ export interface Drill {
 }
 
 /** What the next opening starts from (shared: every copy writes it as it changes). */
-export const isKept = object({ context: nullable(isString), namespace: nullable(isString), kind: isString }, { tab: maybe(isTab), detail: maybe(isDetailView) });
+export const isKept = object({ context: nullable(isString), namespace: nullable(isString), kind: isString }, { tab: maybe(isTab), detail: maybe(isDetailView), graph: maybe(isGraphDir) });
 
 export type Kept = Guarded<typeof isKept>;
 

@@ -27,11 +27,11 @@ import type { KindRef } from "./kinds.ts";
 import type { Row } from "./rows.ts";
 import type { Settings } from "./settings.ts";
 import { DEFAULTS, SETTINGS_PATH, parseSettings } from "./settings.ts";
-import type { ArgoPanel, DetailView, Drill, Menu, Note, Panel, Tab, Typing } from "./state.ts";
+import type { ArgoPanel, DetailView, Drill, GraphDir, Menu, Note, Panel, Tab, Typing } from "./state.ts";
 import type { Diffed } from "./argo-actions.ts";
 import { DATABASES_MOD } from "./forwards.ts";
 import { Memo } from "./derive.ts";
-import type { View as CanvasView } from "./graph-view.ts";
+import type { View as CanvasView } from "./graph-pan.ts";
 import { appNamespace, listRows, selectedRow } from "./nav.ts";
 import { checkEdits } from "./edit.ts";
 import { frame } from "./frame.ts";
@@ -60,6 +60,8 @@ export default class K8s extends View {
   detail: DetailView = "graph";
   /** The graph box with the keyboard's cursor (arrows walk the graph when the detail panel has the keys). */
   graphSel: string | null = null;
+  /** The workload graph's direction: "auto" follows the detail panel's shape, `O` picks one (kept). */
+  graphDir: GraphDir = "auto";
   filter = "";
   typing: Typing | null = null;
   drill: Drill | null = null;
@@ -84,7 +86,7 @@ export default class K8s extends View {
   text: EditorState | null = null;
   shownText = "";
   rowsMemo = new Memo<readonly Row[]>();
-  /** Each graph canvas's size and pan (graph-view.ts). */
+  /** Each graph canvas's size and pan (graph-pan.ts). */
   canvases = new Map<string, CanvasView>();
   closed = false;
   /** No kubectl call before the settings are read (they name which kubectl). */

@@ -6,12 +6,14 @@
 import type { default as K8s } from "./main.ts";
 import type { Graph } from "./graph.ts";
 import { workloadGraph } from "./graph.ts";
-import type { Laid, Placed } from "./graph-layout.ts";
+import type { Direction, Laid, Placed } from "./graph-layout.ts";
 import { fit, layout, readingOrder } from "./graph-layout.ts";
+import { directionFor, layoutDown } from "./graph-down.ts";
 import { appGraph } from "./argo.ts";
 import { EMPTY } from "./snapshot.ts";
 import { selectedRow, shownApp } from "./nav.ts";
 import { Memo } from "./derive.ts";
+import { WIDE } from "./main.ts";
 
 /** A graph laid out for a panel width. */
 export interface Shown {
@@ -30,7 +32,47 @@ function memo(map: WeakMap<K8s, Memo<Shown | null>>, v: K8s): Memo<Shown | null>
   return m;
 }
 
-const laidOut = (g: Graph, width: number): Shown => ({ graph: g, laid: layout(g, fit(g, width)) });
+const laidOut = (g: Graph, width: number, dir: Direction = "right"): Shown => ({ graph: g, laid: dir === "down" ? layoutDown(g, width) : layout(g, fit(g, width)) });
+
+/** The workload graph's canvas id (its measured size picks the direction). */
+export const ROW_CANVAS = "g-row";
+
+/** The Argo application tree's canvas id. */
+export const APP_CANVAS = "g-app";
+
+/** A panel's size in px. */
+interface Size {
+  readonly w: number;
+  readonly h: number;
+}
+
+/** The detail graph's size before it's measured, from the layout frame.ts picks. */
+function guessedSize(v: K8s): Size {
+  const { width, height } = v.size;
+  const low = !v.narrow() && width < WIDE;
+
+  return { w: detailWidth(v), h: low ? Math.round((height - 90) * 0.48) - 170 : height - 260 };
+}
+
+/** The direction the detail panel's shape gives the workload graph (its canvas as measured, else as guessed). */
+function panelDirection(v: K8s): Direction {
+  const c = v.canvases.get(ROW_CANVAS);
+  const s = c?.measured ? c : guessedSize(v);
+
+  return directionFor(s.w, s.h);
+}
+
+/** The workload graph's direction: the one `O` picked, else the panel's shape's. */
+export function rowDirection(v: K8s): Direction {
+  return v.graphDir === "auto" ? panelDirection(v) : v.graphDir;
+}
+
+/** `O`: the workload graph the other way; back to following the panel's shape when that's the way it reads. */
+export function flipDirection(v: K8s): void {
+  const next: Direction = rowDirection(v) === "down" ? "right" : "down";
+
+  v.graphDir = panelDirection(v) === next ? "auto" : next;
+}
 
 /** The selected row's workload graph, laid out for `width`. */
 export function rowGraph(v: K8s, width: number): Shown | null {
@@ -38,10 +80,12 @@ export function rowGraph(v: K8s, width: number): Shown | null {
 
   if (!row) return null;
 
-  return memo(rowMemo, v).get(v.data.version, `${row.key}|${Math.round(width / 40)}`, () => {
+  const dir = rowDirection(v);
+
+  return memo(rowMemo, v).get(v.data.version, `${row.key}|${Math.round(width / 40)}|${dir}`, () => {
     const g = workloadGraph(row.ref, row.uid, v.data.snap.value ?? EMPTY, v.data.pods.value ?? []);
 
-    return g ? laidOut(g, width) : null;
+    return g ? laidOut(g, width, dir) : null;
   });
 }
 
@@ -62,16 +106,18 @@ export function stepBox(s: Shown, at: string | null, by: number): Placed | null 
   return order[Math.max(0, Math.min(order.length - 1, (i < 0 ? 0 : i + by)))] ?? null;
 }
 
-/** The box beside the cursor's: the nearest one in the next column left or right. */
-export function sideBox(s: Shown, at: string | null, dir: -1 | 1): Placed | null {
+/** The box beside the cursor's: the nearest one in the next column left or right (`axis` "x"), or in the
+ *  next row up or down ("y"). */
+export function sideBox(s: Shown, at: string | null, dir: -1 | 1, axis: "x" | "y" = "x"): Placed | null {
   const from = s.laid.boxes.find((b) => b.node.key === at) ?? null;
 
   if (!from) return readingOrder(s.laid)[0] ?? null;
 
-  const col = s.laid.boxes.filter((b) => (dir > 0 ? b.x > from.x : b.x < from.x));
-  const nx = dir > 0 ? Math.min(...col.map((b) => b.x)) : Math.max(...col.map((b) => b.x));
+  const other = axis === "x" ? "y" : "x";
+  const line = s.laid.boxes.filter((b) => (dir > 0 ? b[axis] > from[axis] : b[axis] < from[axis]));
+  const next = dir > 0 ? Math.min(...line.map((b) => b[axis])) : Math.max(...line.map((b) => b[axis]));
 
-  return col.filter((b) => b.x === nx).sort((a, b) => Math.abs(a.y - from.y) - Math.abs(b.y - from.y))[0] ?? null;
+  return line.filter((b) => b[axis] === next).sort((a, b) => Math.abs(a[other] - from[other]) - Math.abs(b[other] - from[other]))[0] ?? null;
 }
 
 /** Width the detail panel's graph is laid out for. */

@@ -13,7 +13,7 @@ import { band, dither, icon, panel, stop, toneColor } from "./kit.ts";
 import type { Application } from "./argo.ts";
 import { autoSync, destinationOf, healthTone, historyOf, inThisCluster, sourceOf, syncTone } from "./argo.ts";
 import { apps, shownApp, showRef } from "./nav.ts";
-import { appTree, treeWidth } from "./graph-shown.ts";
+import { APP_CANVAS, appTree, treeWidth } from "./graph-shown.ts";
 import { canvas, rule } from "./graph-view.ts";
 import { age, instant } from "./time.ts";
 import type { DiffLine } from "./diff.ts";
@@ -87,7 +87,7 @@ function tree(v: K8s, t: Theme, a: Application): Element {
       if (open && r && r.kind !== "applications") showRef(v, r.kind, r.name, r.namespace);
 
       cx.notify();
-    }, "g-app") : div()))
+    }, APP_CANVAS) : div()))
     .child(legend(t));
 
   return panel(t, "argo-tree", a.metadata.name, active, body, { num: "2", right: "enter opens · tab panels" });
