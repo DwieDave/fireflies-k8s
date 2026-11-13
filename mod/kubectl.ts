@@ -32,23 +32,30 @@ export interface Where {
   readonly namespace: string | null;
 }
 
-/** --context and the namespace flags for a kind. */
+/** --context, and -n for one namespace: kubectl's own flags, which may stand before the verb. */
 export function scope(where: Where, kind: KindRef | null = null): string[] {
-  const ns = kind !== null && !namespaced(kind) ? [] : where.namespace === null ? ["-A"] : ["-n", where.namespace];
+  const ns = (kind !== null && !namespaced(kind)) || where.namespace === null ? [] : ["-n", where.namespace];
 
   return ["--context", where.context, ...ns];
 }
 
+/** -A for every namespace. It is a flag of `get` and `top`, not of kubectl itself: before the verb
+ *  kubectl takes the verb for the flag's value and then looks for a plugin ("flags cannot be placed
+ *  before plugin name: --context"). So it stands at the end of a call that lists. */
+export function across(where: Where, kind: KindRef | null = null): string[] {
+  return where.namespace === null && (kind === null || namespaced(kind)) ? ["-A"] : [];
+}
+
 /** `get <kind> -o json` for a list. */
 export function listArgs(where: Where, kind: KindRef): string[] {
-  return [...scope(where, kind), "get", resourceOf(kind), "-o", "json", "--request-timeout=10s"];
+  return [...scope(where, kind), "get", resourceOf(kind), "-o", "json", "--request-timeout=10s", ...across(where, kind)];
 }
 
 /** The template that lists secrets by name, type, age and key names: values never leave kubectl. */
 export const SECRET_TEMPLATE = '{{range .items}}{{.metadata.namespace}}{{"\\t"}}{{.metadata.name}}{{"\\t"}}{{.type}}{{"\\t"}}{{.metadata.creationTimestamp}}{{"\\t"}}{{range $k, $v := .data}}{{$k}},{{end}}{{"\\n"}}{{end}}';
 
 export function secretListArgs(where: Where): string[] {
-  return [...scope(where, "secrets"), "get", "secrets", "-o", `go-template=${SECRET_TEMPLATE}`, "--request-timeout=10s"];
+  return [...scope(where, "secrets"), "get", "secrets", "-o", `go-template=${SECRET_TEMPLATE}`, "--request-timeout=10s", ...across(where, "secrets")];
 }
 
 /** One object's YAML, describe, or events. */
@@ -61,7 +68,7 @@ export function describeArgs(where: Where, kind: KindRef, name: string): string[
 }
 
 export function eventArgs(where: Where, uid: string): string[] {
-  return [...scope(where, "events"), "get", "events", "--field-selector", `involvedObject.uid=${uid}`, "-o", "json", "--request-timeout=10s"];
+  return [...scope(where, "events"), "get", "events", "--field-selector", `involvedObject.uid=${uid}`, "-o", "json", "--request-timeout=10s", ...across(where, "events")];
 }
 
 export function topPodsArgs(where: Where): string[] {

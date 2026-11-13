@@ -6,7 +6,7 @@
 
 import { isString, object } from "./guard.ts";
 import type { Where } from "./kubectl.ts";
-import { scope } from "./kubectl.ts";
+import { across, scope } from "./kubectl.ts";
 import type { ConfigMap, CronJob, DaemonSet, Deployment, Ingress, Job, Pvc, ReplicaSet, Service, StatefulSet } from "./objects.ts";
 import { isConfigMap, isCronJob, isDaemonSet, isDeployment, isIngress, isJob, isPvc, isReplicaSet, isService, isStatefulSet } from "./objects.ts";
 import { maybe } from "./guards.ts";
@@ -30,7 +30,7 @@ export const EMPTY: Snapshot = { deployments: [], replicasets: [], statefulsets:
 const RESOURCES = "deployments.apps,replicasets.apps,statefulsets.apps,daemonsets.apps,jobs.batch,cronjobs.batch,services,ingresses.networking.k8s.io,configmaps,persistentvolumeclaims";
 
 export function snapshotArgs(where: Where): string[] {
-  return [...scope(where, "deployments"), "get", RESOURCES, "-o", "json", "--request-timeout=10s"];
+  return [...scope(where, "deployments"), "get", RESOURCES, "-o", "json", "--request-timeout=10s", ...across(where, "deployments")];
 }
 
 const isKinded = object({}, { kind: maybe(isString) });

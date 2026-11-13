@@ -49,6 +49,28 @@ describe("snapshot", () => {
   });
 });
 
+describe("every namespace", () => {
+  // -A is a flag of get, not of kubectl: before the verb the real kubectl answers "flags cannot be
+  // placed before plugin name: --context" (the fake does too), and the table showed that line.
+  const all = { context: "nightjar-dev", namespace: null };
+
+  test("-A stands after the verb", () => {
+    const args = listArgs(all, "pods");
+
+    expect(args.indexOf("-A")).toBeGreaterThan(args.indexOf("get"));
+    expect(secretListArgs(all).indexOf("-A")).toBeGreaterThan(secretListArgs(all).indexOf("get"));
+    expect(listArgs(all, "nodes")).not.toContain("-A");
+    expect(listArgs(dev, "pods")).not.toContain("-A");
+  });
+
+  test("the pods of every namespace list", async () => {
+    const r = await readList(exec, listArgs(all, "pods"), isPod);
+
+    if (!r.ok) throw new Error(r.error);
+    expect(new Set(r.value.map((p) => p.metadata.namespace)).size).toBeGreaterThan(1);
+  });
+});
+
 describe("rows", () => {
   test("pods: the crash-looping one is red with its restarts, recent", async () => {
     const r = await readList(exec, listArgs(dev, "pods"), isPod);

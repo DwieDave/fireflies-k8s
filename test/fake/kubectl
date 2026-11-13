@@ -53,7 +53,12 @@ for (let i = 0; i < argv.length; i++) {
   const valued = VALUED.has(a) && !(a === "-f" && verb0 === "logs");
   if (a === "-p" && verb0 === "patch") { flags.set("-p", argv[++i] ?? ""); continue; }
   if (valued) { flags.set(a, argv[++i] ?? ""); continue; }
-  if (a.startsWith("-")) { bools.add(a); continue; }
+  if (a.startsWith("-")) {
+    // As the real kubectl: a flag that isn't its own (-A belongs to get and top) before the verb
+    // swallows the verb, and the rest is taken for a plugin's name.
+    if (words.length === 0 && (a === "-A" || a === "--all-namespaces")) { process.stderr.write("error: flags cannot be placed before plugin name: --context\n"); process.exit(1); }
+    bools.add(a); continue;
+  }
   words.push(a);
 }
 
