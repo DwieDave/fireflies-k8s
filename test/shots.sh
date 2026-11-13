@@ -5,7 +5,7 @@
 #   test/shots.sh <herdr-app binary> [out dir]
 #
 # A scratch home under /var/tmp (its own HC_SESSION, the nocturne layout, zoom
-# 0.9, sounds off) with this repository's mod/ linked as mods/k8s and
+# 1.3, sounds off) with this repository's mod/ linked as mods/k8s and
 # k8s/settings.json naming test/fake/kubectl. The window is driven by
 # `k8s.press:<keys>` and `k8s.show:{…}`; shots also go to docs/shots/ for the
 # README. The app and its core are stopped at the end.
@@ -22,7 +22,7 @@ export HERDR_APP_HOME=/var/tmp/k8ss HC_SESSION=k8ss
 H=$HERDR_APP_HOME
 mkdir -p "$H/mods" "$H/k8s" "$OUT" "$REPO/docs/shots"
 ln -sfn "$REPO/mod" "$H/mods/k8s"
-echo '{ "layout": "nocturne", "zoom": 0.9, "sounds": { "enabled": false } }' > "$H/settings.json"
+echo '{ "layout": "nocturne", "zoom": 1.3, "sounds": { "enabled": false } }' > "$H/settings.json"
 printf '{ "kubectl": "%s/test/fake/kubectl", "favourites": ["lantern", "moth"] }\n' "$REPO" > "$H/k8s/settings.json"
 export K8S_FAKE_LOG=/var/tmp/k8ss-writes.log
 # A neutral shell: its own zsh config, no user or host in its prompt or title.
@@ -47,7 +47,7 @@ for i in $(seq 10); do W=$(aerospace list-windows --all --format "%{window-id} %
 [ -n "${W:-}" ] && { aerospace move-node-to-workspace --window-id "$W" 5; aerospace workspace "$P" 2>/dev/null; }
 
 do_() { kill -0 $PID 2>/dev/null || { echo "app gone"; stop; exit 1; }; R=$(perl -e 'alarm 10; exec @ARGV' "$APP" do "$@" 2>&1) || echo "do $*: $R" | head -2; }
-shot() { sleep "${2:-1.5}"; do_ window.maximize; sleep 0.6; perl -e 'alarm 10; exec @ARGV' "$APP" shot "$OUT/$1.png" >/dev/null 2>&1 && cp "$OUT/$1.png" "$REPO/docs/shots/$1.png" 2>/dev/null; echo "shot $1"; }
+shot() { sleep "${2:-1.5}"; do_ window.maximize; sleep 0.6; perl -e 'alarm 10; exec @ARGV' "$APP" shot "$OUT/$1.png" >/dev/null 2>&1 && { command -v magick >/dev/null 2>&1 && magick "$OUT/$1.png" -resize 1600x -strip -colors 200 "$REPO/docs/shots/$1.png" || cp "$OUT/$1.png" "$REPO/docs/shots/$1.png"; } 2>/dev/null; echo "shot $1"; }
 
 # One space (the core answers a second or two after the socket: retried until it gives a space).
 for i in $(seq 10); do "$APP" do space.new "{\"folder\":\"$H/nightjar\",\"name\":\"nightjar\"}" 2>&1 | grep -q '"space"' && break; sleep 1; done
@@ -91,6 +91,9 @@ do_ 'k8s.press:f j enter'
 shot 9-forward-leads 1.5
 do_ 'k8s.press:b'
 shot 10-forward-databases 3
+# The Databases window (when that mod is installed) gives the app back before the next shots.
+do_ nocturne.databases
+sleep 1
 # 11 a pod's logs in a pane under (the window gives way to it)
 window
 do_ 'k8s.press:colon p o enter l'
