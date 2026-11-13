@@ -27,10 +27,15 @@ export function onKey(v: K8s, e: KeyEvent, cx: Context): void {
   }
 }
 
+/** Names for characters a command line can't carry well (`k8s.press:colon d e p l o y enter`). */
+const SPELLED: ReadonlyMap<string, string> = new Map([["colon", ":"], ["slash", "/"], ["question", "?"], ["bracketleft", "["], ["bracketright", "]"]]);
+
 /** Keys by name, one after another (`k8s.press:j j enter`, `k8s.press:ctrl-d`): what a script or a demo types.
- *  A single character stands for itself; `space` is a space. */
+ *  A single character stands for itself; `space` is a space; `colon`, `slash`, `question`,
+ *  `bracketleft`, `bracketright` are : / ? [ ]. */
 export function pressKeys(v: K8s, names: readonly string[], cx: Context): void {
-  for (const name of names) {
+  for (const spelled of names) {
+    const name = SPELLED.get(spelled) ?? spelled;
     const ch = name === "space" ? " " : name.length === 1 ? name : undefined;
     const modifiers = { control: name.startsWith("ctrl-"), alt: false, shift: name.length === 1 && name !== name.toLowerCase(), platform: false, function: false };
     const key = name.replace(/^ctrl-/, "");
