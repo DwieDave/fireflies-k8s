@@ -2,7 +2,8 @@
 // key bar, and what opens over the body. The resources tab at three widths:
 // wide (rail | table | detail), middle (rail | table over detail), and
 // narrow, under the pane pattern's break (one panel, the others folded into
-// a row of numbered tabs). A window has a 1 px frame; a pane none.
+// a row of numbered tabs). A window has a 1 px frame; a pane none. The
+// gaps between panels drag to resize them (panels.ts).
 
 import { div } from "gpui-kit";
 import type { Context, Element } from "gpui-kit";
@@ -21,8 +22,8 @@ import { forwardsTab, shelf } from "./forwards-view.ts";
 import { askCard, helpPanel, menuBox } from "./overlays.ts";
 import { unzoom } from "./kit.ts";
 import { detailWidth } from "./graph-shown.ts";
-
-const RAIL = 210;
+import { divider, tracking } from "./dividers.ts";
+import { GAP, detailDivider, detailHeightDivider, railDivider } from "./panels.ts";
 
 export function frame(v: K8s, t: Theme, _cx: Context): Element {
   const handle = v.handle;
@@ -46,7 +47,7 @@ export function frame(v: K8s, t: Theme, _cx: Context): Element {
     .children(v.tab === "resources" ? [shelf(v, t)].flatMap((x) => (x ? [x] : [])) : [])
     .child(keyBar(v, t));
 
-  const keyed = tabActions(root, (e, cx) => onKey(v, e, cx));
+  const keyed = tabActions(tracking(root, v.dividers), (e, cx) => onKey(v, e, cx));
 
   return handle ? keyed.track_focus(handle) : keyed;
 }
@@ -68,20 +69,29 @@ function resources(v: K8s, t: Theme): Element {
     return v_flex().size_full().child(foldRow(v, t)).child(div().flex_1().min_h(0).p(8).child(shown));
   }
 
-  if (w >= WIDE) {
-    const dw = detailWidth(v);
+  const ds = v.dividers;
+  const rd = railDivider(v);
+  const rw = ds.size(rd);
 
-    return h_flex().size_full().gap(10).px(10).pt(12).pb(8)
-      .child(v_flex().w(RAIL).flex_none().h_full().child(rail(v, t)))
-      .child(v_flex().flex_1().min_w(0).h_full().child(table(v, t, w - RAIL - dw - 40)))
+  if (w >= WIDE) {
+    const dd = detailDivider(v);
+    const dw = ds.size(dd);
+
+    return h_flex().size_full().px(GAP).pt(12).pb(8)
+      .child(v_flex().w(rw).flex_none().h_full().child(rail(v, t)))
+      .child(divider(t, "k8s-div-rail", rd, ds, GAP))
+      .child(v_flex().flex_1().min_w(0).h_full().child(table(v, t, w - rw - dw - 4 * GAP)))
+      .child(divider(t, "k8s-div-detail", dd, ds, GAP))
       .child(v_flex().w(dw).flex_none().h_full().child(detail(v, t, dw)));
   }
 
-  const rw = RAIL - 20;
+  const hd = detailHeightDivider(v);
 
-  return h_flex().size_full().gap(10).px(10).pt(12).pb(8)
+  return h_flex().size_full().px(GAP).pt(12).pb(8)
     .child(v_flex().w(rw).flex_none().h_full().child(rail(v, t)))
-    .child(v_flex().flex_1().min_w(0).h_full().gap(12)
-      .child(v_flex().flex_1().min_h(0).min_w(0).child(table(v, t, w - rw - 30)))
-      .child(div().h(Math.round((v.size.height - 90) * 0.48)).flex_none().child(detail(v, t, w - rw - 30))));
+    .child(divider(t, "k8s-div-rail", rd, ds, GAP))
+    .child(v_flex().flex_1().min_w(0).h_full()
+      .child(v_flex().flex_1().min_h(0).min_w(0).child(table(v, t, w - rw - 3 * GAP)))
+      .child(divider(t, "k8s-div-detail-h", hd, ds, 12))
+      .child(div().h(ds.size(hd)).flex_none().child(detail(v, t, w - rw - 3 * GAP))));
 }

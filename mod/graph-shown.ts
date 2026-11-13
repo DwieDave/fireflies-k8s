@@ -14,6 +14,7 @@ import { EMPTY } from "./snapshot.ts";
 import { selectedRow, shownApp } from "./nav.ts";
 import { Memo } from "./derive.ts";
 import { WIDE } from "./main.ts";
+import { GAP, argoAppsDivider, argoSideDivider, detailDivider, railDivider } from "./panels.ts";
 
 /** A graph laid out for a panel width. */
 export interface Shown {
@@ -120,16 +121,18 @@ export function sideBox(s: Shown, at: string | null, dir: -1 | 1, axis: "x" | "y
   return line.filter((b) => b[axis] === next).sort((a, b) => Math.abs(a[other] - from[other]) - Math.abs(b[other] - from[other]))[0] ?? null;
 }
 
-/** Width the detail panel's graph is laid out for. */
+/** Width the detail panel's graph is laid out for (its divider's size when wide). */
 export function detailWidth(v: K8s): number {
   const w = v.size.width;
 
-  return v.narrow() ? w - 16 : w >= 1100 ? Math.min(560, Math.round(w * 0.42)) : w - 220;
+  if (v.narrow()) return w - 16;
+
+  return w >= WIDE ? v.dividers.size(detailDivider(v)) : w - v.dividers.size(railDivider(v)) - 3 * GAP;
 }
 
-/** Width the Argo tree is laid out for. */
+/** Width the Argo tree is laid out for (what the applications and the status leave it). */
 export function treeWidth(v: K8s): number {
   const w = v.size.width;
 
-  return v.narrow() ? w - 16 : Math.max(360, w - 230 - 300 - 40);
+  return v.narrow() ? w - 16 : Math.max(260, w - v.dividers.size(argoAppsDivider(v)) - v.dividers.size(argoSideDivider(v)) - 4 * GAP);
 }

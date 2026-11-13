@@ -16,6 +16,8 @@ import { apps, shownApp, showRef } from "./nav.ts";
 import { APP_CANVAS, appTree, treeWidth } from "./graph-shown.ts";
 import { canvas, rule } from "./graph-view.ts";
 import { age, instant } from "./time.ts";
+import { divider } from "./dividers.ts";
+import { GAP, argoAppsDivider, argoSideDivider } from "./panels.ts";
 import type { DiffLine } from "./diff.ts";
 
 export function argoTab(v: K8s, t: Theme): Element {
@@ -31,10 +33,16 @@ export function argoTab(v: K8s, t: Theme): Element {
     return v_flex().size_full().p(8).child(shown);
   }
 
-  return h_flex().size_full().gap(10).px(10).pt(12).pb(8)
-    .child(v_flex().w(230).flex_none().h_full().child(appList(v, t)))
+  const ds = v.dividers;
+  const ad = argoAppsDivider(v);
+  const sd = argoSideDivider(v);
+
+  return h_flex().size_full().px(GAP).pt(12).pb(8)
+    .child(v_flex().w(ds.size(ad)).flex_none().h_full().child(appList(v, t)))
+    .child(divider(t, "argo-div-apps", ad, ds, GAP))
     .child(v_flex().flex_1().min_w(0).h_full().child(a ? tree(v, t, a) : div()))
-    .child(v_flex().w(300).flex_none().h_full().child(a ? side(v, t, a) : div()));
+    .child(divider(t, "argo-div-side", sd, ds, GAP))
+    .child(v_flex().w(ds.size(sd)).flex_none().h_full().child(a ? side(v, t, a) : div()));
 }
 
 function appList(v: K8s, t: Theme): Element {

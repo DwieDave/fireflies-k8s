@@ -15,6 +15,7 @@ import { closeCopy, closeWindow, move } from "./host.ts";
 import { clusterOf, request, runAsk, scaleSpec } from "./writes.ts";
 import { contextMenu, kindMenu } from "./menus.ts";
 import { paceMenu } from "./metrics-pace.ts";
+import { panelEdges } from "./panels.ts";
 import { argoKey, forwardsKey, resourcesKey } from "./input-tabs.ts";
 
 export function onKey(v: K8s, e: KeyEvent, cx: Context): void {
@@ -201,6 +202,12 @@ function windowKey(v: K8s, name: string, cx: Context): boolean {
 
  return true;
     case "]": stepTab(v, 1);
+
+ return true;
+    case "+": case "=": v.dividers.stepAll(panelEdges(v), 1);
+
+ return true;
+    case "-": v.dividers.stepAll(panelEdges(v), -1);
 
  return true;
     case "M": v.menu = paceMenu(v);

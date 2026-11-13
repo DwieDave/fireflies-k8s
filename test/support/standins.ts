@@ -11,6 +11,8 @@ export class El {
   kids: El[] = [];
   text: string[] = [];
   ids: string[] = [];
+  /** Every builder call, with its arguments (handlers are found here). */
+  calls: [string, unknown[]][] = [];
   constructor(label = "") {
     if (label) this.text.push(label);
     return new Proxy(this, {
@@ -18,6 +20,7 @@ export class El {
         if (prop in target) return Reflect.get(target, prop, recv);
         if (typeof prop === "symbol") return undefined;
         return (...args: unknown[]) => {
+          target.calls.push([prop, args]);
           if (prop === "child") target.add(args[0]);
           else if (prop === "children") for (const a of (args[0] as unknown[]) ?? []) target.add(a);
           else if (prop === "when") { if (args[0]) (args[1] as (e: El) => El)(recv as El); }
@@ -38,6 +41,28 @@ export function texts(el: El): string[] {
   return [...el.text, ...el.kids.flatMap(texts)];
 }
 
+/** Every builder call in a drawn tree. */
+export function allCalls(el: El): [string, unknown[]][] {
+  return [...el.calls, ...el.kids.flatMap(allCalls)];
+}
+
+/** The element with `id` in a drawn tree. */
+export function byId(el: El, id: string): El | null {
+  if (el.ids.includes(id)) return el;
+  for (const k of el.kids) {
+    const hit = byId(k, id);
+    if (hit) return hit;
+  }
+  return null;
+}
+
+/** An element's handler by its builder's name (and first argument: "left"). */
+export function handlerOf(el: El, name: string, arg?: string): ((...a: any[]) => unknown) {
+  const hit = el.calls.find(([m, a]) => m === name && (arg === undefined || a[0] === arg));
+  if (!hit) throw new Error(`no ${name} handler`);
+  return hit[1][hit[1].length - 1] as (...a: any[]) => unknown;
+}
+
 /** Every element id in a drawn tree. */
 export function ids(el: El): string[] {
   return [...el.ids, ...el.kids.flatMap(ids)];
@@ -54,6 +79,7 @@ export const env = {
   files: new Map<string, string>(),
   hcResult: { code: 0, stdout: '{"address":"t9"}', stderr: "" },
   fake: {} as Record<string, string>,
+  zoom: 1,
 };
 
 const theme = new Proxy({}, { get: () => "#808080" });
@@ -93,7 +119,7 @@ mock.module("herdr", () => ({
   panes: () => env.panes,
   focused: () => env.focused,
   theme: () => theme,
-  settings: () => ({ zoom: 1, font_family: "mono" }),
+  settings: () => ({ zoom: env.zoom, font_family: "mono" }),
   window: () => ({ platform: "macos" }),
   nextCommand: () => Promise.reject(new Error("no commands in tests")),
   readTextFile: (p: string) => Promise.resolve(env.files.get(p) ?? null),

@@ -108,6 +108,7 @@ export const WINDOW_KEYS = [
   ["ctrl-a", "every kind"],
   ["[ ]", "resources / argo cd / forwards"],
   ["tab", "next panel"],
+  ["+ -", "the panel with the keys wider or narrower (or drag the gap beside it; a double click resets it)"],
   ["j k ↑ ↓", "move"],
   ["g G", "first / last (in a list)"],
   ["f", "forwards"],
