@@ -9,7 +9,7 @@ import type { AsyncContext, Context } from "gpui-kit";
 import type { Props } from "gpui-shell";
 import { closeOverlay, focused, openOverlay, panes, props, run, setShared, shared } from "herdr";
 import type { default as K8s } from "./main.ts";
-import { isString, literal, object, parseJson, readShared, writeShared } from "./guard.ts";
+import { isBoolean, isString, literal, object, parseJson, readShared, writeShared } from "./guard.ts";
 import type { Guarded } from "./guard.ts";
 import { maybe } from "./guards.ts";
 import { isBuiltin, kindFor } from "./kinds.ts";
@@ -23,6 +23,8 @@ import { pressKeys } from "./input.ts";
 export const isOpening = object({}, {
   context: maybe(isString), namespace: maybe(isString), kind: maybe(isString), name: maybe(isString),
   view: maybe(literal("graph", "describe", "yaml", "events", "logs", "argo", "forwards")),
+  // The window over the whole app instead of 0.88 of it (pictures that show the mod alone).
+  full: maybe(isBoolean),
 });
 
 export type Opening = Guarded<typeof isOpening>;
@@ -187,7 +189,9 @@ export function openAs(as: "pane" | "tab" | "window", o: Opening, besidePane: st
 
     if (open) closeOverlay(open);
 
-    openOverlay({ ...WINDOW_SPEC, resizable: { min: [520, 360] }, props: args });
+    const size = o.full ? 1 : WINDOW_SPEC.width;
+
+    openOverlay({ ...WINDOW_SPEC, width: size, height: size, resizable: { min: [520, 360] }, props: args });
 
     return;
   }
