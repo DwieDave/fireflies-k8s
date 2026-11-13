@@ -1,0 +1,139 @@
+// The keys: k9s's where they fit. One table for each scope, read by the key
+// handler, the key bar, the right-click menu and the `?` overview, so the keys
+// listed and the keys handled can't drift.
+
+import type { KindRef } from "./kinds.ts";
+import type { Row } from "./rows.ts";
+
+/** A key press as the table names it: "d", "F" (shift-f), "ctrl-d", "enter", "?", ":". */
+export interface Press {
+  readonly key: string;
+  readonly key_char?: string | undefined;
+  readonly modifiers: { readonly control?: boolean; readonly platform?: boolean; readonly alt?: boolean; readonly shift?: boolean };
+}
+
+const NAMED = new Set(["enter", "escape", "tab", "backspace", "delete", "up", "down", "left", "right", "home", "end", "pageup", "pagedown", "space"]);
+
+/** The table's name for a press, or null for one the window leaves (cmd chords go to the app). */
+export function pressName(e: Press): string | null {
+  const m = e.modifiers;
+  const k = e.key.toLowerCase();
+
+  if (m.platform || m.alt) return null;
+
+  if (m.control) return `ctrl-${k}`;
+
+  if (k === "tab") return m.shift ? "shift-tab" : "tab";
+
+  if (NAMED.has(k)) return k;
+
+  const ch = e.key_char ?? "";
+
+  if (ch.length === 1 && ch >= " ") return ch === " " ? "space" : ch;
+
+  return k.length === 1 ? (m.shift ? k.toUpperCase() : k) : null;
+}
+
+/** What can be done to a row. */
+export type RowAction =
+  | "open" | "describe" | "yaml" | "graph" | "events" | "logs" | "previous" | "shell" | "forward" | "edit"
+  | "scale" | "restart" | "reveal" | "web" | "cordon" | "uncordon" | "drain" | "delete" | "kill";
+
+/** [key, action, what the bar and menus say]. */
+export const ROW_KEYS = [
+  ["enter", "open", "open"],
+  ["g", "graph", "graph"],
+  ["d", "describe", "describe"],
+  ["y", "yaml", "yaml"],
+  ["v", "events", "events"],
+  ["l", "logs", "logs in a pane"],
+  ["p", "previous", "previous logs"],
+  ["s", "shell", "shell in a pane"],
+  ["F", "forward", "port-forward"],
+  ["o", "web", "open in a web pane"],
+  ["e", "edit", "edit in the editor"],
+  ["S", "scale", "scale"],
+  ["R", "restart", "restart"],
+  ["x", "reveal", "show values"],
+  ["c", "cordon", "cordon"],
+  ["u", "uncordon", "uncordon"],
+  ["D", "drain", "drain"],
+  ["ctrl-k", "kill", "kill"],
+  ["ctrl-d", "delete", "delete"],
+] as const satisfies readonly (readonly [string, RowAction, string])[];
+
+const WORKLOADS: ReadonlySet<KindRef> = new Set(["deployments", "statefulsets", "daemonsets", "replicasets", "jobs", "cronjobs"]);
+const GRAPHED: ReadonlySet<KindRef> = new Set([...WORKLOADS, "pods", "services", "ingresses", "applications"]);
+const FORWARDED: ReadonlySet<KindRef> = new Set(["pods", "services", "deployments", "statefulsets"]);
+
+/** The writes: drawn in the blocked colour in menus, refused in a read-only context. */
+export const WRITES: ReadonlySet<RowAction> = new Set(["edit", "scale", "restart", "cordon", "uncordon", "drain", "delete", "kill"]);
+
+/** Whether an action applies to a row of this kind. */
+export function applies(a: RowAction, row: Row): boolean {
+  const k = row.ref.kind;
+
+  switch (a) {
+    case "open": case "describe": case "yaml": return true;
+    case "graph": return GRAPHED.has(k);
+    case "events": return row.uid !== null && k !== "events";
+    case "logs": case "previous": return k === "pods" || WORKLOADS.has(k);
+    case "shell": case "kill": return k === "pods";
+    case "forward": return FORWARDED.has(k) && (row.ports?.length ?? 0) > 0;
+    case "web": return k === "ingresses";
+    case "edit": return k !== "events";
+    case "scale": return k === "deployments" || k === "statefulsets" || k === "replicasets";
+    case "restart": return k === "deployments" || k === "statefulsets" || k === "daemonsets";
+    case "reveal": return k === "secrets";
+    case "cordon": case "uncordon": case "drain": return k === "nodes";
+    case "delete": return k !== "events";
+    default: return false;
+  }
+}
+
+/** The row action a key runs on a row, or null. */
+export function rowActionFor(name: string, row: Row | null): RowAction | null {
+  if (!row) return null;
+
+  const hit = ROW_KEYS.find(([k, a]) => k === name && applies(a, row));
+
+  return hit ? hit[1] : null;
+}
+
+/** The window's own keys (any panel). */
+export const WINDOW_KEYS = [
+  [":", "kind…"],
+  ["/", "filter"],
+  ["0-9", "namespace (0 all)"],
+  ["ctrl-a", "every kind"],
+  ["[ ]", "resources / argo cd / forwards"],
+  ["tab", "next panel"],
+  ["j k ↑ ↓", "move"],
+  ["g G", "first / last (in a list)"],
+  ["f", "forwards"],
+  ["r", "read again"],
+  ["ctrl-t", "into a pane / out to a window"],
+  ["esc", "back"],
+  ["?", "keys"],
+] as const;
+
+/** The Argo tab's keys. */
+export const ARGO_KEYS = [
+  ["S", "sync"],
+  ["r", "refresh (R hard)"],
+  ["D", "diff"],
+  ["h", "history"],
+  ["B", "roll back to the picked revision"],
+  ["enter", "open the resource"],
+  ["o", "open the repository"],
+] as const;
+
+/** The forwards tab's keys. */
+export const FORWARD_KEYS = [
+  ["enter", "where it leads"],
+  ["w", "open in a web pane"],
+  ["b", "open in Databases"],
+  ["p", "peek at its terminal"],
+  ["t", "give it a pane"],
+  ["x", "stop it"],
+] as const;
