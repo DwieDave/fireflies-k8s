@@ -342,3 +342,40 @@ describe("window or pane", () => {
     expect(v.kind).toBe("services");
   });
 });
+
+const { rowGraph, detailWidth } = await import("../mod/graph-shown.ts");
+const { command } = await import("../mod/host.ts");
+
+describe("fits", () => {
+  test.each([1300, 1100, 900, 520])("the deployment graph fits a %ipx window's detail panel", async (width) => {
+    const { v, press } = await open({ width });
+    await press(":", "d", "e", "p", "l", "o", "y", "enter", "g");
+    const s = rowGraph(v, detailWidth(v));
+    expect(s).not.toBeNull();
+    const l = s!.laid;
+    expect(l.width).toBeLessThanOrEqual(detailWidth(v) + 1);
+    expect(l.boxes.every((b) => b.x + l.d.w <= detailWidth(v))).toBe(true);
+    // Narrow: the ingress and the service sit in a row over the tree.
+    if (detailWidth(v) < 700) expect(l.top).toBeGreaterThan(0);
+  });
+
+  test("the rail draws its three panels, the namespaces and kinds sharing the height", async () => {
+    const { draw } = await open();
+    const all = ids(draw());
+    for (const id of ["rail-ctx", "rail-ns", "rail-kinds", "rail-ns-list", "rail-kinds-list"]) expect(all).toContain(id);
+  });
+
+  test("k8s.press spells the colon and slash: colon d e p l o y enter", async () => {
+    const { v, cx } = await open();
+    command(v, "press:colon d e p l o y enter slash w e b enter", cx);
+    await new Promise((r) => setTimeout(r, 5));
+    expect(v.kind).toBe("deployments");
+    expect(v.filter).toBe("web");
+  });
+
+  test("k8s.open with full: the window over the whole app", async () => {
+    const { v, cx } = await open();
+    command(v, 'open:{"as":"window","full":true,"kind":"pods"}', cx);
+    expect(calls.find((c) => c.name === "openOverlay")?.args).toMatchObject({ mod: "k8s", width: 1, height: 1, props: { kind: "pods" } });
+  });
+});
