@@ -18,7 +18,18 @@ the keyboard first and the pointer too. Its keys follow k9s's where they fit.
 - **The selected row**: its graph, read the way traffic flows (ingress →
   service → deployment → replica sets → pods, old replica sets faded), each
   pod with its CPU line and restarts; describe and YAML in a read-only code
-  view; its events.
+  view; its events. In a panel taller than wide (the detail column) the
+  graph runs top to bottom, a row per rank with whole names; in a wide, low
+  one (under the table, a wide pane) left to right; `O` turns it. A graph
+  larger than its panel drags with the pointer, or `H` `J` `K` `L`.
+- **Metrics**: CPU and memory every 15 s by default; `M` (or the chip by the
+  lines) reads them every 2 s, 5 s, 30 s or pauses them, kept in the
+  settings. metrics-server itself measures about every 15 s: a faster read
+  that answers its last numbers again adds nothing to the lines, and the
+  chip says "same numbers".
+- **Panels**: drag the gap between two panels to resize them (a double click
+  puts it back), or `+` and `-` on the panel with the keys; the sizes are
+  kept, a window's and a pane's apart.
 - **Argo CD**: the applications (from the cluster's `applications.argoproj.io`
   objects: no `argocd` CLI needed), each one's resource tree as Argo's web UI
   draws it (out-of-sync and missing resources outlined and flagged), its
@@ -101,7 +112,8 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
   "kubectl": "kubectl",
   "readonly": ["my-prod-context"],
   "prod": "prod|prd|production|live",
-  "favourites": ["my-app", "other"]
+  "favourites": ["my-app", "other"],
+  "metrics": 15
 }
 ```
 
@@ -123,8 +135,16 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | `c` `u` `D` | cordon, uncordon, drain a node |
 | `ctrl-d` `ctrl-k` | delete, kill |
 | `[` `]`, `tab` | the tabs, the panels |
+| `+` `-` | the panel with the keys wider or narrower (or drag the gap) |
+| `M` | metrics: read every 2s, 5s, 15s, 30s, or paused |
 | `ctrl-t` | into a pane / out to a window |
 | `?` | every key |
+
+A graph (the detail panel's, Argo's tree), with the keys there: `j` `k` `h`
+`l` walk the boxes the way the graph reads, `H` `J` `K` `L` move it (so does
+a drag, or the wheel), `c` centres the selected box (or a double click on
+the empty graph), `O` turns the workload graph (top to bottom / left to
+right, kept), `enter` opens the box's object.
 
 Argo CD: `S` sync, `r` refresh (`R` hard), `D` diff, `h` history, `B` roll
 back to the picked revision, `o` the repository.

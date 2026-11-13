@@ -23,6 +23,9 @@ H=$HERDR_APP_HOME
 mkdir -p "$H/mods" "$H/k8s" "$OUT" "$REPO/docs/shots"
 ln -sfn "$REPO/mod" "$H/mods/k8s"
 echo '{ "layout": "nocturne", "zoom": 1.3, "sounds": { "enabled": false } }' > "$H/settings.json"
+# No welcome card over the pictures; no panel sizes kept from an earlier run.
+[ -f "$H/shared.json" ] || echo '{}' > "$H/shared.json"
+python3 -c 'import json,sys; p=sys.argv[1]; d=json.load(open(p)); d["frame.welcomed"]="shots"; d.pop("k8s.sizes",None); json.dump(d,open(p,"w"))' "$H/shared.json"
 printf '{ "kubectl": "%s/test/fake/kubectl", "favourites": ["lantern", "moth"] }\n' "$REPO" > "$H/k8s/settings.json"
 export K8S_FAKE_LOG=/var/tmp/k8ss-writes.log
 # A neutral shell: its own zsh config, no user or host in its prompt or title.
@@ -59,8 +62,8 @@ window
 # 1 the resource list: deployments, the selected one's graph in traffic order
 do_ 'k8s.press:colon d e p l o y enter'
 shot 1-resources 2.5
-# 2 the workload graph with the keyboard (the detail panel), a pod picked
-do_ 'k8s.press:tab j j j j'
+# 2 the workload graph with the keyboard (the detail panel, top to bottom), the failing pod picked
+do_ 'k8s.press:tab j j j j j j'
 shot 2-workload-graph 1
 # 3 the ask before a delete (twice: the name is typed), then no
 do_ 'k8s.press:escape colon p o enter ctrl-d'

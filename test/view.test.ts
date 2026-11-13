@@ -461,7 +461,7 @@ describe("the metrics' pace", () => {
     await press("M");
     expect(v.menu?.title).toBe("read cpu and memory every");
     expect(v.menu?.rows.map((r) => r.label)).toEqual(["every 2s", "every 5s", "every 15s  ·  now", "every 30s", "paused"]);
-    expect(v.menu?.rows[0]?.sub).toContain("metrics-server measures about every 15s");
+    expect(v.menu?.rows[0]?.sub).toContain("metrics-server measures ~every 15s");
     await press("1");
     expect(v.data.metricsEvery).toBe(2);
     expect(v.data.topPods.every).toBe(2000);

@@ -18,7 +18,7 @@ import { SETTINGS_PATH, withMetrics } from "./settings.ts";
 import type { Menu } from "./state.ts";
 
 /** What metrics-server's own pace means for a faster one. */
-const RESOLUTION = "metrics-server measures about every 15s: faster reads often answer the same numbers";
+const RESOLUTION = "metrics-server measures ~every 15s: often the same numbers";
 
 /** M: the paces, the one in force marked. */
 export function paceMenu(v: K8s): Menu {
