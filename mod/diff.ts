@@ -32,7 +32,7 @@ export function diffLines(a: string, b: string): readonly DiffLine[] {
       out.push({ op: " ", text: x[i] ?? "", n: i + 1 });
       i++;
       j++;
-    } else if (j < y.length && (i >= x.length || (lcs[i * w + j + 1] ?? 0) >= (lcs[(i + 1) * w + j] ?? 0))) {
+    } else if (j < y.length && (i >= x.length || (lcs[i * w + j + 1] ?? 0) > (lcs[(i + 1) * w + j] ?? 0))) {
       out.push({ op: "+", text: y[j] ?? "", n: j + 1 });
       j++;
     } else {
