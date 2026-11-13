@@ -30,11 +30,11 @@ export function onKey(v: K8s, e: KeyEvent, cx: Context): void {
 }
 
 /** Names for characters a command line can't carry well (`k8s.press:colon d e p l o y enter`). */
-const SPELLED: ReadonlyMap<string, string> = new Map([["colon", ":"], ["slash", "/"], ["question", "?"], ["bracketleft", "["], ["bracketright", "]"]]);
+const SPELLED: ReadonlyMap<string, string> = new Map([["colon", ":"], ["slash", "/"], ["question", "?"], ["bracketleft", "["], ["bracketright", "]"], ["plus", "+"], ["minus", "-"]]);
 
 /** Keys by name, one after another (`k8s.press:j j enter`, `k8s.press:ctrl-d`): what a script or a demo types.
  *  A single character stands for itself; `space` is a space; `colon`, `slash`, `question`,
- *  `bracketleft`, `bracketright` are : / ? [ ]. */
+ *  `bracketleft`, `bracketright`, `plus`, `minus` are : / ? [ ] + -. */
 export function pressKeys(v: K8s, names: readonly string[], cx: Context): void {
   for (const spelled of names) {
     const name = SPELLED.get(spelled) ?? spelled;
