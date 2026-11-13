@@ -1,0 +1,294 @@
+#!/usr/bin/env bun
+// A fake kubectl for the made-up cluster "nightjar" (test/fixtures/nightjar):
+// reads answer from the recorded JSON, writes are appended to a log
+// ($K8S_FAKE_LOG, default <tmp>/k8s-fake-writes.log) and never applied.
+// Enough of kubectl's flags for the k8s mod and its tests. Never talks to a cluster.
+//
+//   K8S_FAKE_DOWN=<context>   that context answers as an unreachable server
+//   K8S_FAKE_NOW=<ms>         the "now" ages are shown against (tests)
+
+import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+const ROOT = join(import.meta.dir, "..", "fixtures", "nightjar");
+const BASE = Date.parse("2026-11-13T12:00:00Z");
+const NOW = Number(process.env.K8S_FAKE_NOW) || Date.now();
+const LOG = process.env.K8S_FAKE_LOG || join(tmpdir(), "k8s-fake-writes.log");
+
+const ALIASES: Record<string, string> = {
+  po: "pods", pod: "pods", pods: "pods",
+  deploy: "deployments", deployment: "deployments", deployments: "deployments", "deployments.apps": "deployments",
+  rs: "replicasets", replicaset: "replicasets", replicasets: "replicasets", "replicasets.apps": "replicasets",
+  sts: "statefulsets", statefulset: "statefulsets", statefulsets: "statefulsets", "statefulsets.apps": "statefulsets",
+  ds: "daemonsets", daemonset: "daemonsets", daemonsets: "daemonsets", "daemonsets.apps": "daemonsets",
+  job: "jobs", jobs: "jobs", "jobs.batch": "jobs", cj: "cronjobs", cronjob: "cronjobs", cronjobs: "cronjobs", "cronjobs.batch": "cronjobs",
+  svc: "services", service: "services", services: "services",
+  ing: "ingresses", ingress: "ingresses", ingresses: "ingresses", "ingresses.networking.k8s.io": "ingresses",
+  cm: "configmaps", configmap: "configmaps", configmaps: "configmaps",
+  secret: "secrets", secrets: "secrets",
+  pvc: "persistentvolumeclaims", persistentvolumeclaim: "persistentvolumeclaims", persistentvolumeclaims: "persistentvolumeclaims",
+  ev: "events", event: "events", events: "events", "events.events.k8s.io": "events",
+  no: "nodes", node: "nodes", nodes: "nodes", ns: "namespaces", namespace: "namespaces", namespaces: "namespaces",
+  app: "applications.argoproj.io", apps: "applications.argoproj.io", application: "applications.argoproj.io", applications: "applications.argoproj.io", "applications.argoproj.io": "applications.argoproj.io",
+  certificate: "certificates.cert-manager.io", certificates: "certificates.cert-manager.io", "certificates.cert-manager.io": "certificates.cert-manager.io",
+};
+const CLUSTER = new Set(["nodes", "namespaces"]);
+
+// ---- the arguments
+
+const argv = process.argv.slice(2);
+const flags = new Map<string, string>();
+const bools = new Set<string>();
+const words: string[] = [];
+const VALUED = new Set(["--context", "-n", "--namespace", "-o", "--output", "-l", "--selector", "--field-selector", "--request-timeout", "--tail", "-c", "--container", "--type", "--replicas", "--since", "--address", "-f", "--filename"]);
+const verb0 = argv.find((a) => !a.startsWith("-") && !VALUED.has(a));
+
+for (let i = 0; i < argv.length; i++) {
+  const a = argv[i]!;
+  if (a === "--") { words.push(...argv.slice(i)); break; }
+  const eq = a.match(/^(--?[a-z-]+)=(.*)$/s);
+  if (eq) { flags.set(eq[1]!, eq[2]!); continue; }
+  // -f is a file for apply/replace, follow for logs; -p is the patch for patch, previous for logs.
+  const valued = VALUED.has(a) && !(a === "-f" && verb0 === "logs");
+  if (a === "-p" && verb0 === "patch") { flags.set("-p", argv[++i] ?? ""); continue; }
+  if (valued) { flags.set(a, argv[++i] ?? ""); continue; }
+  if (a.startsWith("-")) { bools.add(a); continue; }
+  words.push(a);
+}
+
+const flag = (...names: string[]) => names.map((n) => flags.get(n)).find((v) => v !== undefined);
+const has = (...names: string[]) => names.some((n) => bools.has(n));
+const context = flag("--context") ?? "nightjar-dev";
+const namespace = flag("-n", "--namespace") ?? "lantern";
+const all = has("-A", "--all-namespaces");
+const output = flag("-o", "--output") ?? "";
+
+const out = (s: string) => process.stdout.write(s.endsWith("\n") ? s : s + "\n");
+const fail = (s: string, code = 1): never => { process.stderr.write(s + "\n"); process.exit(code); };
+
+if (process.env.K8S_FAKE_DOWN && process.env.K8S_FAKE_DOWN === context) fail(`Unable to connect to the server: dial tcp 192.0.2.1:6443: connect: connection refused`);
+if (!existsSync(join(ROOT, context)) && words[0] !== "config") fail(`error: context "${context}" does not exist`);
+
+// ---- reading the cluster
+
+const shift = (text: string) => text.replace(/"(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ)"/g, (_, t) => JSON.stringify(new Date(Date.parse(t) + (NOW - BASE)).toISOString().replace(/\.\d+Z$/, "Z")));
+
+function namespaces(): string[] {
+  return readdirSync(join(ROOT, context)).filter((d) => d !== "_cluster");
+}
+
+function items(res: string): any[] {
+  if (CLUSTER.has(res)) return JSON.parse(shift(readFileSync(join(ROOT, context, "_cluster", `${res}.json`), "utf8"))).items;
+  const spaces = all ? namespaces() : [namespace];
+  return spaces.flatMap((n) => {
+    const f = join(ROOT, context, n, `${res}.json`);
+    return existsSync(f) ? JSON.parse(shift(readFileSync(f, "utf8"))).items : [];
+  });
+}
+
+function selected(list: any[]): any[] {
+  const sel = flag("-l", "--selector");
+  const field = flag("--field-selector");
+  return list.filter((o) => {
+    for (const term of (sel ?? "").split(",").filter(Boolean)) {
+      const [k, v] = term.split(/!?=/);
+      const neg = term.includes("!=");
+      const got = o.metadata.labels?.[k!];
+      if (neg ? got === v : got !== v) return false;
+    }
+    for (const term of (field ?? "").split(",").filter(Boolean)) {
+      const [path, v] = term.split("=");
+      const got = path!.split(".").reduce((x: any, k) => x?.[k], o);
+      if (String(got) !== v) return false;
+    }
+    return true;
+  });
+}
+
+function resolve(word: string): string {
+  const r = ALIASES[word.toLowerCase()];
+  if (!r) fail(`error: the server doesn't have a resource type "${word}"`);
+  return r!;
+}
+
+// ---- YAML, enough for kubectl's objects
+
+function yaml(v: any, indent = ""): string {
+  if (Array.isArray(v)) {
+    if (!v.length) return " []";
+    return v.map((x) => {
+      if (x && typeof x === "object" && !Array.isArray(x)) {
+        const body = yaml(x, indent + "  ").replace(/^\n/, "").replace(new RegExp(`^${indent}  `), "");
+        return `\n${indent}- ${body}`;
+      }
+      return `\n${indent}-${yaml(x, indent + "  ")}`;
+    }).join("");
+  }
+  if (v && typeof v === "object") {
+    const keys = Object.keys(v);
+    if (!keys.length) return " {}";
+    return keys.map((k) => `\n${indent}${/^[A-Za-z0-9_./-]+$/.test(k) ? k : JSON.stringify(k)}:${yaml(v[k], indent + "  ")}`).join("");
+  }
+  if (typeof v === "string") {
+    if (v.includes("\n")) return " |\n" + v.replace(/\n$/, "").split("\n").map((l) => indent + l).join("\n");
+    return " " + (/^[A-Za-z0-9_./:@-][A-Za-z0-9_ ./:@,-]*$/.test(v) && !/^(true|false|null|yes|no|on|off|[0-9.]+)$/i.test(v) ? v : JSON.stringify(v));
+  }
+  return " " + String(v);
+}
+
+const toYaml = (o: any) => yaml(o).replace(/^\n/, "") + "\n";
+
+// ---- describe, made up from the object
+
+function describe(o: any): string {
+  const m = o.metadata;
+  const lines = [`Name:         ${m.name}`, ...(m.namespace ? [`Namespace:    ${m.namespace}`] : []), `Labels:       ${Object.entries(m.labels ?? {}).map(([k, v]) => `${k}=${v}`).join("\n              ") || "<none>"}`, `Annotations:  ${Object.keys(m.annotations ?? {}).join("\n              ") || "<none>"}`, `CreationTimestamp:  ${m.creationTimestamp}`];
+  if (o.kind === "Pod") {
+    lines.push(`Node:         ${o.spec.nodeName}`, `Status:       ${o.status.phase}`, `IP:           ${o.status.podIP}`, `Controlled By:  ${m.ownerReferences?.[0] ? `${m.ownerReferences[0].kind}/${m.ownerReferences[0].name}` : "<none>"}`, "Containers:");
+    for (const c of o.status.containerStatuses ?? []) {
+      const st = Object.keys(c.state ?? {})[0] ?? "unknown";
+      lines.push(`  ${c.name}:`, `    Image:          ${c.image}`, `    State:          ${st[0]!.toUpperCase() + st.slice(1)}`, ...(c.state?.waiting?.reason ? [`      Reason:       ${c.state.waiting.reason}`] : []), `    Ready:          ${c.ready ? "True" : "False"}`, `    Restart Count:  ${c.restartCount}`);
+    }
+  } else if (o.spec) {
+    lines.push(`Spec:`, ...toYaml(o.spec).split("\n").filter(Boolean).map((l) => "  " + l));
+  }
+  if (o.status && o.kind !== "Pod") lines.push(`Status:`, ...toYaml(o.status).split("\n").filter(Boolean).slice(0, 30).map((l) => "  " + l));
+  const evs = items("events").filter((e) => e.involvedObject.uid === m.uid);
+  lines.push("Events:", ...(evs.length ? ["  Type     Reason     Age   Message", ...evs.map((e) => `  ${e.type.padEnd(8)} ${e.reason.padEnd(10)} ${e.count}x   ${e.message}`)] : ["  <none>"]));
+  return lines.join("\n") + "\n";
+}
+
+// ---- writes: logged, never applied
+
+function record(what: string) {
+  appendFileSync(LOG, JSON.stringify({ at: new Date(NOW).toISOString(), context, namespace, argv }) + "\n");
+  out(what);
+  process.exit(0);
+}
+
+const SECRET_TEMPLATE = /^go-template=/;
+
+// ---- the verbs
+
+const [verb, ...rest] = words;
+
+switch (verb) {
+  case "version":
+    out(output === "json" ? JSON.stringify({ clientVersion: { gitVersion: "v1.31.4" }, serverVersion: { gitVersion: "v1.31.4+k3s1" } }) : "Client Version: v1.31.4\nServer Version: v1.31.4+k3s1");
+    break;
+  case "config": {
+    if (rest[0] === "get-contexts") {
+      for (const line of readFileSync(join(ROOT, "contexts.txt"), "utf8").trim().split("\n")) {
+        const [cur, ...cols] = line.split("\t");
+        out(`${(cur || " ").padEnd(10)}${cols.map((c) => c.padEnd(22)).join("").trimEnd()}`);
+      }
+    } else if (rest[0] === "current-context") out("nightjar-dev");
+    else fail(`fake kubectl: config ${rest[0]} isn't recorded`);
+    break;
+  }
+  case "api-resources":
+    out(readFileSync(join(ROOT, "api-resources.txt"), "utf8"));
+    break;
+  case "auth":
+    out(context === "nightjar-prod" && rest[1] !== "get" && rest[1] !== "list" && rest[1] !== "watch" ? "no" : "yes");
+    break;
+  case "get": {
+    const target = rest[0] ?? fail("error: You must specify the type of resource to get.");
+    const [typeWord, slashName] = target.split("/");
+    const name = slashName ?? rest[1];
+    const types = typeWord!.split(",").map(resolve);
+    let found = types.flatMap((t) => selected(items(t)).map((o) => ({ t, o })));
+    if (name) found = found.filter(({ o }) => o.metadata.name === name);
+    if (name && !found.length) fail(`Error from server (NotFound): ${types[0]} "${name}" not found`);
+    const objs = found.map(({ o }) => o);
+    if (types[0] === "secrets" && SECRET_TEMPLATE.test(output)) {
+      // The mod's template: name, type, created, the key names (never the values).
+      for (const o of objs) out(`${o.metadata.namespace}\t${o.metadata.name}\t${o.type}\t${o.metadata.creationTimestamp}\t${Object.keys(o.data ?? {}).join(",")}`);
+      break;
+    }
+    if (types[0] === "secrets" && output === "json" && !name) fail("fake kubectl: the mod lists secrets by go-template only (values never leave kubectl)");
+    const body = name && objs.length === 1 ? objs[0] : { apiVersion: "v1", kind: "List", items: objs, metadata: { resourceVersion: "" } };
+    if (output === "json") out(JSON.stringify(body, null, 2));
+    else if (output === "yaml") out(toYaml(body));
+    else if (output === "name") out(objs.map((o) => `${o.kind.toLowerCase()}/${o.metadata.name}`).join("\n"));
+    else out(["NAME", ...objs.map((o) => o.metadata.name)].join("\n"));
+    break;
+  }
+  case "describe": {
+    const [typeWord, slashName] = (rest[0] ?? "").split("/");
+    const name = slashName ?? rest[1];
+    const o = items(resolve(typeWord!)).find((x) => x.metadata.name === name) ?? fail(`Error from server (NotFound): "${name}" not found`);
+    out(describe(o));
+    break;
+  }
+  case "top": {
+    const what = rest[0];
+    const t = (NOW / 15000) | 0;
+    const wobble = (v: number, i: number) => Math.max(1, Math.round(v * (1 + 0.18 * Math.sin(t * 0.9 + i * 1.7))));
+    if (what === "nodes" || what === "node") {
+      readFileSync(join(ROOT, context, "_cluster", "top-nodes.txt"), "utf8").trim().split("\n").forEach((l, i) => {
+        const [n, cpu, cpuPct, mem, memPct] = l.split("\t");
+        out(`${n!.padEnd(16)}${wobble(parseInt(cpu!), i)}m   ${cpuPct}   ${mem}   ${memPct}`);
+      });
+    } else {
+      readFileSync(join(ROOT, context, "_cluster", "top-pods.txt"), "utf8").trim().split("\n").forEach((l, i) => {
+        const [n, p, cpu, mem] = l.split("\t");
+        if (!all && n !== namespace) return;
+        out(`${all ? n!.padEnd(14) : ""}${p!.padEnd(34)}${wobble(parseInt(cpu!), i)}m   ${wobble(parseInt(mem!), i + 3)}Mi`);
+      });
+    }
+    break;
+  }
+  case "logs": {
+    const pod = rest[0] ?? fail("error: expected a pod");
+    const lines = (n: number) => Array.from({ length: n }, (_, i) => `${new Date(NOW - (n - i) * 2000).toISOString()} level=info msg="handled request" path=/api/lanterns/${(i * 37) % 900} status=200 ms=${(i * 13) % 90}`);
+    if (has("-p", "--previous")) out(`${new Date(NOW - 120000).toISOString()} level=error msg="config: NEW_CHECKOUT needs DARK_SKY" pod=${pod}\npanic: missing setting`);
+    else out(lines(Number(flag("--tail")) > 0 ? Math.min(40, Number(flag("--tail"))) : 40).join("\n"));
+    if (has("-f", "--follow")) {
+      let i = 0;
+      setInterval(() => out(`${new Date().toISOString()} level=info msg="handled request" path=/api/lanterns/${i++} status=200`), 2000);
+    }
+    break;
+  }
+  case "exec": {
+    const pod = rest[0];
+    out(`(made-up shell in ${pod}: nightjar is not a real cluster)`);
+    process.stdout.write(`${pod}:/app$ `);
+    for await (const line of console) {
+      const cmd = line.trim();
+      if (cmd === "exit") process.exit(0);
+      if (cmd) out(cmd === "ls" ? "bin  config  lantern  static" : cmd === "hostname" ? String(pod) : `sh: ${cmd.split(" ")[0]}: made up`);
+      process.stdout.write(`${pod}:/app$ `);
+    }
+    break;
+  }
+  case "port-forward": {
+    const target = rest[0] ?? fail("error: TYPE/NAME is required");
+    const pairs = rest.slice(1).filter((p) => /^\d*:?\d+$/.test(p));
+    appendFileSync(LOG, JSON.stringify({ at: new Date(NOW).toISOString(), context, namespace, argv }) + "\n");
+    for (const p of pairs) {
+      const [local, remote] = p.includes(":") ? p.split(":") : [p, p];
+      out(`Forwarding from 127.0.0.1:${local} -> ${remote}\nForwarding from [::1]:${local} -> ${remote}`);
+      // An http-looking target answers a made-up page, so a web pane has something to show.
+      if (/web|ui|api|http|server/.test(target)) {
+        Bun.serve({ port: Number(local), hostname: "127.0.0.1", fetch: () => new Response(`<!doctype html><title>${target} (made up)</title><body style="background:#080808;color:#c6c6c6;font:14px monospace;padding:40px"><h1 style="color:#80a0ff">${target}</h1><p>Answered by the fake kubectl's port-forward: nightjar is a made-up cluster.</p></body>`, { headers: { "content-type": "text/html" } }) });
+      }
+    }
+    setInterval(() => {}, 1 << 30);
+    break;
+  }
+  case "delete": record(`${resolve((rest[0] ?? "").split("/")[0]!).replace(/s$/, "")} "${(rest[0] ?? "").split("/")[1] ?? rest[1]}" deleted`); break;
+  case "scale": record(`${rest[0]} scaled`); break;
+  case "rollout": record(`${rest[1]} restarted`); break;
+  case "cordon": record(`node/${rest[0]} cordoned`); break;
+  case "uncordon": record(`node/${rest[0]} uncordoned`); break;
+  case "drain": record(`node/${rest[0]} drained`); break;
+  case "patch": record(`${rest[0]}/${rest[1] ?? ""} patched`); break;
+  case "annotate": record(`${rest[0]}/${rest[1] ?? ""} annotated`); break;
+  case "label": record(`${rest[0]}/${rest[1] ?? ""} labeled`); break;
+  case "replace": record(`replaced from ${flag("-f", "--filename")}`); break;
+  case "apply": record(`applied from ${flag("-f", "--filename")}`); break;
+  default:
+    fail(`fake kubectl: "${verb}" isn't recorded`);
+}

@@ -1,0 +1,191 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Event",
+   "metadata": {
+    "name": "lantern-api-n7es-0n7u7.xxxxxxxxx1yexqh3",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000047",
+    "resourceVersion": "1047",
+    "creationTimestamp": "2026-11-13T11:58:00Z"
+   },
+   "involvedObject": {
+    "kind": "Pod",
+    "name": "lantern-api-n7es-0n7u7",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000008"
+   },
+   "reason": "BackOff",
+   "message": "Back-off restarting failed container lantern-api in pod lantern-api-n7es-0n7u7",
+   "type": "Warning",
+   "count": 23,
+   "firstTimestamp": "2026-11-13T11:47:00Z",
+   "lastTimestamp": "2026-11-13T11:58:00Z",
+   "source": {
+    "component": "kubelet"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Event",
+   "metadata": {
+    "name": "lantern-api-n7es-0n7u7.xxxxxxxxx1gu3v8q",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000048",
+    "resourceVersion": "1048",
+    "creationTimestamp": "2026-11-13T11:56:00Z"
+   },
+   "involvedObject": {
+    "kind": "Pod",
+    "name": "lantern-api-n7es-0n7u7",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000008"
+   },
+   "reason": "Unhealthy",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "type": "Warning",
+   "count": 9,
+   "firstTimestamp": "2026-11-13T11:52:00Z",
+   "lastTimestamp": "2026-11-13T11:56:00Z",
+   "source": {
+    "component": "kubelet"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Event",
+   "metadata": {
+    "name": "lantern-api-n7es-0n7u7.xxxxxxxxx1pq3rql",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000049",
+    "resourceVersion": "1049",
+    "creationTimestamp": "2026-11-13T11:51:00Z"
+   },
+   "involvedObject": {
+    "kind": "Pod",
+    "name": "lantern-api-n7es-0n7u7",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000008"
+   },
+   "reason": "Pulled",
+   "message": "Container image \"nightjar/lantern-api:7.0.3\" already present on machine",
+   "type": "Normal",
+   "count": 6,
+   "firstTimestamp": "2026-11-13T11:48:30Z",
+   "lastTimestamp": "2026-11-13T11:51:00Z",
+   "source": {
+    "component": "kubelet"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Event",
+   "metadata": {
+    "name": "lantern-api.xxxxxxxxxx3o3uig",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000050",
+    "resourceVersion": "1050",
+    "creationTimestamp": "2026-11-13T11:30:00Z"
+   },
+   "involvedObject": {
+    "kind": "Deployment",
+    "name": "lantern-api",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000001"
+   },
+   "reason": "ScalingReplicaSet",
+   "message": "Scaled up replica set lantern-api-n7es to 4",
+   "type": "Normal",
+   "count": 1,
+   "firstTimestamp": "2026-11-13T11:30:00Z",
+   "lastTimestamp": "2026-11-13T11:30:00Z",
+   "source": {
+    "component": "kubelet"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Event",
+   "metadata": {
+    "name": "lantern-mailer-1ebs-0r4a0.xxxxxxxxxxo9zsrw",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000051",
+    "resourceVersion": "1051",
+    "creationTimestamp": "2026-11-13T11:57:00Z"
+   },
+   "involvedObject": {
+    "kind": "Pod",
+    "name": "lantern-mailer-1ebs-0r4a0",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000019"
+   },
+   "reason": "Failed",
+   "message": "Failed to pull image \"nightjar/lantern-mailer:2.3.0-rc1\": not found",
+   "type": "Warning",
+   "count": 31,
+   "firstTimestamp": "2026-11-13T11:42:00Z",
+   "lastTimestamp": "2026-11-13T11:57:00Z",
+   "source": {
+    "component": "kubelet"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Event",
+   "metadata": {
+    "name": "lantern-mailer-1ebs-0r4a0.xxxxxxxxx1iyzgde",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000052",
+    "resourceVersion": "1052",
+    "creationTimestamp": "2026-11-13T11:59:00Z"
+   },
+   "involvedObject": {
+    "kind": "Pod",
+    "name": "lantern-mailer-1ebs-0r4a0",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000019"
+   },
+   "reason": "BackOff",
+   "message": "Back-off pulling image \"nightjar/lantern-mailer:2.3.0-rc1\"",
+   "type": "Normal",
+   "count": 40,
+   "firstTimestamp": "2026-11-13T11:39:30Z",
+   "lastTimestamp": "2026-11-13T11:59:00Z",
+   "source": {
+    "component": "kubelet"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Event",
+   "metadata": {
+    "name": "lantern-mailer.xxxxxxxxxx3o7jzg",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000053",
+    "resourceVersion": "1053",
+    "creationTimestamp": "2026-11-13T10:00:00Z"
+   },
+   "involvedObject": {
+    "kind": "Deployment",
+    "name": "lantern-mailer",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000017"
+   },
+   "reason": "ScalingReplicaSet",
+   "message": "Scaled up replica set to 1",
+   "type": "Normal",
+   "count": 1,
+   "firstTimestamp": "2026-11-13T10:00:00Z",
+   "lastTimestamp": "2026-11-13T10:00:00Z",
+   "source": {
+    "component": "kubelet"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

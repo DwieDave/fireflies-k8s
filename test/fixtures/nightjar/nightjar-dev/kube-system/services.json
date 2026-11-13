@@ -1,0 +1,67 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Service",
+   "metadata": {
+    "name": "kube-dns",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000093",
+    "resourceVersion": "1093",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "kube-dns"
+    }
+   },
+   "spec": {
+    "type": "ClusterIP",
+    "clusterIP": "10.43.3.209",
+    "ports": [
+     {
+      "protocol": "TCP",
+      "name": "dns",
+      "port": 53,
+      "targetPort": 53
+     }
+    ],
+    "selector": {
+     "k8s-app": "kube-dns"
+    }
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Service",
+   "metadata": {
+    "name": "traefik",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000094",
+    "resourceVersion": "1094",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "traefik"
+    }
+   },
+   "spec": {
+    "type": "LoadBalancer",
+    "clusterIP": "10.43.4.222",
+    "ports": [
+     {
+      "protocol": "TCP",
+      "name": "web",
+      "port": 80,
+      "targetPort": "web"
+     }
+    ],
+    "selector": {
+     "app": "traefik"
+    }
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

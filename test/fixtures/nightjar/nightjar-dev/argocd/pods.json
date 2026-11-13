@@ -1,0 +1,230 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "argocd-server-e0e4-h5elw",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000097",
+    "resourceVersion": "1097",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "argocd-server"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "argocd-server-e0e4",
+      "uid": "00000000-0000-4000-8000-000000000096",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "argocd-server",
+      "image": "quay.io/argoproj/argocd:v2.13.1",
+      "ports": [
+       {
+        "containerPort": 8080,
+        "name": "server",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.179",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "argocd-server",
+      "image": "quay.io/argoproj/argocd:v2.13.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "argocd-repo-server-873b-boyeh",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000100",
+    "resourceVersion": "1100",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "argocd-repo-server"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "argocd-repo-server-873b",
+      "uid": "00000000-0000-4000-8000-000000000099",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "argocd-repo",
+      "image": "quay.io/argoproj/argocd:v2.13.1",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.200",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "argocd-repo",
+      "image": "quay.io/argoproj/argocd:v2.13.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "argocd-application-controller-0",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000102",
+    "resourceVersion": "1102",
+    "creationTimestamp": "2026-11-01T12:00:00Z",
+    "labels": {
+     "app": "argocd-application-controller"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "name": "argocd-application-controller",
+      "uid": "00000000-0000-4000-8000-000000000101",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "argocd-application",
+      "image": "quay.io/argoproj/argocd:v2.13.1",
+      "ports": [
+       {
+        "containerPort": 8082,
+        "name": "metrics",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.214",
+    "startTime": "2026-11-01T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "argocd-application",
+      "image": "quay.io/argoproj/argocd:v2.13.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-01T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

@@ -1,0 +1,105 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000141",
+    "resourceVersion": "1141",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "lantern"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "moth",
+    "uid": "00000000-0000-4000-8000-000000000142",
+    "resourceVersion": "1142",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "moth"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "glowworm",
+    "uid": "00000000-0000-4000-8000-000000000143",
+    "resourceVersion": "1143",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "glowworm"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000144",
+    "resourceVersion": "1144",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "kube-system"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000145",
+    "resourceVersion": "1145",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "argocd"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "default",
+    "uid": "00000000-0000-4000-8000-000000000146",
+    "resourceVersion": "1146",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "default"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

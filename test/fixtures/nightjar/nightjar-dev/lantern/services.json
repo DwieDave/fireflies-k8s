@@ -1,0 +1,96 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Service",
+   "metadata": {
+    "name": "lantern-api",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000028",
+    "resourceVersion": "1028",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    }
+   },
+   "spec": {
+    "type": "ClusterIP",
+    "clusterIP": "10.43.1.114",
+    "ports": [
+     {
+      "protocol": "TCP",
+      "name": "http",
+      "port": 8080,
+      "targetPort": "http"
+     }
+    ],
+    "selector": {
+     "app": "lantern-api"
+    }
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Service",
+   "metadata": {
+    "name": "lantern-web",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000029",
+    "resourceVersion": "1029",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "lantern-web"
+    }
+   },
+   "spec": {
+    "type": "ClusterIP",
+    "clusterIP": "10.43.2.127",
+    "ports": [
+     {
+      "protocol": "TCP",
+      "name": "http",
+      "port": 80,
+      "targetPort": 8080
+     }
+    ],
+    "selector": {
+     "app": "lantern-web"
+    }
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Service",
+   "metadata": {
+    "name": "lantern-db",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000030",
+    "resourceVersion": "1030",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "lantern-db"
+    }
+   },
+   "spec": {
+    "type": "ClusterIP",
+    "clusterIP": "10.43.3.140",
+    "ports": [
+     {
+      "protocol": "TCP",
+      "name": "postgres",
+      "port": 5432,
+      "targetPort": 5432
+     }
+    ],
+    "selector": {
+     "app": "lantern-db"
+    }
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

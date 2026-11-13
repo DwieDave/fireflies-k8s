@@ -1,0 +1,2 @@
+*	nightjar-dev	nightjar-dev	nightjar-dev-admin	lantern
+	nightjar-prod	nightjar-prod	nightjar-prod-reader	lantern

@@ -1,0 +1,49 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "coredns-9b9j",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000135",
+    "resourceVersion": "1135",
+    "creationTimestamp": "2026-04-27T12:00:00Z",
+    "labels": {
+     "app": "coredns"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "1"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "coredns",
+      "uid": "00000000-0000-4000-8000-000000000134",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 2,
+    "selector": {
+     "matchLabels": {
+      "app": "coredns"
+     }
+    }
+   },
+   "status": {
+    "replicas": 2,
+    "readyReplicas": 2,
+    "availableReplicas": 2
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

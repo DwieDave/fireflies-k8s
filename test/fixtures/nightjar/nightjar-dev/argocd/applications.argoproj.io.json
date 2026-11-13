@@ -1,0 +1,784 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "argoproj.io/v1alpha1",
+   "kind": "Application",
+   "metadata": {
+    "name": "lantern",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000105",
+    "resourceVersion": "1105",
+    "creationTimestamp": "2026-10-14T12:00:00Z",
+    "finalizers": [
+     "resources-finalizer.argocd.argoproj.io"
+    ]
+   },
+   "spec": {
+    "project": "default",
+    "source": {
+     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "path": "lantern/overlays/dev",
+     "targetRevision": "main"
+    },
+    "destination": {
+     "server": "https://kubernetes.default.svc",
+     "namespace": "lantern"
+    },
+    "syncPolicy": {}
+   },
+   "status": {
+    "sync": {
+     "status": "OutOfSync",
+     "revision": "e18b2c4f0a9d7e6b5c3a1f2e4d6b8a0c9e7f5d3b",
+     "comparedTo": {
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/dev",
+       "targetRevision": "main"
+      }
+     }
+    },
+    "health": {
+     "status": "Progressing"
+    },
+    "reconciledAt": "2026-11-13T11:59:20Z",
+    "resources": [
+     {
+      "version": "v1",
+      "kind": "ConfigMap",
+      "namespace": "lantern",
+      "name": "lantern-flags",
+      "status": "OutOfSync"
+     },
+     {
+      "version": "v1",
+      "kind": "ConfigMap",
+      "namespace": "lantern",
+      "name": "lantern-config",
+      "status": "Synced"
+     },
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "lantern",
+      "name": "lantern-api",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "lantern",
+      "name": "lantern-web",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "lantern",
+      "name": "lantern-db",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "lantern",
+      "name": "lantern-api",
+      "status": "Synced",
+      "health": {
+       "status": "Progressing"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "lantern",
+      "name": "lantern-web",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "StatefulSet",
+      "namespace": "lantern",
+      "name": "lantern-db",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "networking.k8s.io",
+      "version": "v1",
+      "kind": "Ingress",
+      "namespace": "lantern",
+      "name": "lantern",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "networking.k8s.io",
+      "version": "v1",
+      "kind": "Ingress",
+      "namespace": "lantern",
+      "name": "lantern-dark-sky",
+      "status": "OutOfSync",
+      "health": {
+       "status": "Missing"
+      }
+     }
+    ],
+    "history": [
+     {
+      "id": 0,
+      "revision": "a41c7d2e",
+      "deployedAt": "2026-11-10T12:00:00Z",
+      "deployStartedAt": "2026-11-10T11:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/dev",
+       "targetRevision": "main"
+      }
+     },
+     {
+      "id": 1,
+      "revision": "5c10b3f9",
+      "deployedAt": "2026-11-11T12:00:00Z",
+      "deployStartedAt": "2026-11-11T11:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/dev",
+       "targetRevision": "main"
+      }
+     },
+     {
+      "id": 2,
+      "revision": "9e02aa41",
+      "deployedAt": "2026-11-12T12:00:00Z",
+      "deployStartedAt": "2026-11-12T11:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/dev",
+       "targetRevision": "main"
+      }
+     },
+     {
+      "id": 3,
+      "revision": "c7d3e810",
+      "deployedAt": "2026-11-12T16:00:00Z",
+      "deployStartedAt": "2026-11-12T15:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/dev",
+       "targetRevision": "main"
+      }
+     },
+     {
+      "id": 4,
+      "revision": "e18b2c4f0a9d7e6b5c3a1f2e4d6b8a0c9e7f5d3b",
+      "deployedAt": "2026-11-13T10:00:00Z",
+      "deployStartedAt": "2026-11-13T09:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/dev",
+       "targetRevision": "main"
+      }
+     }
+    ],
+    "operationState": {
+     "phase": "Running",
+     "message": "waiting for healthy state of apps/Deployment/lantern-api",
+     "startedAt": "2026-11-13T10:00:00Z",
+     "operation": {
+      "sync": {
+       "revision": "e18b2c4f0a9d7e6b5c3a1f2e4d6b8a0c9e7f5d3b"
+      }
+     }
+    },
+    "sourceType": "Kustomize",
+    "summary": {}
+   }
+  },
+  {
+   "apiVersion": "argoproj.io/v1alpha1",
+   "kind": "Application",
+   "metadata": {
+    "name": "lantern-prod",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000106",
+    "resourceVersion": "1106",
+    "creationTimestamp": "2026-10-14T12:00:00Z",
+    "finalizers": [
+     "resources-finalizer.argocd.argoproj.io"
+    ]
+   },
+   "spec": {
+    "project": "default",
+    "source": {
+     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "path": "lantern/overlays/prod",
+     "targetRevision": "main"
+    },
+    "destination": {
+     "server": "https://prod.nightjar.test:6443",
+     "namespace": "lantern"
+    },
+    "syncPolicy": {
+     "automated": {
+      "prune": true,
+      "selfHeal": true
+     }
+    }
+   },
+   "status": {
+    "sync": {
+     "status": "Synced",
+     "revision": "c7d3e810",
+     "comparedTo": {
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/prod",
+       "targetRevision": "main"
+      }
+     }
+    },
+    "health": {
+     "status": "Healthy"
+    },
+    "reconciledAt": "2026-11-13T11:59:20Z",
+    "resources": [
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "lantern",
+      "name": "lantern-api",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "lantern",
+      "name": "lantern-api",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "lantern",
+      "name": "lantern-web",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     }
+    ],
+    "history": [
+     {
+      "id": 0,
+      "revision": "5c10b3f9",
+      "deployedAt": "2026-11-11T12:00:00Z",
+      "deployStartedAt": "2026-11-11T11:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/prod",
+       "targetRevision": "main"
+      }
+     },
+     {
+      "id": 1,
+      "revision": "c7d3e810",
+      "deployedAt": "2026-11-12T16:00:00Z",
+      "deployStartedAt": "2026-11-12T15:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "lantern/overlays/prod",
+       "targetRevision": "main"
+      }
+     }
+    ],
+    "operationState": {
+     "phase": "Succeeded",
+     "message": "successfully synced (all tasks run)",
+     "startedAt": "2026-11-12T16:00:00Z",
+     "finishedAt": "2026-11-12T16:00:20Z",
+     "operation": {
+      "sync": {
+       "revision": "c7d3e810"
+      }
+     }
+    },
+    "sourceType": "Kustomize",
+    "summary": {}
+   }
+  },
+  {
+   "apiVersion": "argoproj.io/v1alpha1",
+   "kind": "Application",
+   "metadata": {
+    "name": "moth",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000107",
+    "resourceVersion": "1107",
+    "creationTimestamp": "2026-10-14T12:00:00Z",
+    "finalizers": [
+     "resources-finalizer.argocd.argoproj.io"
+    ]
+   },
+   "spec": {
+    "project": "default",
+    "source": {
+     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "path": "moth",
+     "targetRevision": "main"
+    },
+    "destination": {
+     "server": "https://kubernetes.default.svc",
+     "namespace": "moth"
+    },
+    "syncPolicy": {
+     "automated": {
+      "prune": true,
+      "selfHeal": true
+     }
+    }
+   },
+   "status": {
+    "sync": {
+     "status": "Synced",
+     "revision": "77a0c1d2",
+     "comparedTo": {
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "moth",
+       "targetRevision": "main"
+      }
+     }
+    },
+    "health": {
+     "status": "Healthy"
+    },
+    "reconciledAt": "2026-11-13T11:59:20Z",
+    "resources": [
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "moth",
+      "name": "moth-queue",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "moth",
+      "name": "moth-ui",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "StatefulSet",
+      "namespace": "moth",
+      "name": "moth-mysql",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "moth",
+      "name": "moth-ui",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "moth",
+      "name": "moth-queue",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "moth",
+      "name": "moth-mysql",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     }
+    ],
+    "history": [
+     {
+      "id": 0,
+      "revision": "77a0c1d2",
+      "deployedAt": "2026-11-08T12:00:00Z",
+      "deployStartedAt": "2026-11-08T11:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "moth",
+       "targetRevision": "main"
+      }
+     }
+    ],
+    "operationState": {
+     "phase": "Succeeded",
+     "message": "successfully synced (all tasks run)",
+     "startedAt": "2026-11-08T12:00:00Z",
+     "finishedAt": "2026-11-08T12:00:20Z",
+     "operation": {
+      "sync": {
+       "revision": "77a0c1d2"
+      }
+     }
+    },
+    "sourceType": "Kustomize",
+    "summary": {}
+   }
+  },
+  {
+   "apiVersion": "argoproj.io/v1alpha1",
+   "kind": "Application",
+   "metadata": {
+    "name": "glowworm",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000108",
+    "resourceVersion": "1108",
+    "creationTimestamp": "2026-10-14T12:00:00Z",
+    "finalizers": [
+     "resources-finalizer.argocd.argoproj.io"
+    ]
+   },
+   "spec": {
+    "project": "default",
+    "source": {
+     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "path": "glowworm",
+     "targetRevision": "main"
+    },
+    "destination": {
+     "server": "https://kubernetes.default.svc",
+     "namespace": "glowworm"
+    },
+    "syncPolicy": {}
+   },
+   "status": {
+    "sync": {
+     "status": "Synced",
+     "revision": "1f9e0b33",
+     "comparedTo": {
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "glowworm",
+       "targetRevision": "main"
+      }
+     }
+    },
+    "health": {
+     "status": "Degraded"
+    },
+    "reconciledAt": "2026-11-13T11:59:20Z",
+    "resources": [
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "glowworm",
+      "name": "glowworm-api",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "batch",
+      "version": "v1",
+      "kind": "Job",
+      "namespace": "glowworm",
+      "name": "glowworm-backfill",
+      "status": "Synced",
+      "health": {
+       "status": "Degraded"
+      }
+     },
+     {
+      "version": "v1",
+      "kind": "Service",
+      "namespace": "glowworm",
+      "name": "glowworm-api",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     }
+    ],
+    "history": [
+     {
+      "id": 0,
+      "revision": "0b11c2aa",
+      "deployedAt": "2026-11-04T12:00:00Z",
+      "deployStartedAt": "2026-11-04T11:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "glowworm",
+       "targetRevision": "main"
+      }
+     },
+     {
+      "id": 1,
+      "revision": "1f9e0b33",
+      "deployedAt": "2026-11-13T06:00:00Z",
+      "deployStartedAt": "2026-11-13T05:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "glowworm",
+       "targetRevision": "main"
+      }
+     }
+    ],
+    "operationState": {
+     "phase": "Succeeded",
+     "message": "successfully synced (all tasks run)",
+     "startedAt": "2026-11-13T06:00:00Z",
+     "finishedAt": "2026-11-13T06:00:20Z",
+     "operation": {
+      "sync": {
+       "revision": "1f9e0b33"
+      }
+     }
+    },
+    "sourceType": "Kustomize",
+    "summary": {}
+   }
+  },
+  {
+   "apiVersion": "argoproj.io/v1alpha1",
+   "kind": "Application",
+   "metadata": {
+    "name": "kube-stars",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000109",
+    "resourceVersion": "1109",
+    "creationTimestamp": "2026-10-14T12:00:00Z",
+    "finalizers": [
+     "resources-finalizer.argocd.argoproj.io"
+    ]
+   },
+   "spec": {
+    "project": "default",
+    "source": {
+     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "path": "stars",
+     "targetRevision": "main"
+    },
+    "destination": {
+     "server": "https://kubernetes.default.svc",
+     "namespace": "stars"
+    },
+    "syncPolicy": {}
+   },
+   "status": {
+    "sync": {
+     "status": "OutOfSync",
+     "revision": "",
+     "comparedTo": {
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "stars",
+       "targetRevision": "main"
+      }
+     }
+    },
+    "health": {
+     "status": "Missing"
+    },
+    "reconciledAt": "2026-11-13T11:59:20Z",
+    "resources": [
+     {
+      "version": "v1",
+      "kind": "Namespace",
+      "namespace": "stars",
+      "name": "stars",
+      "status": "OutOfSync",
+      "health": {
+       "status": "Missing"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "stars",
+      "name": "stars-api",
+      "status": "OutOfSync",
+      "health": {
+       "status": "Missing"
+      }
+     }
+    ],
+    "history": [],
+    "operationState": {
+     "phase": "Failed",
+     "message": "one or more objects failed to apply: namespaces \"stars\" is forbidden",
+     "startedAt": "2026-11-13T11:00:00Z",
+     "finishedAt": "2026-11-13T11:00:05Z"
+    },
+    "sourceType": "Kustomize",
+    "summary": {}
+   }
+  },
+  {
+   "apiVersion": "argoproj.io/v1alpha1",
+   "kind": "Application",
+   "metadata": {
+    "name": "argo-self",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000110",
+    "resourceVersion": "1110",
+    "creationTimestamp": "2026-10-14T12:00:00Z",
+    "finalizers": [
+     "resources-finalizer.argocd.argoproj.io"
+    ]
+   },
+   "spec": {
+    "project": "default",
+    "source": {
+     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "path": "argocd",
+     "targetRevision": "main"
+    },
+    "destination": {
+     "server": "https://kubernetes.default.svc",
+     "namespace": "argocd"
+    },
+    "syncPolicy": {
+     "automated": {
+      "prune": true,
+      "selfHeal": true
+     }
+    }
+   },
+   "status": {
+    "sync": {
+     "status": "Synced",
+     "revision": "0a11fe90",
+     "comparedTo": {
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "argocd",
+       "targetRevision": "main"
+      }
+     }
+    },
+    "health": {
+     "status": "Healthy"
+    },
+    "reconciledAt": "2026-11-13T11:59:20Z",
+    "resources": [
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "argocd",
+      "name": "argocd-server",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment",
+      "namespace": "argocd",
+      "name": "argocd-repo-server",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     },
+     {
+      "group": "apps",
+      "version": "v1",
+      "kind": "StatefulSet",
+      "namespace": "argocd",
+      "name": "argocd-application-controller",
+      "status": "Synced",
+      "health": {
+       "status": "Healthy"
+      }
+     }
+    ],
+    "history": [
+     {
+      "id": 0,
+      "revision": "0a11fe90",
+      "deployedAt": "2026-10-14T12:00:00Z",
+      "deployStartedAt": "2026-10-14T11:59:30Z",
+      "source": {
+       "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+       "path": "argocd",
+       "targetRevision": "main"
+      }
+     }
+    ],
+    "operationState": {
+     "phase": "Succeeded",
+     "message": "successfully synced (all tasks run)",
+     "startedAt": "2026-10-14T12:00:00Z",
+     "finishedAt": "2026-10-14T12:00:20Z",
+     "operation": {
+      "sync": {
+       "revision": "0a11fe90"
+      }
+     }
+    },
+    "sourceType": "Kustomize",
+    "summary": {}
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

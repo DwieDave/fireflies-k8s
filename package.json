@@ -1,0 +1,11 @@
+{
+  "name": "fireflies-k8s",
+  "private": true,
+  "type": "module",
+  "description": "Kubernetes and Argo CD in a Fireflies window: an optional mod. The tools check it; the mod itself is mod/.",
+  "devDependencies": {
+    "@oxlint/plugins": "1.93.0",
+    "oxlint": "1.93.0",
+    "typescript": "7.0.2"
+  }
+}

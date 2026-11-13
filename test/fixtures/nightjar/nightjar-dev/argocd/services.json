@@ -1,0 +1,38 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Service",
+   "metadata": {
+    "name": "argocd-server",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000104",
+    "resourceVersion": "1104",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "argocd-server"
+    }
+   },
+   "spec": {
+    "type": "ClusterIP",
+    "clusterIP": "10.43.5.102",
+    "ports": [
+     {
+      "protocol": "TCP",
+      "name": "https",
+      "port": 443,
+      "targetPort": 8080
+     }
+    ],
+    "selector": {
+     "app": "argocd-server"
+    }
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

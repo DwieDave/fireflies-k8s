@@ -1,0 +1,31 @@
+{
+  "// why": [
+    "The type check of the mod (`just typecheck`): Fireflies' bar for its shipped mods,",
+    "maximum type safety, not a quiet compiler. types/gpui-kit.d.ts is what",
+    "`herdr-app types types` writes (gpui-kit, gpui-base and the `herdr` module of",
+    "the Fireflies build it came from); `just types` refreshes it."
+  ],
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022"],
+    "types": [],
+    "strict": true,
+    "noImplicitAny": true,
+    "useUnknownInCatchVariables": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noEmit": true,
+    "allowJs": false,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["mod/**/*.ts", "types/gpui-kit.d.ts"],
+  "exclude": ["mod/gpui-kit.d.ts"]
+}

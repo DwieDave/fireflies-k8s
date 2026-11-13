@@ -1,0 +1,348 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-api-n7es",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000002",
+    "resourceVersion": "1002",
+    "creationTimestamp": "2026-11-13T11:20:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "7"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-api",
+      "uid": "00000000-0000-4000-8000-000000000001",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 4,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-api"
+     }
+    }
+   },
+   "status": {
+    "replicas": 4,
+    "readyReplicas": 3,
+    "availableReplicas": 3
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-api-n7er",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000003",
+    "resourceVersion": "1003",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "6"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-api",
+      "uid": "00000000-0000-4000-8000-000000000001",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 0
+   },
+   "status": {
+    "replicas": 0
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-api-n7eq",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000004",
+    "resourceVersion": "1004",
+    "creationTimestamp": "2026-10-27T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "5"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-api",
+      "uid": "00000000-0000-4000-8000-000000000001",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 0
+   },
+   "status": {
+    "replicas": 0
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-web-10sn",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000010",
+    "resourceVersion": "1010",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "lantern-web"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "4"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-web",
+      "uid": "00000000-0000-4000-8000-000000000009",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 2,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-web"
+     }
+    }
+   },
+   "status": {
+    "replicas": 2,
+    "readyReplicas": 2,
+    "availableReplicas": 2
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-web-10sm",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000011",
+    "resourceVersion": "1011",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "lantern-web"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "3"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-web",
+      "uid": "00000000-0000-4000-8000-000000000009",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 0
+   },
+   "status": {
+    "replicas": 0
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-worker-cchg",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000015",
+    "resourceVersion": "1015",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "lantern-worker"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "9"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-worker",
+      "uid": "00000000-0000-4000-8000-000000000014",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-worker"
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-mailer-1ebs",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000018",
+    "resourceVersion": "1018",
+    "creationTimestamp": "2026-11-13T10:00:00Z",
+    "labels": {
+     "app": "lantern-mailer"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "3"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-mailer",
+      "uid": "00000000-0000-4000-8000-000000000017",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-mailer"
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 0,
+    "availableReplicas": 0
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-cron-ui-mv9i",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000021",
+    "resourceVersion": "1021",
+    "creationTimestamp": "2026-10-04T12:00:00Z",
+    "labels": {
+     "app": "lantern-cron-ui"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "2"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-cron-ui",
+      "uid": "00000000-0000-4000-8000-000000000020",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-cron-ui"
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "lantern-legacy-flzl",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000024",
+    "resourceVersion": "1024",
+    "creationTimestamp": "2026-08-15T12:00:00Z",
+    "labels": {
+     "app": "lantern-legacy"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "12"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "lantern-legacy",
+      "uid": "00000000-0000-4000-8000-000000000023",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 0,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-legacy"
+     }
+    }
+   },
+   "status": {
+    "replicas": 0,
+    "readyReplicas": 0,
+    "availableReplicas": 0
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

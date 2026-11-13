@@ -1,0 +1,9 @@
+{
+  "plugins": [],
+  "categories": {},
+  "ignorePatterns": ["**/*.d.ts", "types/**", "test/**", "tools/**", "node_modules/**"],
+  "rules": {
+    "eslint/max-lines": ["error", { "max": 749, "skipBlankLines": false, "skipComments": false }],
+    "eslint/max-lines-per-function": ["error", { "max": 80, "skipBlankLines": true, "skipComments": true, "IIFEs": true }]
+  }
+}

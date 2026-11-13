@@ -1,0 +1,57 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000151",
+    "resourceVersion": "1151",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "lantern"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000152",
+    "resourceVersion": "1152",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "kube-system"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "default",
+    "uid": "00000000-0000-4000-8000-000000000153",
+    "resourceVersion": "1153",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "default"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

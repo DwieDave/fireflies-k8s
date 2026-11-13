@@ -1,0 +1,17 @@
+pods
+deployments.apps
+replicasets.apps
+statefulsets.apps
+daemonsets.apps
+jobs.batch
+cronjobs.batch
+services
+ingresses.networking.k8s.io
+configmaps
+secrets
+persistentvolumeclaims
+events
+applications.argoproj.io
+appprojects.argoproj.io
+certificates.cert-manager.io
+issuers.cert-manager.io

@@ -1,0 +1,37 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "DaemonSet",
+   "metadata": {
+    "name": "svclb-traefik",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000089",
+    "resourceVersion": "1089",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "k8s-app": "svclb-traefik"
+    }
+   },
+   "spec": {
+    "selector": {
+     "matchLabels": {
+      "k8s-app": "svclb-traefik"
+     }
+    }
+   },
+   "status": {
+    "desiredNumberScheduled": 3,
+    "currentNumberScheduled": 3,
+    "numberReady": 3,
+    "numberAvailable": 3,
+    "updatedNumberScheduled": 3
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

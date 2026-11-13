@@ -1,0 +1,129 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "coredns-9b9j",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000080",
+    "resourceVersion": "1080",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "app": "coredns"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "1"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "coredns",
+      "uid": "00000000-0000-4000-8000-000000000079",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 2,
+    "selector": {
+     "matchLabels": {
+      "app": "coredns"
+     }
+    }
+   },
+   "status": {
+    "replicas": 2,
+    "readyReplicas": 2,
+    "availableReplicas": 2
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "metrics-server-tdfo",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000084",
+    "resourceVersion": "1084",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "app": "metrics-server"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "1"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "metrics-server",
+      "uid": "00000000-0000-4000-8000-000000000083",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "metrics-server"
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "traefik-fdjg",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000087",
+    "resourceVersion": "1087",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "app": "traefik"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "2"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "traefik",
+      "uid": "00000000-0000-4000-8000-000000000086",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "traefik"
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

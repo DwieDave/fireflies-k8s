@@ -1,0 +1,37 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "batch/v1",
+   "kind": "CronJob",
+   "metadata": {
+    "name": "nightly-sweep",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000038",
+    "resourceVersion": "1038",
+    "creationTimestamp": "2026-10-14T12:00:00Z"
+   },
+   "spec": {
+    "schedule": "0 3 * * *",
+    "suspend": false,
+    "jobTemplate": {
+     "spec": {}
+    }
+   },
+   "status": {
+    "lastScheduleTime": "2026-11-13T11:56:00Z",
+    "active": [
+     {
+      "kind": "Job",
+      "name": "nightly-sweep-29001",
+      "namespace": "lantern"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

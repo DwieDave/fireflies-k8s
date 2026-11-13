@@ -1,0 +1,48 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "StatefulSet",
+   "metadata": {
+    "name": "lantern-db",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000025",
+    "resourceVersion": "1025",
+    "creationTimestamp": "2026-10-04T12:00:00Z",
+    "labels": {
+     "app": "lantern-db"
+    }
+   },
+   "spec": {
+    "replicas": 1,
+    "serviceName": "lantern-db",
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-db"
+     }
+    },
+    "template": {
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-db",
+        "image": "postgres:16.4"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 1,
+    "currentReplicas": 1,
+    "currentRevision": "lantern-db-xxx12ikx0l"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

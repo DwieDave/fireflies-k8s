@@ -1,0 +1,3 @@
+lumen-a	620m	15%	3100Mi	40%
+lumen-b	410m	10%	2400Mi	31%
+lumen-c	880m	22%	4900Mi	63%

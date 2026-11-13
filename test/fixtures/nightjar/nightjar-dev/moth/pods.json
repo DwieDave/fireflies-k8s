@@ -1,0 +1,313 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "moth-queue-1jkp-cmjg7",
+    "namespace": "moth",
+    "uid": "00000000-0000-4000-8000-000000000056",
+    "resourceVersion": "1056",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "moth-queue"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "moth-queue-1jkp",
+      "uid": "00000000-0000-4000-8000-000000000055",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "moth-queue",
+      "image": "redis:7.4",
+      "ports": [
+       {
+        "containerPort": 6379,
+        "name": "redis",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.142",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "moth-queue",
+      "image": "redis:7.4",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "moth-ui-th7v-048it",
+    "namespace": "moth",
+    "uid": "00000000-0000-4000-8000-000000000059",
+    "resourceVersion": "1059",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "moth-ui"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "moth-ui-th7v",
+      "uid": "00000000-0000-4000-8000-000000000058",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "moth-ui",
+      "image": "nightjar/moth-ui:2.0.1",
+      "ports": [
+       {
+        "containerPort": 3000,
+        "name": "http",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.163",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "moth-ui",
+      "image": "nightjar/moth-ui:2.0.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "moth-ui-th7v-048iu",
+    "namespace": "moth",
+    "uid": "00000000-0000-4000-8000-000000000060",
+    "resourceVersion": "1060",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "moth-ui"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "moth-ui-th7v",
+      "uid": "00000000-0000-4000-8000-000000000058",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "moth-ui",
+      "image": "nightjar/moth-ui:2.0.1",
+      "ports": [
+       {
+        "containerPort": 3000,
+        "name": "http",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.170",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "moth-ui",
+      "image": "nightjar/moth-ui:2.0.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "moth-mysql-0",
+    "namespace": "moth",
+    "uid": "00000000-0000-4000-8000-000000000062",
+    "resourceVersion": "1062",
+    "creationTimestamp": "2026-11-01T12:00:00Z",
+    "labels": {
+     "app": "moth-mysql"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "name": "moth-mysql",
+      "uid": "00000000-0000-4000-8000-000000000061",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "moth-mysql",
+      "image": "mysql:8.4",
+      "ports": [
+       {
+        "containerPort": 3306,
+        "name": "mysql",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.184",
+    "startTime": "2026-11-01T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "moth-mysql",
+      "image": "mysql:8.4",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-01T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

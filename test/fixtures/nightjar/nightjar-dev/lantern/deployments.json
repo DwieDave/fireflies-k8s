@@ -1,0 +1,389 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-api",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000001",
+    "resourceVersion": "1001",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "generation": 7,
+    "labels": {
+     "app": "lantern-api"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "7"
+    }
+   },
+   "spec": {
+    "replicas": 4,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-api"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-api"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-api",
+        "image": "nightjar/lantern-api:7.0.3"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 7,
+    "replicas": 4,
+    "updatedReplicas": 4,
+    "readyReplicas": 3,
+    "availableReplicas": 3,
+    "unavailableReplicas": 1,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "False",
+      "reason": "MinimumReplicasUnavailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "ReplicaSetUpdated"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-web",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000009",
+    "resourceVersion": "1009",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "generation": 4,
+    "labels": {
+     "app": "lantern-web"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "4"
+    }
+   },
+   "spec": {
+    "replicas": 2,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-web"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-web"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-web",
+        "image": "nightjar/lantern-web:4.1.0"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 4,
+    "replicas": 2,
+    "updatedReplicas": 2,
+    "readyReplicas": 2,
+    "availableReplicas": 2,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "True",
+      "reason": "MinimumReplicasAvailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-worker",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000014",
+    "resourceVersion": "1014",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "generation": 9,
+    "labels": {
+     "app": "lantern-worker"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "9"
+    }
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-worker"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-worker"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-worker",
+        "image": "nightjar/lantern-worker:7.0.3"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 9,
+    "replicas": 1,
+    "updatedReplicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "True",
+      "reason": "MinimumReplicasAvailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-mailer",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000017",
+    "resourceVersion": "1017",
+    "creationTimestamp": "2026-11-13T10:00:00Z",
+    "generation": 3,
+    "labels": {
+     "app": "lantern-mailer"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "3"
+    }
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-mailer"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-mailer"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-mailer",
+        "image": "nightjar/lantern-mailer:2.3.0-rc1"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 3,
+    "replicas": 1,
+    "updatedReplicas": 1,
+    "readyReplicas": 0,
+    "availableReplicas": 0,
+    "unavailableReplicas": 1,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "False",
+      "reason": "MinimumReplicasUnavailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-cron-ui",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000020",
+    "resourceVersion": "1020",
+    "creationTimestamp": "2026-10-04T12:00:00Z",
+    "generation": 2,
+    "labels": {
+     "app": "lantern-cron-ui"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "2"
+    }
+   },
+   "spec": {
+    "replicas": 1,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-cron-ui"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-cron-ui"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-cron-ui",
+        "image": "nightjar/cron-ui:1.0.4"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 2,
+    "replicas": 1,
+    "updatedReplicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "True",
+      "reason": "MinimumReplicasAvailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-legacy",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000023",
+    "resourceVersion": "1023",
+    "creationTimestamp": "2026-08-15T12:00:00Z",
+    "generation": 12,
+    "labels": {
+     "app": "lantern-legacy"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "12"
+    }
+   },
+   "spec": {
+    "replicas": 0,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-legacy"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-legacy"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-legacy",
+        "image": "nightjar/lantern-legacy:0.9"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 12,
+    "replicas": 0,
+    "updatedReplicas": 0,
+    "readyReplicas": 0,
+    "availableReplicas": 0,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "True",
+      "reason": "MinimumReplicasAvailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

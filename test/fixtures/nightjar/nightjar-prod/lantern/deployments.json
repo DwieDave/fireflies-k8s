@@ -1,0 +1,135 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-api",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000112",
+    "resourceVersion": "1112",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "generation": 31,
+    "labels": {
+     "app": "lantern-api"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "31"
+    }
+   },
+   "spec": {
+    "replicas": 6,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-api"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-api"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-api",
+        "image": "nightjar/lantern-api:6.9.1"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 31,
+    "replicas": 6,
+    "updatedReplicas": 6,
+    "readyReplicas": 6,
+    "availableReplicas": 6,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "True",
+      "reason": "MinimumReplicasAvailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "lantern-web",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000120",
+    "resourceVersion": "1120",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "generation": 18,
+    "labels": {
+     "app": "lantern-web"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "18"
+    }
+   },
+   "spec": {
+    "replicas": 3,
+    "selector": {
+     "matchLabels": {
+      "app": "lantern-web"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-web"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "lantern-web",
+        "image": "nightjar/lantern-web:4.0.7"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 18,
+    "replicas": 3,
+    "updatedReplicas": 3,
+    "readyReplicas": 3,
+    "availableReplicas": 3,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "True",
+      "reason": "MinimumReplicasAvailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

@@ -1,0 +1,5 @@
+node_modules/
+# what Fireflies writes into a mod's folder on every load
+mod/gpui-kit.d.ts
+mod/tsconfig.json
+mod/jsconfig.json

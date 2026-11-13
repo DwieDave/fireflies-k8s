@@ -1,0 +1,48 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "StatefulSet",
+   "metadata": {
+    "name": "argocd-application-controller",
+    "namespace": "argocd",
+    "uid": "00000000-0000-4000-8000-000000000101",
+    "resourceVersion": "1101",
+    "creationTimestamp": "2026-10-04T12:00:00Z",
+    "labels": {
+     "app": "argocd-application-controller"
+    }
+   },
+   "spec": {
+    "replicas": 1,
+    "serviceName": "argocd-application-controller",
+    "selector": {
+     "matchLabels": {
+      "app": "argocd-application-controller"
+     }
+    },
+    "template": {
+     "spec": {
+      "containers": [
+       {
+        "name": "argocd-application-controller",
+        "image": "quay.io/argoproj/argocd:v2.13.1"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 1,
+    "currentReplicas": 1,
+    "currentRevision": "argocd-application-controller-xxx18y8cq4"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

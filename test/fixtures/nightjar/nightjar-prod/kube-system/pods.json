@@ -1,0 +1,147 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "coredns-9b9j-uz7wp",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000136",
+    "resourceVersion": "1136",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "coredns"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "coredns-9b9j",
+      "uid": "00000000-0000-4000-8000-000000000135",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "coredns-9b9j",
+      "image": "rancher/mirrored-coredns-coredns:1.12.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.202",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "coredns-9b9j",
+      "image": "rancher/mirrored-coredns-coredns:1.12.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "coredns-9b9j-uz7wq",
+    "namespace": "kube-system",
+    "uid": "00000000-0000-4000-8000-000000000137",
+    "resourceVersion": "1137",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "coredns"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "coredns-9b9j",
+      "uid": "00000000-0000-4000-8000-000000000135",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "coredns-9b9j",
+      "image": "rancher/mirrored-coredns-coredns:1.12.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.209",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "coredns-9b9j",
+      "image": "rancher/mirrored-coredns-coredns:1.12.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

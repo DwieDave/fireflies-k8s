@@ -1,0 +1,54 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "ConfigMap",
+   "metadata": {
+    "name": "lantern-flags",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000032",
+    "resourceVersion": "1032",
+    "creationTimestamp": "2026-10-26T12:00:00Z"
+   },
+   "data": {
+    "LOG_LEVEL": "info",
+    "NEW_CHECKOUT": "true",
+    "DARK_SKY": "on",
+    "REGION": "eu-north"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "ConfigMap",
+   "metadata": {
+    "name": "lantern-config",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000033",
+    "resourceVersion": "1033",
+    "creationTimestamp": "2026-10-26T12:00:00Z"
+   },
+   "data": {
+    "app.yaml": "listen: :8080\ndatabase: postgres://lantern-db:5432/lantern\n"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "ConfigMap",
+   "metadata": {
+    "name": "kube-root-ca.crt",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000034",
+    "resourceVersion": "1034",
+    "creationTimestamp": "2026-10-26T12:00:00Z"
+   },
+   "data": {
+    "ca.crt": "-----BEGIN CERTIFICATE-----\nMIIB (made up)\n-----END CERTIFICATE-----\n"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

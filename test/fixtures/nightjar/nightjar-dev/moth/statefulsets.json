@@ -1,0 +1,48 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "StatefulSet",
+   "metadata": {
+    "name": "moth-mysql",
+    "namespace": "moth",
+    "uid": "00000000-0000-4000-8000-000000000061",
+    "resourceVersion": "1061",
+    "creationTimestamp": "2026-10-04T12:00:00Z",
+    "labels": {
+     "app": "moth-mysql"
+    }
+   },
+   "spec": {
+    "replicas": 1,
+    "serviceName": "moth-mysql",
+    "selector": {
+     "matchLabels": {
+      "app": "moth-mysql"
+     }
+    },
+    "template": {
+     "spec": {
+      "containers": [
+       {
+        "name": "moth-mysql",
+        "image": "mysql:8.4"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "replicas": 1,
+    "readyReplicas": 1,
+    "currentReplicas": 1,
+    "currentRevision": "moth-mysql-xxxxd6n2qz"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

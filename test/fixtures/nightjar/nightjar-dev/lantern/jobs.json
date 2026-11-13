@@ -1,0 +1,167 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "batch/v1",
+   "kind": "Job",
+   "metadata": {
+    "name": "nightly-sweep-28999",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000039",
+    "resourceVersion": "1039",
+    "creationTimestamp": "2026-11-10T15:00:00Z",
+    "labels": {
+     "job-name": "nightly-sweep-28999"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "batch/v1",
+      "kind": "CronJob",
+      "name": "nightly-sweep",
+      "uid": "00000000-0000-4000-8000-000000000038",
+      "controller": true
+     }
+    ]
+   },
+   "spec": {
+    "completions": 1,
+    "backoffLimit": 3,
+    "template": {
+     "spec": {
+      "containers": [
+       {
+        "name": "nightly-sweep-28999",
+        "image": "nightjar/tools:3"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "startTime": "2026-11-10T15:00:00Z",
+    "succeeded": 1,
+    "completionTime": "2026-11-10T15:01:35Z"
+   }
+  },
+  {
+   "apiVersion": "batch/v1",
+   "kind": "Job",
+   "metadata": {
+    "name": "nightly-sweep-29000",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000041",
+    "resourceVersion": "1041",
+    "creationTimestamp": "2026-11-11T15:00:00Z",
+    "labels": {
+     "job-name": "nightly-sweep-29000"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "batch/v1",
+      "kind": "CronJob",
+      "name": "nightly-sweep",
+      "uid": "00000000-0000-4000-8000-000000000038",
+      "controller": true
+     }
+    ]
+   },
+   "spec": {
+    "completions": 1,
+    "backoffLimit": 3,
+    "template": {
+     "spec": {
+      "containers": [
+       {
+        "name": "nightly-sweep-29000",
+        "image": "nightjar/tools:3"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "startTime": "2026-11-11T15:00:00Z",
+    "succeeded": 1,
+    "completionTime": "2026-11-11T15:01:35Z"
+   }
+  },
+  {
+   "apiVersion": "batch/v1",
+   "kind": "Job",
+   "metadata": {
+    "name": "nightly-sweep-29001",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000043",
+    "resourceVersion": "1043",
+    "creationTimestamp": "2026-11-13T11:56:00Z",
+    "labels": {
+     "job-name": "nightly-sweep-29001"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "batch/v1",
+      "kind": "CronJob",
+      "name": "nightly-sweep",
+      "uid": "00000000-0000-4000-8000-000000000038",
+      "controller": true
+     }
+    ]
+   },
+   "spec": {
+    "completions": 1,
+    "backoffLimit": 3,
+    "template": {
+     "spec": {
+      "containers": [
+       {
+        "name": "nightly-sweep-29001",
+        "image": "nightjar/tools:3"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "startTime": "2026-11-13T11:56:00Z",
+    "active": 1
+   }
+  },
+  {
+   "apiVersion": "batch/v1",
+   "kind": "Job",
+   "metadata": {
+    "name": "migrate-7",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000045",
+    "resourceVersion": "1045",
+    "creationTimestamp": "2026-11-13T11:20:00Z",
+    "labels": {
+     "job-name": "migrate-7"
+    }
+   },
+   "spec": {
+    "completions": 1,
+    "backoffLimit": 3,
+    "template": {
+     "spec": {
+      "containers": [
+       {
+        "name": "migrate-7",
+        "image": "nightjar/tools:3"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "startTime": "2026-11-13T11:20:00Z",
+    "succeeded": 1,
+    "completionTime": "2026-11-13T11:21:35Z"
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}
