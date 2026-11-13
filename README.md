@@ -63,10 +63,28 @@ context?, namespace?, kind?, name?, view? } })`, or as a pane with
 
 ## Install
 
+By hand: clone it and link its `mod/` folder into Fireflies' mods.
+
 ```sh
-git clone <this repository> ~/code/fireflies-k8s
+git clone https://github.com/DwieDave/fireflies-k8s ~/code/fireflies-k8s
 ln -s ~/code/fireflies-k8s/mod ~/.config/herdr-app/mods/k8s
 ```
+
+To update: `git pull` in the clone; the app reloads the mod.
+
+With nix (a flake input, linked by home-manager):
+
+```nix
+# flake.nix
+inputs.fireflies-k8s = { url = "github:DwieDave/fireflies-k8s"; flake = false; };
+
+# home-manager
+xdg.configFile."herdr-app/mods/k8s".source = "${inputs.fireflies-k8s}/mod";
+```
+
+To update: `nix flake update fireflies-k8s` and switch. The folder is then read
+only: Fireflies can't write its editor typings (`tsconfig.json`,
+`gpui-kit.d.ts`) into it, which only matters for editing the mod there.
 
 Fireflies loads it at once. Open it with the palette (Kubernetes) or "+ new"
 (Nocturne reads the mod's `launcher` in `mod.json`), or bind a key in your own
@@ -75,8 +93,6 @@ Fireflies loads it at once. Open it with the palette (Kubernetes) or "+ new"
 ```json
 { "global": { "cmd-shift-k": "mod.open:k8s" } }
 ```
-
-To update: `git pull` in the clone; the app reloads the mod.
 
 Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 
@@ -130,4 +146,4 @@ kubectl answering from the recorded JSON of a made-up cluster, *nightjar*
 (`test/fixtures/build.ts` writes it). Writes are logged, never applied.
 `test/shots.sh <herdr-app>` takes the pictures above in a scratch Fireflies.
 
-Icons: [Lucide](https://lucide.dev) (ISC).
+Icons: [Lucide](https://lucide.dev) (ISC). Licence: MIT ([LICENSE](LICENSE)).

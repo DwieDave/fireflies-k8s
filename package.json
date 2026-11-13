@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "description": "Kubernetes and Argo CD in a Fireflies window: an optional mod. The tools check it; the mod itself is mod/.",
+  "license": "MIT",
   "devDependencies": {
     "@oxlint/plugins": "1.93.0",
     "oxlint": "1.93.0",
