@@ -17,6 +17,7 @@ import type { KindRef } from "./kinds.ts";
 import type { Handover } from "./state.ts";
 import { FRESH, HANDOVER, KEPT, WINDOW, isDetailView, isHandover } from "./state.ts";
 import { listKey, selectedRow, setTab, showRef } from "./nav.ts";
+import { pressKeys } from "./input.ts";
 
 /** The opening args another mod or a person can give (props, `k8s.open`, `k8s.show`). */
 export const isOpening = object({}, {
@@ -254,6 +255,7 @@ export function command(v: K8s, c: string, cx: AsyncContext): void {
   else if (name === "refresh") v.data.refresh();
   else if (name === "open") openCommand(arg, v);
   else if (name === "show") showCommand(v, arg);
+  else if (name === "press") pressKeys(v, arg.split(/\s+/).filter(Boolean), cx);
 }
 
 /** `k8s.open:pane|tab|window` or `k8s.open:{"as": …, …opening}`. */

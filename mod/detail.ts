@@ -40,11 +40,11 @@ export function detail(v: K8s, t: Theme, width: number): Element {
     v.panel = "detail";
   })));
 
-  return panel(t, "k8s-detail", row.ref.name, active, v_flex().size_full().child(strip).child(div().flex_1().min_h(0).child(body(v, t, row, shown, width, active))), { num: "5", right: row.status });
+  return panel(t, "k8s-detail", row.ref.name, active, v_flex().size_full().child(strip).child(v_flex().flex_1().min_h(0).min_w(0).child(body(v, t, row, shown, width, active))), { num: "5", right: row.status });
 }
 
 function body(v: K8s, t: Theme, row: Row, shown: DetailView, width: number, active: boolean): Element {
-  if (row.ref.kind === "secrets") return v_flex().size_full().child(secretValues(v, t, row)).child(div().flex_1().min_h(0).child(textView(v, t)));
+  if (row.ref.kind === "secrets") return v_flex().size_full().child(secretValues(v, t, row)).child(v_flex().flex_1().min_h(0).min_w(0).child(textView(v, t)));
 
   if (shown === "graph") return graphView(v, t, row, width, active);
 
@@ -52,7 +52,7 @@ function body(v: K8s, t: Theme, row: Row, shown: DetailView, width: number, acti
 
   const node = row.ref.kind === "nodes" ? nodeLoad(v, t, row, width) : null;
 
-  return v_flex().size_full().when(node !== null, (el) => el.child(node ?? div())).child(div().flex_1().min_h(0).child(textView(v, t)));
+  return v_flex().size_full().when(node !== null, (el) => el.child(node ?? div())).child(v_flex().flex_1().min_h(0).min_w(0).child(textView(v, t)));
 }
 
 /** The describe / YAML text, as a read-only code view. */
@@ -72,7 +72,7 @@ function graphView(v: K8s, t: Theme, row: Row, width: number, active: boolean): 
   const line = v.data.history.sum(keys);
 
   return v_flex().size_full()
-    .child(div().flex_1().min_h(0).child(s ? canvas(v, t, s, width, v.graphSel ?? row.key, active, (b, open) => {
+    .child(v_flex().flex_1().min_h(0).min_w(0).child(s ? canvas(v, t, s, width, v.graphSel ?? row.key, active, (b, open) => {
       v.graphSel = b.node.key;
       v.panel = "detail";
 

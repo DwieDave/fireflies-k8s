@@ -32,9 +32,9 @@ export function argoTab(v: K8s, t: Theme): Element {
   }
 
   return h_flex().size_full().gap(10).px(10).pt(12).pb(8)
-    .child(div().w(230).flex_none().h_full().child(appList(v, t)))
-    .child(div().flex_1().min_w(0).h_full().child(a ? tree(v, t, a) : div()))
-    .child(div().w(300).flex_none().h_full().child(a ? side(v, t, a) : div()));
+    .child(v_flex().w(230).flex_none().h_full().child(appList(v, t)))
+    .child(v_flex().flex_1().min_w(0).h_full().child(a ? tree(v, t, a) : div()))
+    .child(v_flex().w(300).flex_none().h_full().child(a ? side(v, t, a) : div()));
 }
 
 function appList(v: K8s, t: Theme): Element {
@@ -78,7 +78,7 @@ function tree(v: K8s, t: Theme, a: Application): Element {
 
   const body = v_flex().size_full()
     .when(elsewhere, (el) => el.child(div().px(10).py(6).text_size(10).text_color(t.dim).child(`deploys to ${destinationOf(a)}: its resources as Argo reports them (what they own lives in that cluster)`)))
-    .child(div().flex_1().min_h(0).child(s ? canvas(v, t, s, width, v.argoNode, active, (b, open, cx) => {
+    .child(v_flex().flex_1().min_h(0).min_w(0).child(s ? canvas(v, t, s, width, v.argoNode, active, (b, open, cx) => {
       v.argoNode = b.node.key;
       v.argoPanel = "tree";
 
@@ -123,7 +123,7 @@ function side(v: K8s, t: Theme, a: Application): Element {
     .child(rule(t, "history"))
     .child(timeline(v, t, a))
     .child(rule(t, v.argoDiff?.app === a.metadata.name ? (v.argoDiff.how === "argocd" ? "diff · argocd" : "diff · live vs last applied") : "diff (D)"))
-    .child(div().flex_1().min_h(0).child(diffView(v, t, a))), { num: "3", right: "S sync · B rollback" });
+    .child(v_flex().flex_1().min_h(0).min_w(0).child(diffView(v, t, a))), { num: "3", right: "S sync · B rollback" });
 }
 
 /** The history as a line of marks, oldest left: the running revision ringed, the picked one lit. */

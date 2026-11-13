@@ -27,6 +27,19 @@ export function onKey(v: K8s, e: KeyEvent, cx: Context): void {
   }
 }
 
+/** Keys by name, one after another (`k8s.press:j j enter`, `k8s.press:ctrl-d`): what a script or a demo types.
+ *  A single character stands for itself; `space` is a space. */
+export function pressKeys(v: K8s, names: readonly string[], cx: Context): void {
+  for (const name of names) {
+    const ch = name === "space" ? " " : name.length === 1 ? name : undefined;
+    const modifiers = { control: name.startsWith("ctrl-"), alt: false, shift: name.length === 1 && name !== name.toLowerCase(), platform: false, function: false };
+    const key = name.replace(/^ctrl-/, "");
+    const e: KeyEvent = ch === undefined ? { key, keystroke: name, modifiers } : { key, keystroke: name, modifiers, key_char: ch };
+
+    handled(v, e, name, cx);
+  }
+}
+
 /** Whether the window took the key. */
 function handled(v: K8s, e: KeyEvent, name: string, cx: Context): boolean {
   if (v.help) {

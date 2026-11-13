@@ -41,7 +41,7 @@ export function frame(v: K8s, t: Theme, _cx: Context): Element {
     .on_mouse_down("left", () => handle?.focus())
     .on_key_down((e, cx) => onKey(v, e, cx))
     .child(header(v, t))
-    .child(div().relative().flex_1().min_h(0).child(body(v, t))
+    .child(v_flex().relative().flex_1().min_h(0).child(body(v, t))
       .children([menuBox(v, t), askCard(v, t), helpPanel(v, t)].flatMap((x) => (x ? [x] : []))))
     .children(v.tab === "resources" ? [shelf(v, t)].flatMap((x) => (x ? [x] : [])) : [])
     .child(keyBar(v, t));
@@ -72,16 +72,16 @@ function resources(v: K8s, t: Theme): Element {
     const dw = detailWidth(v);
 
     return h_flex().size_full().gap(10).px(10).pt(12).pb(8)
-      .child(div().w(RAIL).flex_none().h_full().child(rail(v, t)))
-      .child(div().flex_1().min_w(0).h_full().child(table(v, t, w - RAIL - dw - 40)))
-      .child(div().w(dw).flex_none().h_full().child(detail(v, t, dw)));
+      .child(v_flex().w(RAIL).flex_none().h_full().child(rail(v, t)))
+      .child(v_flex().flex_1().min_w(0).h_full().child(table(v, t, w - RAIL - dw - 40)))
+      .child(v_flex().w(dw).flex_none().h_full().child(detail(v, t, dw)));
   }
 
   const rw = RAIL - 20;
 
   return h_flex().size_full().gap(10).px(10).pt(12).pb(8)
-    .child(div().w(rw).flex_none().h_full().child(rail(v, t)))
+    .child(v_flex().w(rw).flex_none().h_full().child(rail(v, t)))
     .child(v_flex().flex_1().min_w(0).h_full().gap(12)
-      .child(div().flex_1().min_h(0).child(table(v, t, w - rw - 30)))
+      .child(v_flex().flex_1().min_h(0).min_w(0).child(table(v, t, w - rw - 30)))
       .child(div().h(Math.round((v.size.height - 90) * 0.48)).flex_none().child(detail(v, t, w - rw - 30))));
 }
