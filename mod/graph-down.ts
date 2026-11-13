@@ -1,11 +1,19 @@
 // A workload graph top to bottom, for a panel taller than wide (the
-// resources tab's detail column): a row per rank (the ingresses, the
-// services, the workload, its replica sets, the pods at the bottom), each
-// parent centred over the first row of what it owns, a row too long for the
-// panel wrapped into further rows under it. The lines go down: out of a
-// box's foot, along a lane over the row below, into each box's head; a
-// wrapped row's lane hangs off a spine in the gutter left of the rows.
-// Boxes are as wide as their names need, as far as the panel allows.
+// resources tab's detail column): a band per rank (the ingresses, the
+// services, the workload, its replica sets, the pods at the bottom), every
+// rank wholly under the one above, so siblings stay side by side (the live
+// replica set first, the ones scaled to 0 beside it) and what they own
+// hangs below all of them. A rank too long for the panel wraps into rows on
+// a grid of columns; a rank of one row sits in the middle.
+//
+// The lines go down: out of a box's foot, along a lane over the row below,
+// into each box's head. Where they'd have to pass a row (a parent in a
+// wrapped row's upper line, children in more than one row), they run in the
+// gutters between the grid's columns: out of the parent's side into the
+// gutter right of it, or from the first lane down the gutter left of the
+// first child. Lanes over a row are staggered per parent, so two parents'
+// lines never run on one line. Boxes are as wide as their names need, as
+// far as the panel allows.
 
 import type { GNode, Graph } from "./graph.ts";
 import type { Dims, Direction, Laid, Placed, Seg } from "./graph-layout.ts";
@@ -40,110 +48,117 @@ export function downDims(g: Graph, width: number): Dims {
   return { ...DIMS, w: Math.max(96, Math.min(want, width - 2 * DIMS.pad)), gx: GX, gy: GY };
 }
 
-/** A subtree measured: its width and height, and its children in rows. */
-interface Block {
-  readonly node: GNode;
-  readonly w: number;
-  readonly h: number;
-  readonly rows: readonly (readonly Block[])[];
-}
-
-const rowWidth = (d: Dims, r: readonly Block[]): number => r.reduce((acc, b) => acc + b.w, 0) + Math.max(0, r.length - 1) * d.gx;
-
-/** Blocks packed into rows no wider than `room`. */
-function pack(d: Dims, kids: readonly Block[], room: number): Block[][] {
-  const rows: Block[][] = [];
-  let row: Block[] = [];
-
-  for (const k of kids) {
-    if (row.length && rowWidth(d, [...row, k]) > room) {
-      rows.push(row);
-      row = [];
-    }
-
-    row.push(k);
-  }
-
-  if (row.length) rows.push(row);
-
-  return rows;
-}
-
-/** Measures a subtree, its children packed into rows no wider than `room`. */
-function measure(n: GNode, d: Dims, room: number): Block {
-  const rows = pack(d, n.children.map((c) => measure(c, d, room)), room);
-  const w = Math.max(d.w, ...rows.map((r) => rowWidth(d, r)));
-  const h = d.h + rows.reduce((acc, r) => acc + d.gy + Math.max(...r.map((k) => k.h)), 0);
-
-  return { node: n, w, h, rows };
-}
-
-/** A parent and the rows of boxes it leads to, from `left` to `right`. A wrapped group's spine runs in the
- *  gutter left of its rows, or right of them when a child's own rows wrap too (`outer`: that child's spine
- *  is on the left), so two spines never share a line. */
-interface Group {
-  readonly from: Placed;
+/** A rank laid out: its rows of boxes, and whether they sit on the grid (wrapped) or in the middle. */
+interface Rank {
   readonly rows: readonly (readonly Placed[])[];
-  readonly left: number;
-  readonly right: number;
-  readonly outer: boolean;
+  readonly grid: boolean;
 }
 
-/** Where a block's own box sits across it: centred over its first row. */
-const selfX = (b: Block, d: Dims): number => Math.round(((b.rows[0] ? rowWidth(d, b.rows[0]) : d.w) - d.w) / 2);
+/** The tree's ranks: the root, then each rank's children in their parents' order. */
+function ranksOf(root: GNode): readonly (readonly GNode[])[] {
+  const out: GNode[][] = [];
 
-function place(b: Block, x: number, y: number, d: Dims, boxes: Placed[], groups: Group[]): Placed {
-  const self: Placed = { node: b.node, x: x + selfX(b, d), y };
-  let ry = y + d.h + d.gy;
+  for (let rank: readonly GNode[] = [root]; rank.length; rank = rank.flatMap((n) => n.children)) out.push([...rank]);
 
-  boxes.push(self);
+  return out;
+}
 
-  const rows = b.rows.map((r) => {
-    let rx = x;
+/** Where things sit across: the grid's first column, the grid's width, a column's x and its gutters. */
+interface Across {
+  readonly x0: number;
+  readonly width: number;
+  readonly cols: number;
+}
 
-    const placed = r.map((k) => {
-      const p = place(k, rx, ry, d, boxes, groups);
+const colX = (a: Across, d: Dims, c: number): number => a.x0 + c * (d.w + d.gx);
+const gutter = (a: Across, d: Dims, c: number): number => colX(a, d, c) - Math.round(d.gx / 2);
 
-      rx += k.w + d.gx;
+function placeRank(nodes: readonly GNode[], a: Across, d: Dims, top: number): Rank {
+  const rows: Placed[][] = [];
 
-      return p;
-    });
+  for (let i = 0; i < nodes.length; i += a.cols) rows.push([]);
 
-    ry += Math.max(...r.map((k) => k.h)) + d.gy;
+  const grid = rows.length > 1;
+  const lone = Math.round((a.width - (nodes.length * d.w + (nodes.length - 1) * d.gx)) / 2);
 
-    return placed;
+  nodes.forEach((node, i) => {
+    const r = Math.floor(i / a.cols);
+    const c = i % a.cols;
+    const x = grid ? colX(a, d, c) : a.x0 + lone + c * (d.w + d.gx);
+
+    rows[r]?.push({ node, x, y: top + r * (d.h + d.gy) });
   });
 
-  const outer = b.rows.some((r) => r.some((k) => k.rows.length > 1));
-
-  if (rows.length) groups.push({ from: self, rows, left: x, right: x + Math.max(...b.rows.map((r) => rowWidth(d, r))), outer });
-
-  return self;
+  return { rows, grid };
 }
 
 const across = (x1: number, x2: number, y: number): Seg => ({ x: Math.min(x1, x2), y, w: Math.abs(x2 - x1) + 1, h: 1, live: false });
 const down = (x: number, y1: number, y2: number, live = false): Seg => ({ x, y: y1, w: 1, h: Math.max(1, y2 - y1), live });
 
-/** A parent's lines: down from its foot to the first row's lane, along each lane, down into each box. */
-function groupLines(gr: Group, d: Dims, segs: Seg[]): void {
-  const mid = (p: Placed) => p.x + Math.round(d.w / 2);
-  const pcx = mid(gr.from);
-  const spine = gr.outer ? gr.right + Math.round(d.gx / 2) : gr.left - Math.round(d.gx / 2);
-  const lanes = gr.rows.map((r) => (r[0]?.y ?? 0) - Math.round(d.gy / 2));
-  const wrapped = gr.rows.length > 1;
+/** How one parent's lines reach its children: the rows of the rank below it needs a lane over, and the
+ *  gutter its trunk runs down (null: straight down from its foot into one row). */
+interface Route {
+  readonly p: Placed;
+  readonly kids: readonly Placed[];
+  readonly kidRow: ReadonlyMap<Placed, number>;
+  /** It leaves by its foot (it's in its rank's last row), else by its side. */
+  readonly foot: boolean;
+  readonly rows: readonly number[];
+  readonly trunk: number | null;
+  /** Its lane's y over each row it reaches (rankLines fills it in). */
+  readonly lanes: Map<number, number>;
+}
 
-  segs.push(down(pcx, gr.from.y + d.h, lanes[0] ?? 0));
+const mid = (d: Dims, b: Placed): number => b.x + Math.round(d.w / 2);
 
-  gr.rows.forEach((r, i) => {
-    const lane = lanes[i] ?? 0;
-    const xs = r.map(mid);
-    const ends = [...xs, ...(i === 0 ? [pcx] : []), ...(wrapped ? [spine] : [])];
+function route(p: Placed, pr: Rank, below: Rank, at: ReadonlyMap<string, Placed>, a: Across, d: Dims): Route {
+  const kids = p.node.children.flatMap((c) => at.get(c.key) ?? []);
+  const kidRow = new Map(kids.map((k) => [k, below.rows.findIndex((row) => row.includes(k))] as const));
+  const rows = [...kidRow.values()];
+  const first = Math.min(...rows);
+  const last = Math.max(...rows);
+  const foot = pr.rows[pr.rows.length - 1]?.includes(p) ?? true;
+  const col = (b: Placed) => Math.round((b.x - a.x0) / (d.w + d.gx));
+  // A row of its own rank under it: out by its side into the gutter right of it. Children past the
+  // first row: down the gutter left of the first child.
+  const trunk = !foot ? gutter(a, d, col(p) + 1) : last > 0 ? gutter(a, d, col(kids[0] ?? p)) : null;
+  const from = foot ? 0 : first;
 
-    segs.push(across(Math.min(...ends), Math.max(...ends), lane));
-    r.forEach((p, j) => segs.push(down(xs[j] ?? 0, lane, p.y, liveTone(p.node.tone))));
+  return { p, kids, kidRow, foot, rows: Array.from({ length: last - from + 1 }, (_, i) => from + i), trunk, lanes: new Map() };
+}
+
+/** A route's lines, `lane(j)` the y of its lane over the row j below. */
+function routeLines(r: Route, lane: (j: number) => number, d: Dims, segs: Seg[]): void {
+  const p = r.p;
+  const half = p.y + Math.round(d.h / 2);
+  const end = lane(r.rows[r.rows.length - 1] ?? 0) + 1;
+
+  if (r.foot) segs.push(down(mid(d, p), p.y + d.h, lane(0)));
+
+  if (r.trunk !== null) segs.push(...(r.foot ? [down(r.trunk, lane(0), end)] : [across(p.x + d.w, r.trunk, half), down(r.trunk, half, end)]));
+
+  for (const j of r.rows) {
+    const xs = r.kids.filter((k) => r.kidRow.get(k) === j).map((k) => mid(d, k));
+    const ends = [...xs, ...(r.foot && j === 0 ? [mid(d, p)] : []), ...(r.trunk === null ? [] : [r.trunk])];
+
+    if (ends.length > 1) segs.push(across(Math.min(...ends), Math.max(...ends), lane(j)));
+  }
+
+  for (const k of r.kids) segs.push(down(mid(d, k), lane(r.kidRow.get(k) ?? 0), k.y, liveTone(k.node.tone)));
+}
+
+/** Every parent's lines into the rank below: lanes over each row staggered upwards, one per route. */
+function rankLines(pr: Rank, below: Rank, at: ReadonlyMap<string, Placed>, a: Across, d: Dims, segs: Seg[]): void {
+  const routes = pr.rows.flat().filter((p) => p.node.children.length).map((p) => route(p, pr, below, at, a, d));
+
+  below.rows.forEach((row, j) => {
+    const top = row[0]?.y ?? 0;
+    const users = routes.filter((r) => r.rows.includes(j));
+
+    users.forEach((r, i) => r.lanes.set(j, Math.max(top - d.gy + 3, top - 7 - 5 * i)));
   });
 
-  if (wrapped) segs.push(down(spine, lanes[0] ?? 0, (lanes[lanes.length - 1] ?? 0) + 1));
+  routes.forEach((r) => routeLines(r, (j) => r.lanes.get(j) ?? 0, d, segs));
 }
 
 /** The feeders' rows over the tree (the outermost on top), each centred on the root, and their lines. */
@@ -168,30 +183,53 @@ function feederRows(g: Graph, d: Dims, root: Placed, at: Map<string, Placed>, bo
   for (const f of g.feeders) {
     const from = at.get(f.node.key);
     const to = f.to.flatMap((k) => at.get(k) ?? []);
+    const lane = (to[0]?.y ?? 0) - Math.round(d.gy / 2);
+    const xs = to.map((b) => mid(d, b));
 
-    if (from && to.length) groupLines({ from, rows: [to], left: Math.min(...to.map((p) => p.x)), right: 0, outer: false }, d, segs);
+    if (!from || !to.length) continue;
+
+    segs.push(down(mid(d, from), from.y + d.h, lane), across(Math.min(mid(d, from), ...xs), Math.max(mid(d, from), ...xs), lane));
+    to.forEach((b) => segs.push(down(mid(d, b), lane, b.y)));
   }
 }
 
 /** Lays a graph out top to bottom in a panel `width` wide. */
 export function layoutDown(g: Graph, width: number): Laid {
   const d = downDims(g, width);
-  const block = measure(g.root, d, Math.max(d.w, width - 2 * d.pad));
+  const ranks = ranksOf(g.root);
+  const cols = Math.max(1, Math.floor((width - 2 * d.pad + d.gx) / (d.w + d.gx)));
+  const used = Math.min(cols, Math.max(...ranks.map((r) => r.length)));
   const deepest = Math.max(0, ...g.feeders.map((f) => f.depth));
-  const widest = Math.max(0, ...Array.from({ length: deepest }, (_, i) => g.feeders.filter((f) => f.depth === i + 1).length));
-  // Room left of the tree for a feeder row wider than the root's first row.
-  const margin = Math.max(0, Math.ceil((widest * d.w + (widest - 1) * d.gx - d.w) / 2) - selfX(block, d));
-  const boxes: Placed[] = [];
-  const groups: Group[] = [];
-  const segs: Seg[] = [];
-  const root = place(block, d.pad + margin, d.pad + deepest * (d.h + d.gy), d, boxes, groups);
+  const feedWide = Math.max(0, ...Array.from({ length: deepest }, (_, i) => g.feeders.filter((f) => f.depth === i + 1).length));
+  const gridW = used * (d.w + d.gx) - d.gx;
+  const all = Math.max(gridW, feedWide * (d.w + d.gx) - d.gx);
+  const a: Across = { x0: d.pad + Math.round((all - gridW) / 2), width: gridW, cols };
+  const placed: Rank[] = [];
+  let top = d.pad + deepest * (d.h + d.gy);
+
+  for (const nodes of ranks) {
+    const r = placeRank(nodes, a, d, top);
+
+    placed.push(r);
+    top += r.rows.length * (d.h + d.gy);
+  }
+
+  const boxes: Placed[] = placed.flatMap((r) => r.rows.flat());
   const at = new Map(boxes.map((b) => [b.node.key, b] as const));
+  const segs: Seg[] = [];
 
-  feederRows(g, d, root, at, boxes, segs);
-  groups.forEach((gr) => groupLines(gr, d, segs));
+  placed.forEach((pr, k) => {
+    const below = placed[k + 1];
 
-  const width_ = Math.max(0, ...boxes.map((b) => b.x + d.w)) + d.pad;
+    if (below) rankLines(pr, below, at, a, d, segs);
+  });
+
+  const root = at.get(g.root.key);
+
+  if (root) feederRows(g, d, root, at, boxes, segs);
+
+  const w = Math.max(0, ...boxes.map((b) => b.x + d.w)) + d.pad;
   const height = Math.max(0, ...boxes.map((b) => b.y + d.h)) + d.pad;
 
-  return { dir: "down", boxes, segs, width: width_, height, d, top: 0 };
+  return { dir: "down", boxes, segs, width: w, height, d, top: 0 };
 }

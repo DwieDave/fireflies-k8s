@@ -19,6 +19,12 @@ function deployment(n: number): Graph {
   return { root, feeders: [{ node: svc, depth: 1, to: ["deploy"] }, { node: ing, depth: 2, to: ["svc"] }] };
 }
 
+/** A cronjob of five jobs, each with its one pod. */
+function cronjob(): Graph {
+  const jobs = Array.from({ length: 5 }, (_, i) => node(`lantern-report-2911${i}`, "job", [node(`lantern-report-2911${i}-pod`, "pod")]));
+  return { root: node("cj", "cronjob", jobs, "lantern-report"), feeders: [] };
+}
+
 const at = (l: Laid, key: string): Placed => l.boxes.find((b) => b.node.key === key)!;
 
 function overlaps(l: Laid): boolean {
@@ -48,13 +54,40 @@ describe("top to bottom", () => {
     expect(crossesBox(l)).toBe(false);
   });
 
-  test("a parent sits centred over the first row of what it owns; the feeders centred on the root", () => {
+  test("a rank of one row sits in the middle; the feeders centred on the root", () => {
     const l = layoutDown(deployment(4), 1200);
     const mid = (k: string) => at(l, k).x + l.d.w / 2;
     const ps = pods(4).map((p) => mid(p.key));
-    expect(Math.abs(mid("rs-live") - (ps[0]! + ps[3]!) / 2)).toBeLessThanOrEqual(1);
+    expect(Math.abs((ps[0]! + ps[3]!) / 2 - mid("deploy"))).toBeLessThanOrEqual(1);
+    expect(Math.abs((mid("rs-live") + mid("rs-old2")) / 2 - mid("deploy"))).toBeLessThanOrEqual(1);
     expect(Math.abs(mid("svc") - mid("deploy"))).toBeLessThanOrEqual(1);
     expect(Math.abs(mid("ing") - mid("deploy"))).toBeLessThanOrEqual(1);
+  });
+
+  test.each([300, 460, 560, 800, 1200])("no child rank sits above a sibling of its parent (%ipx): the scaled-away replica sets beside the live one, the pods under all three", (width) => {
+    for (const g of [deployment(4), deployment(9), cronjob()]) {
+      const l = layoutDown(g, width);
+      const depth = new Map<string, number>();
+      const walk = (n: GNode, k: number) => { depth.set(n.key, k); n.children.forEach((c) => walk(c, k + 1)); };
+      walk(g.root, 0);
+      const ranked = l.boxes.filter((b) => depth.has(b.node.key));
+      for (const a of ranked) for (const b of ranked) if (depth.get(a.node.key)! < depth.get(b.node.key)!) expect(a.y).toBeLessThan(b.y);
+      expect(overlaps(l)).toBe(false);
+      expect(crossesBox(l)).toBe(false);
+    }
+    // The live replica set comes first in its rank.
+    const l = layoutDown(deployment(4), width);
+    expect(readingOrder(l).filter((b) => b.node.kind === "rs")[0]?.node.key).toBe("rs-live");
+  });
+
+  test("a cronjob's jobs wrap, each job's pod in the rank under every job, each reached by its own lane", () => {
+    const l = layoutDown(cronjob(), 460);
+    const ys = (kind: string) => new Set(l.boxes.filter((b) => b.node.kind === kind).map((b) => b.y));
+    expect(ys("job").size).toBeGreaterThan(1);
+    expect(Math.min(...ys("pod"))).toBeGreaterThan(Math.max(...ys("job")));
+    // Lanes never share a line: no two horizontal pieces overlap on one y.
+    const flats = l.segs.filter((s) => s.h === 1 && s.w > 1);
+    expect(flats.some((a, i) => flats.some((b, j) => i < j && a.y === b.y && a.x < b.x + b.w - 1 && b.x < a.x + a.w - 1))).toBe(false);
   });
 
   test.each([300, 460, 560, 800])("a long row of pods wraps into further rows inside %ipx, nothing overlaps", (width) => {
