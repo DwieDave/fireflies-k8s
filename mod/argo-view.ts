@@ -19,6 +19,7 @@ import { age, instant } from "./time.ts";
 import { divider } from "./dividers.ts";
 import { GAP, argoAppsDivider, argoSideDivider } from "./panels.ts";
 import type { DiffLine } from "./diff.ts";
+import { argoNum } from "./panel-keys.ts";
 
 export function argoTab(v: K8s, t: Theme): Element {
   const a = shownApp(v);
@@ -75,7 +76,7 @@ function appList(v: K8s, t: Theme): Element {
       .child(div().relative().pl(34).text_size(10).truncate().text_color(t.dim).child(`${sync} · ${health} · ${destinationOf(a)}`));
   });
 
-  return panel(t, "argo-apps", "Applications", active, v_flex().id("argo-app-list").size_full().pt(4).overflow_y_scroll().children(rows), { num: "1", right: String(list.length) });
+  return panel(t, "argo-apps", "Applications", active, v_flex().id("argo-app-list").size_full().pt(4).overflow_y_scroll().children(rows), { num: argoNum("apps"), right: String(list.length) });
 }
 
 function tree(v: K8s, t: Theme, a: Application): Element {
@@ -98,7 +99,7 @@ function tree(v: K8s, t: Theme, a: Application): Element {
     }, APP_CANVAS) : div()))
     .child(legend(t));
 
-  return panel(t, "argo-tree", a.metadata.name, active, body, { num: "2", right: "enter opens · tab panels" });
+  return panel(t, "argo-tree", a.metadata.name, active, body, { num: argoNum("tree"), right: "enter opens · tab panels" });
 }
 
 function legend(t: Theme): Element {
@@ -131,7 +132,7 @@ function side(v: K8s, t: Theme, a: Application): Element {
     .child(rule(t, "history"))
     .child(timeline(v, t, a))
     .child(rule(t, v.argoDiff?.app === a.metadata.name ? (v.argoDiff.how === "argocd" ? "diff · argocd" : "diff · live vs last applied") : "diff (D)"))
-    .child(v_flex().flex_1().min_h(0).min_w(0).child(diffView(v, t, a))), { num: "3", right: "S sync · B rollback" });
+    .child(v_flex().flex_1().min_h(0).min_w(0).child(diffView(v, t, a))), { num: argoNum("side"), right: "S sync · B rollback" });
 }
 
 /** The history as a line of marks, oldest left: the running revision ringed, the picked one lit. */

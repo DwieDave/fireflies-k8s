@@ -24,6 +24,7 @@ import { age, instant } from "./time.ts";
 import { cpuText, memText } from "./quantity.ts";
 import { allocatable } from "./rows-kinds.ts";
 import { paceChip } from "./metrics-pace.ts";
+import { panelNum } from "./panel-keys.ts";
 
 const VIEWS: readonly (readonly [DetailView, string, string])[] = [["graph", "g", "graph"], ["describe", "d", "describe"], ["yaml", "y", "yaml"], ["events", "v", "events"]];
 
@@ -31,7 +32,7 @@ export function detail(v: K8s, t: Theme, width: number): Element {
   const row = selectedRow(v);
   const active = v.panel === "detail";
 
-  if (!row) return panel(t, "k8s-detail", "nothing selected", active, div().p(16).text_size(11).text_color(t.dim).child("pick a row"), { num: "5" });
+  if (!row) return panel(t, "k8s-detail", "nothing selected", active, div().p(16).text_size(11).text_color(t.dim).child("pick a row"), { num: panelNum("detail") });
 
   const views = VIEWS.filter(([d]) => d !== "graph" || hasGraph(row.ref.kind));
   const shown = views.some(([d]) => d === v.detail) ? v.detail : "describe";
@@ -41,7 +42,7 @@ export function detail(v: K8s, t: Theme, width: number): Element {
     v.panel = "detail";
   })));
 
-  return panel(t, "k8s-detail", row.ref.name, active, v_flex().size_full().child(strip).child(v_flex().flex_1().min_h(0).min_w(0).child(body(v, t, row, shown, width, active))), { num: "5", right: row.status });
+  return panel(t, "k8s-detail", row.ref.name, active, v_flex().size_full().child(strip).child(v_flex().flex_1().min_h(0).min_w(0).child(body(v, t, row, shown, width, active))), { num: panelNum("detail"), right: row.status });
 }
 
 function body(v: K8s, t: Theme, row: Row, shown: DetailView, width: number, active: boolean): Element {

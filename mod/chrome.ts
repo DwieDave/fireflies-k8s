@@ -71,7 +71,7 @@ function status(v: K8s, t: Theme): Element {
 
 /** The narrow layout's fold row: the panels as numbered tabs, the shown one lit. */
 export function foldRow(v: K8s, t: Theme): Element {
-  const names: readonly (readonly [Panel, string])[] = [["rail", "1 where"], ["table", `2 ${titleOf(v.kind).toLowerCase()}`], ["detail", "3 detail"]];
+  const names: readonly (readonly [Panel, string])[] = [["rail", "1-3 where"], ["table", `0 ${titleOf(v.kind).toLowerCase()}`], ["detail", "4 detail"]];
 
   return h_flex().id("k8s-fold").relative().h(24).flex_none().px(6).gap(2).items_center()
     .child(div().absolute().left(0).right(0).bottom(0).h(1).child(dither(t.ansi0, 1)))
@@ -123,11 +123,11 @@ function barKeys(v: K8s): readonly (readonly [string, string])[] {
 
   if (v.tab === "forwards") return [["enter", "leads"], ["w", "web"], ["b", "databases"], ["B", "pick secret"], ["p", "peek"], ["x", "stop"]];
 
-  if (v.panel === "rail") return [["enter", "pick"], ["0-9", "namespace"], ["tab", "panel"]];
+  if (v.panel === "rail") return [["enter", "pick"], ["n", "namespace"], ["0-4", "panel"]];
 
   const row = selectedRow(v);
 
-  if (!row) return [["0-9", "namespace"], ["tab", "panel"]];
+  if (!row) return [["n", "namespace"], ["0-4", "panel"]];
 
   const max = v.narrow() ? 3 : v.size.width < 1000 ? 6 : 9;
 

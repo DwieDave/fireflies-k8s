@@ -104,10 +104,11 @@ export function rowActionFor(name: string, row: Row | null): RowAction | null {
 export const WINDOW_KEYS = [
   [":", "kind…"],
   ["/", "filter"],
-  ["0-9", "namespace (0 all)"],
+  ["n", "namespace: a picker (type to narrow, 0 all, 1-9 the first shown, * a favourite)"],
+  ["1 2 3 0 4", "the panels by number (resources: context, namespaces, kinds, the table, detail; argo cd: applications 1, tree 0, status 2)"],
   ["ctrl-a", "every kind"],
   ["[ ]", "resources / argo cd / forwards"],
-  ["tab", "next panel"],
+  ["tab shift-tab", "next / previous panel"],
   ["+ -", "the panel with the keys wider or narrower (or drag the gap beside it; a double click resets it)"],
   ["j k ↑ ↓", "move"],
   ["g G", "first / last (in a list)"],

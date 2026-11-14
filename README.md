@@ -176,7 +176,8 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 |---|---|
 | `:` | jump to a kind (k9s's aliases: `po`, `deploy`, `svc`, `ing`, `cm`, `sec`, `no`, `ev`, `sts`, `ds`, `cj`, `pvc`, custom kinds by name; `ctx`, `pf`, `argo`) |
 | `/` | filter (`-l app=web` by label, `!x` everything but) |
-| `0`-`9` | namespace (0: all; your favourites first) |
+| `n` | namespace: a picker (type to narrow it, `0` all, `1`-`9` the first nine shown, `*` makes one a favourite; favourites first) |
+| `1` `2` `3` `0` `4` | the panels by number, as in the Databases window: context, namespaces, kinds, the table, detail (Argo CD: applications `1`, tree `0`, status `2`) |
 | `ctrl-a` | every kind |
 | `enter` | drill in (a deployment's pods), a namespace, an app's tree |
 | `g` `d` `y` `v` | graph, describe, YAML, events |
@@ -188,7 +189,7 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | `x` | show a secret's values |
 | `c` `u` `D` | cordon, uncordon, drain a node |
 | `ctrl-d` `ctrl-k` | delete, kill |
-| `[` `]`, `tab` | the tabs, the panels |
+| `[` `]`, `tab` `shift-tab` | the tabs; the next / previous panel |
 | `+` `-` | the panel with the keys wider or narrower (or drag the gap) |
 | `M` | metrics: read every 2s, 5s, 15s, 30s, or paused |
 | `ctrl-t` | into a pane / out to a window |

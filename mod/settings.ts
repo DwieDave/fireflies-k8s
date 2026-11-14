@@ -6,7 +6,7 @@
 //     "kubectl": "kubectl",              the program (a path, or a name on PATH)
 //     "readonly": ["nightjar-prod"],     contexts the window never writes to
 //     "prod": "prod|prd|production|live", what makes a context production-looking (asks twice)
-//     "favourites": ["lantern", "moth"],  namespaces 1-9 jump to (else the first nine)
+//     "favourites": ["lantern", "moth"],  namespaces listed first (the rail, n's picker; * there sets them)
 //     "metrics": 15                      seconds between CPU and memory reads (0: paused; M sets it)
 //   }
 
@@ -53,12 +53,15 @@ export function parseSettings(text: string | null): Settings {
   return { kubectl: f.kubectl || DEFAULTS.kubectl, readonly: new Set(f.readonly ?? []), prod: f.prod || DEFAULTS.prod, favourites: f.favourites ?? [], metrics: metricsPace(f.metrics) };
 }
 
-/** The settings file's text with `metrics` set, everything else kept as it was; null when the text isn't a
+/** The settings file's text with one field set, everything else kept as it was; null when the text isn't a
  *  JSON object (it's left alone then). No file yet: one with just that. */
-export function withMetrics(text: string | null, seconds: number): string | null {
-  if (text === null || !text.trim()) return `${JSON.stringify({ metrics: seconds }, null, 2)}\n`;
+export function withField(text: string | null, field: "metrics" | "favourites", value: number | readonly string[]): string | null {
+  if (text === null || !text.trim()) return `${JSON.stringify({ [field]: value }, null, 2)}\n`;
 
   const o = parseJson(text, isRecord);
 
-  return o ? `${JSON.stringify({ ...o, metrics: seconds }, null, 2)}\n` : null;
+  return o ? `${JSON.stringify({ ...o, [field]: value }, null, 2)}\n` : null;
 }
+
+/** The settings file's text with `metrics` set (withField). */
+export const withMetrics = (text: string | null, seconds: number): string | null => withField(text, "metrics", seconds);

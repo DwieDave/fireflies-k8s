@@ -17,16 +17,15 @@ import { diffApp, pickedEntry, refreshApp, rollbackApp, syncApp } from "./argo-a
 import { historyOf, sourceOf } from "./argo.ts";
 import { forwards, keepForward, openDatabases, openWeb, peekForward, stopForward } from "./integrate.ts";
 import type { Forward } from "./forwards.ts";
-import type { MenuRow, Panel } from "./state.ts";
+import type { MenuRow } from "./state.ts";
+import { stepPanel } from "./panel-keys.ts";
 import type { Placed } from "./graph-layout.ts";
-
-const PANELS: readonly Panel[] = ["rail", "table", "detail"];
 
 const step = (name: string): number | null => (name === "j" || name === "down" ? 1 : name === "k" || name === "up" ? -1 : name === "pagedown" ? 10 : name === "pageup" ? -10 : null);
 
 export function resourcesKey(v: K8s, name: string, cx: Context): boolean {
   if (name === "tab" || name === "shift-tab") {
-    v.panel = PANELS[(PANELS.indexOf(v.panel) + (name === "tab" ? 1 : 2)) % 3] ?? "table";
+    stepPanel(v, name === "tab" ? 1 : -1);
 
     return true;
   }
@@ -181,9 +180,7 @@ export function argoKey(v: K8s, name: string, cx: Context): boolean {
   const a = shownApp(v);
 
   if (name === "tab" || name === "shift-tab") {
-    const order = ["apps", "tree", "side"] as const;
-
-    v.argoPanel = order[(order.indexOf(v.argoPanel) + (name === "tab" ? 1 : 2)) % 3] ?? "apps";
+    stepPanel(v, name === "tab" ? 1 : -1);
 
     return true;
   }

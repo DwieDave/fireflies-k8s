@@ -8,13 +8,11 @@
 import { div } from "gpui-kit";
 import type { Context, Element } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { appHome, readTextFile, writeTextFile } from "herdr";
 import type { Theme } from "herdr";
-import * as fs from "fs/promises";
 import type { default as K8s } from "./main.ts";
 import { chip } from "./kit.ts";
 import { METRIC_PACES, paceText } from "./metrics.ts";
-import { SETTINGS_PATH, withMetrics } from "./settings.ts";
+import { keepSetting } from "./settings-keep.ts";
 import type { Menu } from "./state.ts";
 
 /** What metrics-server's own pace means for a faster one. */
@@ -40,26 +38,7 @@ export function setPace(v: K8s, seconds: number, cx: Context): void {
   v.settings = { ...v.settings, metrics: seconds };
   v.data.paceMetrics(seconds);
   v.say(seconds === 0 ? "metrics paused" : `metrics read every ${paceText(seconds)}`, "ok");
-  cx.spawn(async (cx) => {
-    const path = `${appHome()}/${SETTINGS_PATH}`;
-    const text = await readTextFile(path).catch(() => null);
-    const next = withMetrics(text, seconds);
-
-    if (next === null) {
-      v.say(`not kept: ${SETTINGS_PATH} isn't a plain JSON object, so it's left as it is`, "wk");
-      cx.notify();
-
-      return;
-    }
-
-    try {
-      await fs.mkdir(path.slice(0, path.lastIndexOf("/")), { recursive: true });
-      await writeTextFile(path, next, text);
-    } catch (cause: unknown) {
-      v.say(`not kept: ${cause instanceof Error ? cause.message : String(cause)}`, "bad");
-      cx.notify();
-    }
-  });
+  keepSetting(v, "metrics", seconds, cx);
 }
 
 /** The chip by the metrics: the pace (a click opens the menu), and "same numbers" while the reads repeat. */

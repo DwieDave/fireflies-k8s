@@ -10,7 +10,9 @@ import { askKey, asksTwice } from "./confirm.ts";
 import { pressName } from "./keys.ts";
 import { kindCompletions, kindFor } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
-import { drillBack, namespaceByNumber, selectedRow, setKind, setNamespace, setTab, stepTab } from "./nav.ts";
+import { drillBack, selectedRow, setKind, setTab, stepTab } from "./nav.ts";
+import { panelByNumber } from "./panel-keys.ts";
+import { findKey, namespaceMenu } from "./ns-picker.ts";
 import { closeCopy, closeWindow, move } from "./host.ts";
 import { clusterOf, request, runAsk, scaleSpec } from "./writes.ts";
 import { contextMenu, kindMenu } from "./menus.ts";
@@ -59,7 +61,7 @@ function handled(v: K8s, e: KeyEvent, name: string, cx: Context): boolean {
 
   if (v.ask) return askStep(v, name, e.key_char ?? null, cx);
 
-  if (v.menu) return menuKey(v, name, cx);
+  if (v.menu) return menuKey(v, name, e.key_char ?? null, cx);
 
   if (v.typing) return typingKey(v, name, e.key_char ?? null, cx);
 
@@ -88,22 +90,28 @@ function askStep(v: K8s, name: string, ch: string | null, cx: Context): boolean 
   return true;
 }
 
-function menuKey(v: K8s, name: string, cx: Context): boolean {
+function menuKey(v: K8s, name: string, ch: string | null, cx: Context): boolean {
   const m = v.menu;
 
   if (!m) return false;
 
-  if (name === "escape" || name === "q") v.menu = null;
+  if (m.find) {
+    findKey(v, m, name, ch, cx, (i) => pickMenu(v, i, cx));
+
+    return true;
+  }
+
+  if (m.onKey?.(name, cx)) return true;
+
+  // A row's own key (the right-click menu lists them) runs it, before the digits.
+  const own = m.rows.findIndex((r) => r.key === name);
+
+  if (own >= 0) pickMenu(v, own, cx);
+  else if (name === "escape" || name === "q") v.menu = null;
   else if (name === "j" || name === "down" || name === "ctrl-n") m.at = Math.min(m.rows.length - 1, m.at + 1);
   else if (name === "k" || name === "up" || name === "ctrl-p") m.at = Math.max(0, m.at - 1);
   else if (name === "enter") pickMenu(v, m.at, cx);
   else if (/^[1-9]$/.test(name)) pickMenu(v, Number(name) - 1, cx);
-  else {
-    // A row's own key (the right-click menu lists them) runs it.
-    const i = m.rows.findIndex((r) => r.key === name);
-
-    if (i >= 0) pickMenu(v, i, cx);
-  }
 
   return true;
 }
@@ -210,6 +218,9 @@ function windowKey(v: K8s, name: string, cx: Context): boolean {
     case "-": v.dividers.stepAll(panelEdges(v), -1);
 
  return true;
+    case "n": v.menu = namespaceMenu(v);
+
+ return true;
     case "M": v.menu = paceMenu(v);
 
  return true;
@@ -229,13 +240,9 @@ function windowKey(v: K8s, name: string, cx: Context): boolean {
     default: break;
   }
 
-  if (/^[0-9]$/.test(name) && v.tab !== "forwards") {
-    const ns = namespaceByNumber(v, Number(name));
-
-    if (ns !== undefined) {
-      setNamespace(v, ns);
-      setTab(v, "resources");
-    }
+  // A digit: the panel with that number (panel-keys.ts), as in the Databases window.
+  if (/^[0-9]$/.test(name)) {
+    panelByNumber(v, name);
 
     return true;
   }

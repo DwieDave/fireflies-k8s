@@ -54,7 +54,19 @@ export function menuBox(v: K8s, t: Theme): Element | null {
     .child(v_flex().id("k8s-menu-box").w(menuWidth(m, v.size.width)).max_h(Math.min(440, v.size.height - 60)).bg(t.background).border(1).border_color(t.accent).py(4).overflow_y_scroll()
       .on_mouse_down("left", stop)
       .child(div().px(10).pb(4).text_size(10).text_color(t.ansi8).child(m.title))
-      .children(rows));
+      .when(Boolean(m.find), (el) => el.child(findLine(t, m.find?.text ?? "", m.find?.hint ?? "")))
+      .children(rows)
+      .when(Boolean(m.find) && !m.rows.length, (el) => el.child(div().px(10).py(4).text_color(t.dim).child(`nothing holds "${m.find?.text ?? ""}" (backspace)`))));
+}
+
+/** A find menu's typed line: what's typed, a caret, what the keys do. */
+function findLine(t: Theme, text: string, hint: string): Element {
+  return h_flex().h(22).mx(10).mb(4).px(6).gap(4).items_center().border(1).border_color(t.ansi0)
+    .child(div().text_color(t.accent).child("›"))
+    .child(div().text_color(t.foreground).child(text))
+    .child(div().w(6).h(12).bg(t.accent).loop("opacity", { from: 0.2, to: 1, period: 900 }))
+    .child(div().flex_1())
+    .child(div().text_size(10).text_color(t.dim).child(hint));
 }
 
 /** The card a write waits on. */

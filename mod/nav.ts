@@ -8,7 +8,7 @@ import { isBuiltin, namespaced } from "./kinds.ts";
 import type { Row } from "./rows.ts";
 import type { Application } from "./argo.ts";
 import { inThisCluster } from "./argo.ts";
-import { drillRows, filterRows, rowsOf, strips } from "./derive.ts";
+import { drillRows, filterRows, rowsOf } from "./derive.ts";
 import type { Tab } from "./state.ts";
 import { TABS } from "./state.ts";
 
@@ -79,15 +79,6 @@ export function setNamespace(v: K8s, ns: string | null): void {
   v.namespace = ns;
   v.drill = null;
   v.secret = null;
-}
-
-/** The namespace the n-th number key names: 0 all, 1-9 the rail's order (favourites first). */
-export function namespaceByNumber(v: K8s, n: number): string | null | undefined {
-  if (n === 0) return null;
-
-  const s = strips(v.data, v.settings.favourites)[n];
-
-  return s ? s.name : undefined;
 }
 
 /** Switches the context: its own default namespace, nothing selected. */

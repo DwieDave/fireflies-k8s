@@ -1,7 +1,7 @@
 // The rail: [1] the contexts (a production-looking one tagged, a read-only
 // one marked), [2] the namespaces, each with its pods as a strip of cells
-// (failing first, so a broken namespace shows red before it's opened; 0 is
-// every namespace), [3] the kinds with their counts (failing ones counted in
+// (failing first, so a broken namespace shows red before it's opened; the
+// first row is every namespace; a favourite starred, n picks one by name), [3] the kinds with their counts (failing ones counted in
 // red). One list for the keyboard (menus.ts railItems), three panels drawn.
 
 import { div } from "gpui-kit";
@@ -16,6 +16,7 @@ import { looksProd } from "./contexts.ts";
 import { isBuiltin, kindInfo, titleOf } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
 import type { Tone } from "./rows.ts";
+import { panelNum } from "./panel-keys.ts";
 
 /** The rail: the contexts as tall as their rows (at most five shown), the namespaces and the
  *  kinds sharing the rest, each scrolling, the cursor's row kept in sight. */
@@ -43,11 +44,11 @@ export function rail(v: K8s, t: Theme): Element {
 
   return v_flex().id("k8s-rail").size_full().gap(12)
     .child(v_flex().h(28 + Math.min(5, Math.max(1, nContexts)) * 20).flex_none()
-      .child(panel(t, "rail-ctx", "Context", active && cursor?.part === "context", v_flex().id("rail-ctx-list").size_full().pt(4).overflow_y_scroll().children(of("context")), { num: "1" })))
+      .child(panel(t, "rail-ctx", "Context", active && cursor?.part === "context", v_flex().id("rail-ctx-list").size_full().pt(4).overflow_y_scroll().children(of("context")), { num: panelNum("rail", "context") })))
     .child(v_flex().flex_1().min_h(0)
-      .child(panel(t, "rail-ns", "Namespaces", active && cursor?.part === "namespace", v_flex().id("rail-ns-list").size_full().pt(4).pb(2).overflow_y_scroll().track_scroll(v.nsScroll).children(of("namespace")), { num: "2", right: v.namespace === null ? "all" : null })))
+      .child(panel(t, "rail-ns", "Namespaces", active && cursor?.part === "namespace", v_flex().id("rail-ns-list").size_full().pt(4).pb(2).overflow_y_scroll().track_scroll(v.nsScroll).children(of("namespace")), { num: panelNum("rail", "namespace"), right: v.namespace === null ? "all · n picks" : "n picks" })))
     .child(v_flex().flex_1().min_h(0)
-      .child(panel(t, "rail-kinds", "Kinds", active && cursor?.part === "kind", kinds, { num: "3", right: ": jump" })));
+      .child(panel(t, "rail-kinds", "Kinds", active && cursor?.part === "kind", kinds, { num: panelNum("rail", "kind"), right: ": jump" })));
 }
 
 function railRow(v: K8s, t: Theme, item: RailItem, i: number, cursor: boolean): Element {
@@ -77,11 +78,11 @@ function railRow(v: K8s, t: Theme, item: RailItem, i: number, cursor: boolean): 
 
   if (item.part === "namespace") {
     const s = item.strip;
-    const key = item.n <= 9 ? String(item.n) : "";
+    const fav = s.name !== null && v.settings.favourites.includes(s.name);
 
     return row.h(30).child(v_flex().relative().h_full().justify_center().gap(3)
       .child(h_flex().gap(7).items_center()
-        .child(div().w(8).flex_none().text_color(cursor ? t.accent : t.dim).child(key))
+        .child(div().w(8).flex_none().text_color(cursor ? t.accent : t.dim).child(fav ? "★" : ""))
         .child(div().flex_1().min_w(0).truncate().text_color(chosen ? t.foreground : t.muted).child(s.name ?? "all"))
         .when(s.bad > 0, (el) => el.child(div().flex_none().text_color(t.blocked).child(`${s.bad}✕`)))
         .child(div().flex_none().text_color(t.dim).child(String(s.tones.length))))

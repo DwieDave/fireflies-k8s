@@ -20,6 +20,7 @@ import { age } from "./time.ts";
 import { cpuText, memText } from "./quantity.ts";
 import { HIDDEN } from "./secrets.ts";
 import { isString } from "./guard.ts";
+import { panelNum } from "./panel-keys.ts";
 
 const ROW_H = 22;
 
@@ -60,7 +61,7 @@ export function table(v: K8s, t: Theme, width: number): Element {
       .children(rows.map((r, i) => tableRow(v, t, r, i, i === at, active, cols, keep)))
       .when(!rows.length, (el) => el.child(empty(v, t, feed))));
 
-  return panel(t, "k8s-table", title, active, body, { num: "4", right });
+  return panel(t, "k8s-table", title, active, body, { num: panelNum("table"), right });
 }
 
 function header(t: Theme, cols: readonly Column[]): Element {

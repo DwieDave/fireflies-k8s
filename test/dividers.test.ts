@@ -189,7 +189,7 @@ describe("the window's panels", () => {
 
   test("+ and - on the detail panel widen and narrow it; the graph is laid out for the new width", async () => {
     const { v, press } = await open();
-    press("tab");
+    press("4");
     expect(v.panel).toBe("detail");
     const before = detailWidth(v);
     press("+");
@@ -197,7 +197,7 @@ describe("the window's panels", () => {
     press("-", "-");
     expect(detailWidth(v)).toBe(before - 24);
     // The table between: + takes from both its neighbours.
-    press("tab", "tab");
+    press("0");
     expect(v.panel).toBe("table");
     const rail = v.dividers.size(railDivider(v));
     const det = v.dividers.size(detailDivider(v));

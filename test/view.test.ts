@@ -104,13 +104,70 @@ describe("k9s's keys", () => {
     expect(listRows(v).map((r) => r.ref.name)).toEqual(["lantern-db-0"]);
   });
 
-  test("0-9 pick namespaces (0 all, favourites first)", async () => {
-    const { v, press } = await open();
+  test("the digits give the keyboard to the panel with that number, in every tab, as in the Databases window", async () => {
+    const { v, press, draw } = await open();
+    const ns = v.namespace;
+    await press("4");
+    expect(v.panel).toBe("detail");
     await press("2");
-    expect(v.namespace).toBe("moth");
+    expect(v.panel).toBe("rail");
+    expect(v.namespace).toBe(ns);
+    const { railItems } = await import("../mod/menus.ts");
+    const at = railItems(v)[v.railAt];
+    expect(at?.part === "namespace" && at.strip.name).toBe("lantern");
+    await press("1");
+    expect(railItems(v)[v.railAt]?.part).toBe("context");
+    await press("3");
+    expect(railItems(v)[v.railAt]?.part === "kind" && railItems(v)[v.railAt]).toMatchObject({ kind: "pods" });
     await press("0");
+    expect(v.panel).toBe("table");
+    // The panels wear their numbers.
+    const shown = texts(draw());
+    for (const n of ["[1]", "[2]", "[3]", "[0]", "[4]"]) expect(shown).toContain(n);
+    // tab walks them in the order drawn; shift-tab back.
+    await press("1", "tab", "tab", "tab");
+    expect(v.panel).toBe("table");
+    await press("tab");
+    expect(v.panel).toBe("detail");
+    await press("shift-tab", "shift-tab");
+    expect(railItems(v)[v.railAt]?.part).toBe("kind");
+    // Argo CD: applications 1, the tree 0, the status 2.
+    await press("]", "2");
+    expect(v.tab).toBe("argo");
+    expect(v.argoPanel).toBe("side");
+    await press("0");
+    expect(v.argoPanel).toBe("tree");
+    await press("1");
+    expect(v.argoPanel).toBe("apps");
+    expect(v.namespace).toBe(ns);
+  });
+
+  test("n opens the namespaces picker: favourites first, typed letters narrow it, digits pick, * a favourite (kept)", async () => {
+    const { v, press, draw } = await open();
+    await press("n");
+    expect(v.menu?.title).toBe("namespace");
+    expect(v.menu?.rows.map((r) => r.label).slice(0, 3)).toEqual(["all namespaces", "lantern", "moth"]);
+    expect(v.menu?.rows.map((r) => r.key).slice(0, 3)).toEqual(["0", "1", "2"]);
+    expect(texts(draw())).toContain("type to narrow · 0-9 pick · * favourite · enter");
+    await press("2");
+    expect(v.menu).toBeNull();
+    expect(v.namespace).toBe("moth");
+    await press("n", "g", "l", "o");
+    expect(v.menu?.rows.map((r) => r.label)).toEqual(["glowworm"]);
+    await press("enter");
+    expect(v.namespace).toBe("glowworm");
+    await press("n", "0");
     expect(v.namespace).toBeNull();
-    expect(listRows(v).length).toBeGreaterThan(20);
+    // * on glowworm makes it a favourite, written to the settings with every other field kept.
+    await press("n", "g", "l", "o", "*");
+    expect(v.settings.favourites).toEqual(["lantern", "moth", "glowworm"]);
+    const kept = JSON.parse(env.files.get(`${HOME}/k8s/settings.json`) ?? "{}");
+    expect(kept.favourites).toEqual(["lantern", "moth", "glowworm"]);
+    expect(kept.kubectl).toBe(KUBECTL);
+    await press("backspace", "backspace", "backspace");
+    expect(v.menu?.rows.map((r) => r.label).slice(0, 4)).toEqual(["all namespaces", "lantern", "moth", "glowworm"]);
+    await press("escape");
+    expect(v.menu).toBeNull();
   });
 
   test("enter on a deployment drills into its pods; esc goes back to it", async () => {

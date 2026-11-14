@@ -50,6 +50,10 @@ export interface Menu {
   readonly title: string;
   readonly rows: readonly MenuRow[];
   at: number;
+  /** Type to filter (the namespace picker): what's typed, every row, how the shown ones get their keys. */
+  readonly find?: { readonly text: string; readonly all: readonly MenuRow[]; readonly hint?: string };
+  /** A key of this menu's own (the picker's `*`); true when it took it. */
+  readonly onKey?: (name: string, cx: Context) => boolean;
 }
 
 /** A word in the key bar for a few seconds (a write ran, a forward started). */
