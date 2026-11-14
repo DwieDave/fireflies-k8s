@@ -8,8 +8,8 @@
    "metadata": {
     "name": "glowworm-api-83qf-k2a7d",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000071",
-    "resourceVersion": "1071",
+    "uid": "00000000-0000-4000-8000-000000000072",
+    "resourceVersion": "1072",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "glowworm-api"
@@ -19,7 +19,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "glowworm-api-83qf",
-      "uid": "00000000-0000-4000-8000-000000000070",
+      "uid": "00000000-0000-4000-8000-000000000071",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -53,7 +53,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.2.247",
+    "podIP": "10.42.0.4",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -84,8 +84,8 @@
    "metadata": {
     "name": "glowworm-api-83qf-k2a7e",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000072",
-    "resourceVersion": "1072",
+    "uid": "00000000-0000-4000-8000-000000000073",
+    "resourceVersion": "1073",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "glowworm-api"
@@ -95,7 +95,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "glowworm-api-83qf",
-      "uid": "00000000-0000-4000-8000-000000000070",
+      "uid": "00000000-0000-4000-8000-000000000071",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -129,7 +129,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.0.4",
+    "podIP": "10.42.1.11",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -166,8 +166,8 @@
    "metadata": {
     "name": "glowworm-backfill-8itx3",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000075",
-    "resourceVersion": "1075",
+    "uid": "00000000-0000-4000-8000-000000000076",
+    "resourceVersion": "1076",
     "creationTimestamp": "2026-11-13T06:00:00Z",
     "labels": {
      "job-name": "glowworm-backfill"
@@ -177,7 +177,7 @@
       "apiVersion": "apps/v1",
       "kind": "Job",
       "name": "glowworm-backfill",
-      "uid": "00000000-0000-4000-8000-000000000074",
+      "uid": "00000000-0000-4000-8000-000000000075",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -204,7 +204,7 @@
    },
    "status": {
     "phase": "Failed",
-    "podIP": "10.42.0.25",
+    "podIP": "10.42.1.32",
     "startTime": "2026-11-13T06:00:00Z",
     "containerStatuses": [
      {
@@ -237,8 +237,8 @@
    "metadata": {
     "name": "glowworm-seed-8jda6",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000077",
-    "resourceVersion": "1077",
+    "uid": "00000000-0000-4000-8000-000000000078",
+    "resourceVersion": "1078",
     "creationTimestamp": "2026-11-04T12:00:00Z",
     "labels": {
      "job-name": "glowworm-seed"
@@ -248,7 +248,7 @@
       "apiVersion": "apps/v1",
       "kind": "Job",
       "name": "glowworm-seed",
-      "uid": "00000000-0000-4000-8000-000000000076",
+      "uid": "00000000-0000-4000-8000-000000000077",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -275,7 +275,7 @@
    },
    "status": {
     "phase": "Succeeded",
-    "podIP": "10.42.2.39",
+    "podIP": "10.42.0.46",
     "startTime": "2026-11-04T12:00:00Z",
     "containerStatuses": [
      {
@@ -298,6 +298,74 @@
      {
       "type": "Ready",
       "status": "False"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "glowworm-pg-1",
+    "namespace": "glowworm",
+    "uid": "00000000-0000-4000-8000-000000000080",
+    "resourceVersion": "1080",
+    "creationTimestamp": "2026-10-24T12:00:00Z",
+    "labels": {
+     "cnpg.io/cluster": "glowworm-pg",
+     "cnpg.io/instanceRole": "primary",
+     "cnpg.io/podRole": "instance"
+    }
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "postgres",
+      "image": "ghcr.io/cloudnative-pg/postgresql:16.4",
+      "ports": [
+       {
+        "containerPort": 5432,
+        "name": "postgresql",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.60",
+    "startTime": "2026-10-24T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "postgres",
+      "image": "ghcr.io/cloudnative-pg/postgresql:16.4",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-10-24T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
      }
     ]
    }

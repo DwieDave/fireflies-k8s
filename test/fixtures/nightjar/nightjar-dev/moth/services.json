@@ -8,8 +8,8 @@
    "metadata": {
     "name": "moth-queue",
     "namespace": "moth",
-    "uid": "00000000-0000-4000-8000-000000000064",
-    "resourceVersion": "1064",
+    "uid": "00000000-0000-4000-8000-000000000065",
+    "resourceVersion": "1065",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "moth-queue"
@@ -17,7 +17,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.1.82",
+    "clusterIP": "10.43.2.95",
     "ports": [
      {
       "protocol": "TCP",
@@ -37,8 +37,8 @@
    "metadata": {
     "name": "moth-ui",
     "namespace": "moth",
-    "uid": "00000000-0000-4000-8000-000000000065",
-    "resourceVersion": "1065",
+    "uid": "00000000-0000-4000-8000-000000000066",
+    "resourceVersion": "1066",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "moth-ui"
@@ -46,7 +46,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.2.95",
+    "clusterIP": "10.43.3.108",
     "ports": [
      {
       "protocol": "TCP",
@@ -66,8 +66,8 @@
    "metadata": {
     "name": "moth-mysql",
     "namespace": "moth",
-    "uid": "00000000-0000-4000-8000-000000000066",
-    "resourceVersion": "1066",
+    "uid": "00000000-0000-4000-8000-000000000067",
+    "resourceVersion": "1067",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "moth-mysql"
@@ -75,7 +75,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.3.108",
+    "clusterIP": "10.43.4.121",
     "ports": [
      {
       "protocol": "TCP",

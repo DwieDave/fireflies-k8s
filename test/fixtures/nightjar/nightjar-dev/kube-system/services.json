@@ -8,8 +8,8 @@
    "metadata": {
     "name": "kube-dns",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000093",
-    "resourceVersion": "1093",
+    "uid": "00000000-0000-4000-8000-000000000098",
+    "resourceVersion": "1098",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "kube-dns"
@@ -17,7 +17,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.3.209",
+    "clusterIP": "10.43.8.24",
     "ports": [
      {
       "protocol": "TCP",
@@ -37,8 +37,8 @@
    "metadata": {
     "name": "traefik",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000094",
-    "resourceVersion": "1094",
+    "uid": "00000000-0000-4000-8000-000000000099",
+    "resourceVersion": "1099",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "traefik"
@@ -46,7 +46,7 @@
    },
    "spec": {
     "type": "LoadBalancer",
-    "clusterIP": "10.43.4.222",
+    "clusterIP": "10.43.0.37",
     "ports": [
      {
       "protocol": "TCP",

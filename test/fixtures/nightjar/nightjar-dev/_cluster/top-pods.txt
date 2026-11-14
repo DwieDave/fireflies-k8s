@@ -13,6 +13,7 @@ moth	moth-ui-th7v-048iu	13m	71Mi
 moth	moth-mysql-0	28m	420Mi
 glowworm	glowworm-api-83qf-k2a7d	50m	160Mi
 glowworm	glowworm-api-83qf-k2a7e	57m	171Mi
+glowworm	glowworm-pg-1	30m	260Mi
 kube-system	coredns-9b9j-uz7wp	4m	22Mi
 kube-system	coredns-9b9j-uz7wq	11m	33Mi
 kube-system	metrics-server-tdfo-ntd2k	6m	30Mi

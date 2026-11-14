@@ -8,8 +8,8 @@
    "metadata": {
     "name": "argocd-server-e0e4-h5elw",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000097",
-    "resourceVersion": "1097",
+    "uid": "00000000-0000-4000-8000-000000000102",
+    "resourceVersion": "1102",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "argocd-server"
@@ -19,7 +19,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "argocd-server-e0e4",
-      "uid": "00000000-0000-4000-8000-000000000096",
+      "uid": "00000000-0000-4000-8000-000000000101",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -53,7 +53,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.179",
+    "podIP": "10.42.0.214",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -84,8 +84,8 @@
    "metadata": {
     "name": "argocd-repo-server-873b-boyeh",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000100",
-    "resourceVersion": "1100",
+    "uid": "00000000-0000-4000-8000-000000000105",
+    "resourceVersion": "1105",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "argocd-repo-server"
@@ -95,7 +95,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "argocd-repo-server-873b",
-      "uid": "00000000-0000-4000-8000-000000000099",
+      "uid": "00000000-0000-4000-8000-000000000104",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -122,7 +122,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.200",
+    "podIP": "10.42.0.235",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -153,8 +153,8 @@
    "metadata": {
     "name": "argocd-application-controller-0",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000102",
-    "resourceVersion": "1102",
+    "uid": "00000000-0000-4000-8000-000000000107",
+    "resourceVersion": "1107",
     "creationTimestamp": "2026-11-01T12:00:00Z",
     "labels": {
      "app": "argocd-application-controller"
@@ -164,7 +164,7 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "name": "argocd-application-controller",
-      "uid": "00000000-0000-4000-8000-000000000101",
+      "uid": "00000000-0000-4000-8000-000000000106",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -198,7 +198,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.0.214",
+    "podIP": "10.42.2.249",
     "startTime": "2026-11-01T12:00:00Z",
     "containerStatuses": [
      {

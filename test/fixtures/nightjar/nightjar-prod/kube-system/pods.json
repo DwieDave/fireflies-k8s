@@ -8,8 +8,8 @@
    "metadata": {
     "name": "coredns-9b9j-uz7wp",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000136",
-    "resourceVersion": "1136",
+    "uid": "00000000-0000-4000-8000-000000000141",
+    "resourceVersion": "1141",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "coredns"
@@ -19,7 +19,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "coredns-9b9j",
-      "uid": "00000000-0000-4000-8000-000000000135",
+      "uid": "00000000-0000-4000-8000-000000000140",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -46,7 +46,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.202",
+    "podIP": "10.42.0.237",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -77,8 +77,8 @@
    "metadata": {
     "name": "coredns-9b9j-uz7wq",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000137",
-    "resourceVersion": "1137",
+    "uid": "00000000-0000-4000-8000-000000000142",
+    "resourceVersion": "1142",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "coredns"
@@ -88,7 +88,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "coredns-9b9j",
-      "uid": "00000000-0000-4000-8000-000000000135",
+      "uid": "00000000-0000-4000-8000-000000000140",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -115,7 +115,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.2.209",
+    "podIP": "10.42.1.244",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {

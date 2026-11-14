@@ -8,8 +8,8 @@
    "metadata": {
     "name": "svclb-traefik",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000089",
-    "resourceVersion": "1089",
+    "uid": "00000000-0000-4000-8000-000000000094",
+    "resourceVersion": "1094",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "k8s-app": "svclb-traefik"

@@ -8,8 +8,8 @@
    "metadata": {
     "name": "coredns",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000134",
-    "resourceVersion": "1134",
+    "uid": "00000000-0000-4000-8000-000000000139",
+    "resourceVersion": "1139",
     "creationTimestamp": "2026-04-27T12:00:00Z",
     "generation": 1,
     "labels": {

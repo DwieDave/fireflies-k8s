@@ -24,11 +24,44 @@
      }
     },
     "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-db"
+      }
+     },
      "spec": {
       "containers": [
        {
         "name": "lantern-db",
-        "image": "postgres:16.4"
+        "image": "postgres:16.4",
+        "env": [
+         {
+          "name": "POSTGRES_USER",
+          "valueFrom": {
+           "secretKeyRef": {
+            "name": "lantern-db-auth",
+            "key": "username"
+           }
+          }
+         },
+         {
+          "name": "POSTGRES_PASSWORD",
+          "valueFrom": {
+           "secretKeyRef": {
+            "name": "lantern-db-auth",
+            "key": "password"
+           }
+          }
+         },
+         {
+          "name": "POSTGRES_DB",
+          "value": "lantern"
+         },
+         {
+          "name": "PGDATA",
+          "value": "/var/lib/postgresql/data/pgdata"
+         }
+        ]
        }
       ]
      }

@@ -8,8 +8,8 @@
    "metadata": {
     "name": "argocd-server",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000104",
-    "resourceVersion": "1104",
+    "uid": "00000000-0000-4000-8000-000000000109",
+    "resourceVersion": "1109",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "argocd-server"
@@ -17,7 +17,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.5.102",
+    "clusterIP": "10.43.1.167",
     "ports": [
      {
       "protocol": "TCP",

@@ -99,10 +99,10 @@ describe("rows", () => {
   test("secrets: names, types and key names, never a value", async () => {
     const r = await readText(exec, secretListArgs(dev));
     if (!r.ok) throw new Error(r.error);
-    expect(r.value).not.toContain("moth-wings");
+    expect(r.value).not.toContain("moth-lantern");
     const rows = secretRows(r.value);
     expect(rows.map((x) => x.ref.name)).toEqual(["lantern-db-auth", "lantern-tls", "mailer-smtp"]);
-    expect(rows[0]?.cells[2]).toEqual({ t: "text", text: "username password", tone: null, dim: false });
+    expect(rows[0]?.cells[2]).toEqual({ t: "text", text: "password username", tone: null, dim: false });
   });
 
   test("events and nodes", async () => {

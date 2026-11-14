@@ -8,8 +8,8 @@
    "metadata": {
     "name": "glowworm-api-83qf",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000070",
-    "resourceVersion": "1070",
+    "uid": "00000000-0000-4000-8000-000000000071",
+    "resourceVersion": "1071",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "glowworm-api"
@@ -22,7 +22,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "glowworm-api",
-      "uid": "00000000-0000-4000-8000-000000000069",
+      "uid": "00000000-0000-4000-8000-000000000070",
       "controller": true,
       "blockOwnerDeletion": true
      }

@@ -45,7 +45,13 @@ function ns(ctx: string, name: string): Ns {
 
 type PodState = "run" | "crash" | "pull" | "pending" | "done" | "failed" | "start";
 
-interface PodSpec { image: string; ports?: { containerPort: number; name?: string }[]; state?: PodState; restarts?: number; lastRestart?: number; node?: string; age?: number; cpu?: number; mem?: number; containers?: string[]; labels?: Obj }
+/** What a database's container runs with (its env, a mounted secret): the credentials the mod finds. */
+interface Runs { env?: Obj[]; envFrom?: Obj[]; volumeMounts?: Obj[]; volumes?: Obj[] }
+
+interface PodSpec extends Runs { image: string; ports?: { containerPort: number; name?: string }[]; state?: PodState; restarts?: number; lastRestart?: number; node?: string; age?: number; cpu?: number; mem?: number; containers?: string[]; labels?: Obj }
+
+/** A container's env and mounts, and the pod spec's volumes, from Runs (left out when empty). */
+const runsOf = (r: Runs) => ({ ...(r.env ? { env: r.env } : {}), ...(r.envFrom ? { envFrom: r.envFrom } : {}), ...(r.volumeMounts ? { volumeMounts: r.volumeMounts } : {}) });
 
 function pod(ctx: string, n: string, name: string, owner: Obj | null, p: PodSpec): Obj {
   const state = p.state ?? "run";
@@ -72,7 +78,7 @@ function pod(ctx: string, n: string, name: string, owner: Obj | null, p: PodSpec
   const o = {
     apiVersion: "v1", kind: "Pod",
     metadata: meta(name, n, age, { labels: p.labels ?? { app: name.replace(/-[a-z0-9]{4,5}(-[a-z0-9]{4,5})?$/, "").replace(/-\d+$/, "") }, ...(owner ? { ownerReferences: own(owner) } : {}) }),
-    spec: { nodeName: p.node ?? "lumen-a", containers: names.map((c, i) => ({ name: c, image: i === 0 ? p.image : "nightjar/sidecar:1.2", ...(i === 0 && p.ports ? { ports: p.ports.map((x) => ({ ...x, protocol: "TCP" })) } : {}), resources: { requests: { cpu: "100m", memory: "128Mi" }, limits: { cpu: "500m", memory: "512Mi" } } })) },
+    spec: { nodeName: p.node ?? "lumen-a", containers: names.map((c, i) => ({ name: c, image: i === 0 ? p.image : "nightjar/sidecar:1.2", ...(i === 0 && p.ports ? { ports: p.ports.map((x) => ({ ...x, protocol: "TCP" })) } : {}), ...(i === 0 ? runsOf(p) : {}), resources: { requests: { cpu: "100m", memory: "128Mi" }, limits: { cpu: "500m", memory: "512Mi" } } })), ...(p.volumes ? { volumes: p.volumes } : {}) },
     status: { phase, podIP: `10.42.${uidN % 3}.${(uidN * 7) % 250}`, startTime: ago(age), containerStatuses: statuses, conditions: [{ type: "Ready", status: state === "run" ? "True" : "False" }] },
   };
   ns(ctx, n).pods.push(o);
@@ -116,16 +122,17 @@ function deployment(ctx: string, n: string, name: string, d: DeploySpec): Obj {
   return dep;
 }
 
-function statefulset(ctx: string, n: string, name: string, image: string, replicas: number, port: { containerPort: number; name?: string }, cpu = 40, mem = 300): Obj {
+function statefulset(ctx: string, n: string, name: string, image: string, replicas: number, port: { containerPort: number; name?: string }, cpu = 40, mem = 300, runs: Runs & { labels?: Obj } = {}): Obj {
+  const labels = runs.labels ?? { app: name };
   const sts = {
     apiVersion: "apps/v1", kind: "StatefulSet",
-    metadata: meta(name, n, 40 * D, { labels: { app: name } }),
-    spec: { replicas, serviceName: name, selector: { matchLabels: { app: name } }, template: { spec: { containers: [{ name, image }] } } },
+    metadata: meta(name, n, 40 * D, { labels }),
+    spec: { replicas, serviceName: name, selector: { matchLabels: labels }, template: { metadata: { labels }, spec: { containers: [{ name, image, ...runsOf(runs) }], ...(runs.volumes ? { volumes: runs.volumes } : {}) } } },
     status: { replicas, readyReplicas: replicas, currentReplicas: replicas, currentRevision: `${name}-${hash(name, 10)}` },
   };
   ns(ctx, n).statefulsets.push(sts);
   for (let i = 0; i < replicas; i++) {
-    pod(ctx, n, `${name}-${i}`, sts, { image, ports: [port], cpu, mem, age: 12 * D, node: "lumen-c", labels: { app: name } });
+    pod(ctx, n, `${name}-${i}`, sts, { image, ports: [port], cpu, mem, age: 12 * D, node: "lumen-c", labels, ...runs });
     pvc(ctx, n, `data-${name}-${i}`, "10Gi");
   }
   return sts;
@@ -210,7 +217,11 @@ deployment(DEV, "lantern", "lantern-worker", { image: "nightjar/lantern-worker:7
 const mailer = deployment(DEV, "lantern", "lantern-mailer", { image: "nightjar/lantern-mailer:2.3.0-rc1", replicas: 1, rev: 3, age: 2 * H, pods: [{ state: "pull", age: 2 * H }] });
 deployment(DEV, "lantern", "lantern-cron-ui", { image: "nightjar/cron-ui:1.0.4", replicas: 1, rev: 2, age: 40 * D, cpu: 3, mem: 30 });
 deployment(DEV, "lantern", "lantern-legacy", { image: "nightjar/lantern-legacy:0.9", replicas: 0, rev: 12, age: 90 * D });
-statefulset(DEV, "lantern", "lantern-db", "postgres:16.4", 1, { containerPort: 5432, name: "postgres" }, 35, 380);
+// The official postgres image's variables, from a secret: one clear candidate for the Databases window.
+const secretRef = (name: string, key: string) => ({ valueFrom: { secretKeyRef: { name, key } } });
+statefulset(DEV, "lantern", "lantern-db", "postgres:16.4", 1, { containerPort: 5432, name: "postgres" }, 35, 380, {
+  env: [{ name: "POSTGRES_USER", ...secretRef("lantern-db-auth", "username") }, { name: "POSTGRES_PASSWORD", ...secretRef("lantern-db-auth", "password") }, { name: "POSTGRES_DB", value: "lantern" }, { name: "PGDATA", value: "/var/lib/postgresql/data/pgdata" }],
+});
 service(DEV, "lantern", "lantern-api", [{ name: "http", port: 8080, targetPort: "http" }], { app: "lantern-api" });
 service(DEV, "lantern", "lantern-web", [{ name: "http", port: 80, targetPort: 8080 }], { app: "lantern-web" });
 service(DEV, "lantern", "lantern-db", [{ name: "postgres", port: 5432, targetPort: 5432 }], { app: "lantern-db" });
@@ -218,7 +229,7 @@ ingress(DEV, "lantern", "lantern", "lantern.nightjar.test", [["/api", "lantern-a
 configmap(DEV, "lantern", "lantern-flags", { LOG_LEVEL: "info", NEW_CHECKOUT: "true", DARK_SKY: "on", REGION: "eu-north" });
 configmap(DEV, "lantern", "lantern-config", { "app.yaml": "listen: :8080\ndatabase: postgres://lantern-db:5432/lantern\n" });
 configmap(DEV, "lantern", "kube-root-ca.crt", { "ca.crt": "-----BEGIN CERTIFICATE-----\nMIIB (made up)\n-----END CERTIFICATE-----\n" });
-secret(DEV, "lantern", "lantern-db-auth", "Opaque", { username: "lantern", password: "moth-wings-at-dusk" });
+secret(DEV, "lantern", "lantern-db-auth", "Opaque", { username: "lantern", password: "moth-lantern-42" });
 secret(DEV, "lantern", "lantern-tls", "kubernetes.io/tls", { "tls.crt": "made-up-certificate", "tls.key": "made-up-key" });
 secret(DEV, "lantern", "mailer-smtp", "Opaque", { host: "smtp.nightjar.test", user: "mailer", token: "glow-7731" });
 cronjob(DEV, "lantern", "nightly-sweep", "0 3 * * *", true);
@@ -239,7 +250,13 @@ event(DEV, "lantern", mailer, "Normal", "ScalingReplicaSet", "Scaled up replica 
 
 deployment(DEV, "moth", "moth-queue", { image: "redis:7.4", replicas: 1, rev: 3, ports: [{ containerPort: 6379, name: "redis" }], cpu: 8, mem: 40 });
 deployment(DEV, "moth", "moth-ui", { image: "nightjar/moth-ui:2.0.1", replicas: 2, rev: 6, ports: [{ containerPort: 3000, name: "http" }], cpu: 6, mem: 60 });
-statefulset(DEV, "moth", "moth-mysql", "mysql:8.4", 1, { containerPort: 3306, name: "mysql" }, 28, 420);
+// Bitnami's chart: the root password from the secret, the app user's as a password file in it (two candidates: a pick).
+statefulset(DEV, "moth", "moth-mysql", "bitnami/mysql:8.4", 1, { containerPort: 3306, name: "mysql" }, 28, 420, {
+  env: [{ name: "MYSQL_ROOT_PASSWORD", ...secretRef("moth-mysql", "mysql-root-password") }, { name: "MYSQL_USER", value: "moth" }, { name: "MYSQL_PASSWORD_FILE", value: "/opt/bitnami/mysql/secrets/mysql-password" }, { name: "MYSQL_DATABASE", value: "moth" }],
+  volumeMounts: [{ name: "mysql-credentials", mountPath: "/opt/bitnami/mysql/secrets/" }],
+  volumes: [{ name: "mysql-credentials", secret: { secretName: "moth-mysql", items: [{ key: "mysql-root-password", path: "mysql-root-password" }, { key: "mysql-password", path: "mysql-password" }] } }],
+});
+secret(DEV, "moth", "moth-mysql", "Opaque", { "mysql-root-password": "dusk-root-77", "mysql-password": "moth-lantern-42" });
 service(DEV, "moth", "moth-queue", [{ name: "redis", port: 6379, targetPort: 6379 }], { app: "moth-queue" });
 service(DEV, "moth", "moth-ui", [{ name: "http", port: 80, targetPort: 3000 }], { app: "moth-ui" });
 service(DEV, "moth", "moth-mysql", [{ name: "mysql", port: 3306, targetPort: 3306 }], { app: "moth-mysql" });
@@ -251,6 +268,12 @@ service(DEV, "glowworm", "glowworm-api", [{ name: "http", port: 8000, targetPort
 job(DEV, "glowworm", "glowworm-backfill", "failed", null, 6 * H);
 job(DEV, "glowworm", "glowworm-seed", "done", null, 9 * D);
 configmap(DEV, "glowworm", "glowworm-env", { MODE: "dev" });
+// A CloudNativePG cluster: no password in the pods' env, the operator's <cluster>-app and -superuser secrets.
+const CNPG = { "cnpg.io/cluster": "glowworm-pg", "cnpg.io/instanceRole": "primary", "cnpg.io/podRole": "instance" };
+pod(DEV, "glowworm", "glowworm-pg-1", null, { image: "ghcr.io/cloudnative-pg/postgresql:16.4", ports: [{ containerPort: 5432, name: "postgresql" }], containers: ["postgres"], labels: CNPG, cpu: 30, mem: 260, age: 20 * D });
+service(DEV, "glowworm", "glowworm-pg-rw", [{ name: "postgres", port: 5432, targetPort: 5432 }], { "cnpg.io/cluster": "glowworm-pg", "cnpg.io/instanceRole": "primary" });
+secret(DEV, "glowworm", "glowworm-pg-app", "kubernetes.io/basic-auth", { username: "app", password: "glow-app-31", dbname: "app", host: "glowworm-pg-rw", port: "5432", uri: "postgresql://app:glow-app-31@glowworm-pg-rw.glowworm:5432/app" });
+secret(DEV, "glowworm", "glowworm-pg-superuser", "kubernetes.io/basic-auth", { username: "postgres", password: "glow-root-12" });
 
 deployment(DEV, "kube-system", "coredns", { image: "rancher/mirrored-coredns-coredns:1.12.0", replicas: 2, rev: 1, age: 60 * D, cpu: 4, mem: 22, ports: [{ containerPort: 53, name: "dns" }] });
 deployment(DEV, "kube-system", "metrics-server", { image: "rancher/mirrored-metrics-server:v0.7.2", replicas: 1, rev: 1, age: 60 * D, cpu: 6, mem: 30 });

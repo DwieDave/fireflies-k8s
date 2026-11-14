@@ -8,8 +8,8 @@
    "metadata": {
     "name": "lantern-api",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000112",
-    "resourceVersion": "1112",
+    "uid": "00000000-0000-4000-8000-000000000117",
+    "resourceVersion": "1117",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "generation": 31,
     "labels": {
@@ -71,8 +71,8 @@
    "metadata": {
     "name": "lantern-web",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000120",
-    "resourceVersion": "1120",
+    "uid": "00000000-0000-4000-8000-000000000125",
+    "resourceVersion": "1125",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "generation": 18,
     "labels": {

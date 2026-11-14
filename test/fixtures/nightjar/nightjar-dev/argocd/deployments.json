@@ -8,8 +8,8 @@
    "metadata": {
     "name": "argocd-server",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000095",
-    "resourceVersion": "1095",
+    "uid": "00000000-0000-4000-8000-000000000100",
+    "resourceVersion": "1100",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "generation": 2,
     "labels": {
@@ -71,8 +71,8 @@
    "metadata": {
     "name": "argocd-repo-server",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000098",
-    "resourceVersion": "1098",
+    "uid": "00000000-0000-4000-8000-000000000103",
+    "resourceVersion": "1103",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "generation": 2,
     "labels": {

@@ -8,386 +8,6 @@
    "metadata": {
     "name": "lantern-api-n7qp-jzo0v",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000114",
-    "resourceVersion": "1114",
-    "creationTimestamp": "2026-11-10T12:00:00Z",
-    "labels": {
-     "app": "lantern-api"
-    },
-    "ownerReferences": [
-     {
-      "apiVersion": "apps/v1",
-      "kind": "ReplicaSet",
-      "name": "lantern-api-n7qp",
-      "uid": "00000000-0000-4000-8000-000000000113",
-      "controller": true,
-      "blockOwnerDeletion": true
-     }
-    ]
-   },
-   "spec": {
-    "nodeName": "lumen-a",
-    "containers": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ports": [
-       {
-        "containerPort": 8080,
-        "name": "http",
-        "protocol": "TCP"
-       }
-      ],
-      "resources": {
-       "requests": {
-        "cpu": "100m",
-        "memory": "128Mi"
-       },
-       "limits": {
-        "cpu": "500m",
-        "memory": "512Mi"
-       }
-      }
-     }
-    ]
-   },
-   "status": {
-    "phase": "Running",
-    "podIP": "10.42.0.48",
-    "startTime": "2026-11-10T12:00:00Z",
-    "containerStatuses": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ready": true,
-      "restartCount": 0,
-      "started": true,
-      "state": {
-       "running": {
-        "startedAt": "2026-11-10T12:00:00Z"
-       }
-      },
-      "lastState": {}
-     }
-    ],
-    "conditions": [
-     {
-      "type": "Ready",
-      "status": "True"
-     }
-    ]
-   }
-  },
-  {
-   "apiVersion": "v1",
-   "kind": "Pod",
-   "metadata": {
-    "name": "lantern-api-n7qp-jzo0w",
-    "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000115",
-    "resourceVersion": "1115",
-    "creationTimestamp": "2026-11-10T12:00:00Z",
-    "labels": {
-     "app": "lantern-api"
-    },
-    "ownerReferences": [
-     {
-      "apiVersion": "apps/v1",
-      "kind": "ReplicaSet",
-      "name": "lantern-api-n7qp",
-      "uid": "00000000-0000-4000-8000-000000000113",
-      "controller": true,
-      "blockOwnerDeletion": true
-     }
-    ]
-   },
-   "spec": {
-    "nodeName": "lumen-b",
-    "containers": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ports": [
-       {
-        "containerPort": 8080,
-        "name": "http",
-        "protocol": "TCP"
-       }
-      ],
-      "resources": {
-       "requests": {
-        "cpu": "100m",
-        "memory": "128Mi"
-       },
-       "limits": {
-        "cpu": "500m",
-        "memory": "512Mi"
-       }
-      }
-     }
-    ]
-   },
-   "status": {
-    "phase": "Running",
-    "podIP": "10.42.1.55",
-    "startTime": "2026-11-10T12:00:00Z",
-    "containerStatuses": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ready": true,
-      "restartCount": 0,
-      "started": true,
-      "state": {
-       "running": {
-        "startedAt": "2026-11-10T12:00:00Z"
-       }
-      },
-      "lastState": {}
-     }
-    ],
-    "conditions": [
-     {
-      "type": "Ready",
-      "status": "True"
-     }
-    ]
-   }
-  },
-  {
-   "apiVersion": "v1",
-   "kind": "Pod",
-   "metadata": {
-    "name": "lantern-api-n7qp-jzo0x",
-    "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000116",
-    "resourceVersion": "1116",
-    "creationTimestamp": "2026-11-10T12:00:00Z",
-    "labels": {
-     "app": "lantern-api"
-    },
-    "ownerReferences": [
-     {
-      "apiVersion": "apps/v1",
-      "kind": "ReplicaSet",
-      "name": "lantern-api-n7qp",
-      "uid": "00000000-0000-4000-8000-000000000113",
-      "controller": true,
-      "blockOwnerDeletion": true
-     }
-    ]
-   },
-   "spec": {
-    "nodeName": "lumen-c",
-    "containers": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ports": [
-       {
-        "containerPort": 8080,
-        "name": "http",
-        "protocol": "TCP"
-       }
-      ],
-      "resources": {
-       "requests": {
-        "cpu": "100m",
-        "memory": "128Mi"
-       },
-       "limits": {
-        "cpu": "500m",
-        "memory": "512Mi"
-       }
-      }
-     }
-    ]
-   },
-   "status": {
-    "phase": "Running",
-    "podIP": "10.42.2.62",
-    "startTime": "2026-11-10T12:00:00Z",
-    "containerStatuses": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ready": true,
-      "restartCount": 0,
-      "started": true,
-      "state": {
-       "running": {
-        "startedAt": "2026-11-10T12:00:00Z"
-       }
-      },
-      "lastState": {}
-     }
-    ],
-    "conditions": [
-     {
-      "type": "Ready",
-      "status": "True"
-     }
-    ]
-   }
-  },
-  {
-   "apiVersion": "v1",
-   "kind": "Pod",
-   "metadata": {
-    "name": "lantern-api-n7qp-jzo0y",
-    "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000117",
-    "resourceVersion": "1117",
-    "creationTimestamp": "2026-11-10T12:00:00Z",
-    "labels": {
-     "app": "lantern-api"
-    },
-    "ownerReferences": [
-     {
-      "apiVersion": "apps/v1",
-      "kind": "ReplicaSet",
-      "name": "lantern-api-n7qp",
-      "uid": "00000000-0000-4000-8000-000000000113",
-      "controller": true,
-      "blockOwnerDeletion": true
-     }
-    ]
-   },
-   "spec": {
-    "nodeName": "lumen-a",
-    "containers": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ports": [
-       {
-        "containerPort": 8080,
-        "name": "http",
-        "protocol": "TCP"
-       }
-      ],
-      "resources": {
-       "requests": {
-        "cpu": "100m",
-        "memory": "128Mi"
-       },
-       "limits": {
-        "cpu": "500m",
-        "memory": "512Mi"
-       }
-      }
-     }
-    ]
-   },
-   "status": {
-    "phase": "Running",
-    "podIP": "10.42.0.69",
-    "startTime": "2026-11-10T12:00:00Z",
-    "containerStatuses": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ready": true,
-      "restartCount": 0,
-      "started": true,
-      "state": {
-       "running": {
-        "startedAt": "2026-11-10T12:00:00Z"
-       }
-      },
-      "lastState": {}
-     }
-    ],
-    "conditions": [
-     {
-      "type": "Ready",
-      "status": "True"
-     }
-    ]
-   }
-  },
-  {
-   "apiVersion": "v1",
-   "kind": "Pod",
-   "metadata": {
-    "name": "lantern-api-n7qp-jzo0z",
-    "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000118",
-    "resourceVersion": "1118",
-    "creationTimestamp": "2026-11-10T12:00:00Z",
-    "labels": {
-     "app": "lantern-api"
-    },
-    "ownerReferences": [
-     {
-      "apiVersion": "apps/v1",
-      "kind": "ReplicaSet",
-      "name": "lantern-api-n7qp",
-      "uid": "00000000-0000-4000-8000-000000000113",
-      "controller": true,
-      "blockOwnerDeletion": true
-     }
-    ]
-   },
-   "spec": {
-    "nodeName": "lumen-b",
-    "containers": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ports": [
-       {
-        "containerPort": 8080,
-        "name": "http",
-        "protocol": "TCP"
-       }
-      ],
-      "resources": {
-       "requests": {
-        "cpu": "100m",
-        "memory": "128Mi"
-       },
-       "limits": {
-        "cpu": "500m",
-        "memory": "512Mi"
-       }
-      }
-     }
-    ]
-   },
-   "status": {
-    "phase": "Running",
-    "podIP": "10.42.1.76",
-    "startTime": "2026-11-10T12:00:00Z",
-    "containerStatuses": [
-     {
-      "name": "lantern-api",
-      "image": "nightjar/lantern-api:6.9.1",
-      "ready": true,
-      "restartCount": 0,
-      "started": true,
-      "state": {
-       "running": {
-        "startedAt": "2026-11-10T12:00:00Z"
-       }
-      },
-      "lastState": {}
-     }
-    ],
-    "conditions": [
-     {
-      "type": "Ready",
-      "status": "True"
-     }
-    ]
-   }
-  },
-  {
-   "apiVersion": "v1",
-   "kind": "Pod",
-   "metadata": {
-    "name": "lantern-api-n7qp-jzo10",
-    "namespace": "lantern",
     "uid": "00000000-0000-4000-8000-000000000119",
     "resourceVersion": "1119",
     "creationTimestamp": "2026-11-10T12:00:00Z",
@@ -399,14 +19,14 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "lantern-api-n7qp",
-      "uid": "00000000-0000-4000-8000-000000000113",
+      "uid": "00000000-0000-4000-8000-000000000118",
       "controller": true,
       "blockOwnerDeletion": true
      }
     ]
    },
    "spec": {
-    "nodeName": "lumen-c",
+    "nodeName": "lumen-a",
     "containers": [
      {
       "name": "lantern-api",
@@ -462,10 +82,390 @@
    "apiVersion": "v1",
    "kind": "Pod",
    "metadata": {
-    "name": "lantern-web-jipg-st3y4",
+    "name": "lantern-api-n7qp-jzo0w",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000120",
+    "resourceVersion": "1120",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "lantern-api-n7qp",
+      "uid": "00000000-0000-4000-8000-000000000118",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ports": [
+       {
+        "containerPort": 8080,
+        "name": "http",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.90",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "lantern-api-n7qp-jzo0x",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000121",
+    "resourceVersion": "1121",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "lantern-api-n7qp",
+      "uid": "00000000-0000-4000-8000-000000000118",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ports": [
+       {
+        "containerPort": 8080,
+        "name": "http",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.97",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "lantern-api-n7qp-jzo0y",
     "namespace": "lantern",
     "uid": "00000000-0000-4000-8000-000000000122",
     "resourceVersion": "1122",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "lantern-api-n7qp",
+      "uid": "00000000-0000-4000-8000-000000000118",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ports": [
+       {
+        "containerPort": 8080,
+        "name": "http",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.104",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "lantern-api-n7qp-jzo0z",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000123",
+    "resourceVersion": "1123",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "lantern-api-n7qp",
+      "uid": "00000000-0000-4000-8000-000000000118",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ports": [
+       {
+        "containerPort": 8080,
+        "name": "http",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.111",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "lantern-api-n7qp-jzo10",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000124",
+    "resourceVersion": "1124",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "lantern-api"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "lantern-api-n7qp",
+      "uid": "00000000-0000-4000-8000-000000000118",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ports": [
+       {
+        "containerPort": 8080,
+        "name": "http",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.118",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "lantern-api",
+      "image": "nightjar/lantern-api:6.9.1",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "lantern-web-jipg-st3y4",
+    "namespace": "lantern",
+    "uid": "00000000-0000-4000-8000-000000000127",
+    "resourceVersion": "1127",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "lantern-web"
@@ -475,7 +475,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "lantern-web-jipg",
-      "uid": "00000000-0000-4000-8000-000000000121",
+      "uid": "00000000-0000-4000-8000-000000000126",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -509,7 +509,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.2.104",
+    "podIP": "10.42.1.139",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -540,8 +540,8 @@
    "metadata": {
     "name": "lantern-web-jipg-st3y5",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000123",
-    "resourceVersion": "1123",
+    "uid": "00000000-0000-4000-8000-000000000128",
+    "resourceVersion": "1128",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "lantern-web"
@@ -551,7 +551,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "lantern-web-jipg",
-      "uid": "00000000-0000-4000-8000-000000000121",
+      "uid": "00000000-0000-4000-8000-000000000126",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -585,7 +585,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.0.111",
+    "podIP": "10.42.2.146",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -616,8 +616,8 @@
    "metadata": {
     "name": "lantern-web-jipg-st3y6",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000124",
-    "resourceVersion": "1124",
+    "uid": "00000000-0000-4000-8000-000000000129",
+    "resourceVersion": "1129",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "lantern-web"
@@ -627,7 +627,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "lantern-web-jipg",
-      "uid": "00000000-0000-4000-8000-000000000121",
+      "uid": "00000000-0000-4000-8000-000000000126",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -661,7 +661,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.118",
+    "podIP": "10.42.0.153",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -692,8 +692,8 @@
    "metadata": {
     "name": "lantern-db-0",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000126",
-    "resourceVersion": "1126",
+    "uid": "00000000-0000-4000-8000-000000000131",
+    "resourceVersion": "1131",
     "creationTimestamp": "2026-11-01T12:00:00Z",
     "labels": {
      "app": "lantern-db"
@@ -703,7 +703,7 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "name": "lantern-db",
-      "uid": "00000000-0000-4000-8000-000000000125",
+      "uid": "00000000-0000-4000-8000-000000000130",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -737,7 +737,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.0.132",
+    "podIP": "10.42.2.167",
     "startTime": "2026-11-01T12:00:00Z",
     "containerStatuses": [
      {
@@ -768,8 +768,8 @@
    "metadata": {
     "name": "lantern-db-1",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000128",
-    "resourceVersion": "1128",
+    "uid": "00000000-0000-4000-8000-000000000133",
+    "resourceVersion": "1133",
     "creationTimestamp": "2026-11-01T12:00:00Z",
     "labels": {
      "app": "lantern-db"
@@ -779,7 +779,7 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "name": "lantern-db",
-      "uid": "00000000-0000-4000-8000-000000000125",
+      "uid": "00000000-0000-4000-8000-000000000130",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -813,7 +813,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.2.146",
+    "podIP": "10.42.1.181",
     "startTime": "2026-11-01T12:00:00Z",
     "containerStatuses": [
      {
@@ -844,8 +844,8 @@
    "metadata": {
     "name": "lantern-db-2",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000130",
-    "resourceVersion": "1130",
+    "uid": "00000000-0000-4000-8000-000000000135",
+    "resourceVersion": "1135",
     "creationTimestamp": "2026-11-01T12:00:00Z",
     "labels": {
      "app": "lantern-db"
@@ -855,7 +855,7 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "name": "lantern-db",
-      "uid": "00000000-0000-4000-8000-000000000125",
+      "uid": "00000000-0000-4000-8000-000000000130",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -889,7 +889,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.160",
+    "podIP": "10.42.0.195",
     "startTime": "2026-11-01T12:00:00Z",
     "containerStatuses": [
      {

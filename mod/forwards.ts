@@ -100,17 +100,72 @@ export function urlOf(f: ForwardNote): string {
   return `${f.web === "https" ? "https" : "http"}://localhost:${f.local}`;
 }
 
-/** The databases mod's connection args for a forward (no secret: its window asks for the password). */
+/** Where a forward's password is in the cluster, as the Databases window reads it itself
+ *  (the contract: the databases mod's kube.ts): a secret's key, never the value. */
+export interface SecretSource {
+  readonly from: "kubernetes";
+  readonly context: string;
+  readonly namespace: string;
+  readonly name: string;
+  readonly key: string;
+  readonly userKey?: string;
+  readonly databaseKey?: string;
+  readonly kubectl?: string;
+}
+
+/** The databases mod's connection args for a forward: no secret's value, ever (its window asks for the
+ *  password, or reads it from the secret `secret` names). */
 export interface ConnectArgs {
   readonly kind: "postgres" | "mysql";
   readonly name: string;
   readonly host: string;
   readonly port: number;
   readonly from: string;
+  readonly user?: string;
+  readonly database?: string;
+  readonly secret?: SecretSource;
 }
 
-export function connectArgs(f: ForwardNote, kind: "postgres" | "mysql"): ConnectArgs {
-  return { kind, name: `${f.name ?? f.target} (${f.context}/${f.namespace})`, host: "127.0.0.1", port: f.local, from: `port-forward ${f.target} in ${f.context}/${f.namespace}` };
+/** A secret picked for a forward: the secret's key, its user and database (plain or the secret's keys). */
+export interface Picked {
+  readonly secret: string;
+  readonly key: string;
+  readonly userKey?: string;
+  readonly databaseKey?: string;
+  readonly user?: string;
+  readonly database?: string;
+}
+
+type Draft<T> = { -readonly [K in keyof T]: T[K] };
+
+/** A pick being put together (the picker's steps). */
+export type PickedDraft = Draft<Picked>;
+
+/** The kubectl the Databases window may run: one named kubectl by its path (the window's rule), else its own. */
+const kubectlFor = (kubectl: string): string | null => (kubectl.startsWith("/") && kubectl.endsWith("/kubectl") ? kubectl : null);
+
+export function connectArgs(f: ForwardNote, kind: "postgres" | "mysql", picked: Picked | null = null, kubectl = "kubectl"): ConnectArgs {
+  const args: Draft<ConnectArgs> = { kind, name: `${f.name ?? f.target} (${f.context}/${f.namespace})`, host: "127.0.0.1", port: f.local, from: `port-forward ${f.target} in ${f.context}/${f.namespace}` };
+
+  if (!picked) return args;
+
+  const source: Draft<SecretSource> = { from: "kubernetes", context: f.context, namespace: f.namespace, name: picked.secret, key: picked.key };
+
+  if (picked.userKey) source.userKey = picked.userKey;
+
+  if (picked.databaseKey) source.databaseKey = picked.databaseKey;
+
+  const path = kubectlFor(kubectl);
+
+  if (path) source.kubectl = path;
+
+  if (picked.user) args.user = picked.user;
+
+  if (picked.database) args.database = picked.database;
+
+  args.secret = source;
+
+  return args;
 }
 
 /** The databases mod's folder file: it's installed when this exists. */

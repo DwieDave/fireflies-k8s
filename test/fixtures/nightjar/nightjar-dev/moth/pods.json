@@ -258,12 +258,41 @@
     "containers": [
      {
       "name": "moth-mysql",
-      "image": "mysql:8.4",
+      "image": "bitnami/mysql:8.4",
       "ports": [
        {
         "containerPort": 3306,
         "name": "mysql",
         "protocol": "TCP"
+       }
+      ],
+      "env": [
+       {
+        "name": "MYSQL_ROOT_PASSWORD",
+        "valueFrom": {
+         "secretKeyRef": {
+          "name": "moth-mysql",
+          "key": "mysql-root-password"
+         }
+        }
+       },
+       {
+        "name": "MYSQL_USER",
+        "value": "moth"
+       },
+       {
+        "name": "MYSQL_PASSWORD_FILE",
+        "value": "/opt/bitnami/mysql/secrets/mysql-password"
+       },
+       {
+        "name": "MYSQL_DATABASE",
+        "value": "moth"
+       }
+      ],
+      "volumeMounts": [
+       {
+        "name": "mysql-credentials",
+        "mountPath": "/opt/bitnami/mysql/secrets/"
        }
       ],
       "resources": {
@@ -277,6 +306,24 @@
        }
       }
      }
+    ],
+    "volumes": [
+     {
+      "name": "mysql-credentials",
+      "secret": {
+       "secretName": "moth-mysql",
+       "items": [
+        {
+         "key": "mysql-root-password",
+         "path": "mysql-root-password"
+        },
+        {
+         "key": "mysql-password",
+         "path": "mysql-password"
+        }
+       ]
+      }
+     }
     ]
    },
    "status": {
@@ -286,7 +333,7 @@
     "containerStatuses": [
      {
       "name": "moth-mysql",
-      "image": "mysql:8.4",
+      "image": "bitnami/mysql:8.4",
       "ready": true,
       "restartCount": 0,
       "started": true,

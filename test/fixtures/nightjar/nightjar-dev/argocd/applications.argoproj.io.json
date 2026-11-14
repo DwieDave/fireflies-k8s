@@ -8,8 +8,8 @@
    "metadata": {
     "name": "lantern",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000105",
-    "resourceVersion": "1105",
+    "uid": "00000000-0000-4000-8000-000000000110",
+    "resourceVersion": "1110",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
@@ -222,8 +222,8 @@
    "metadata": {
     "name": "lantern-prod",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000106",
-    "resourceVersion": "1106",
+    "uid": "00000000-0000-4000-8000-000000000111",
+    "resourceVersion": "1111",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
@@ -342,8 +342,8 @@
    "metadata": {
     "name": "moth",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000107",
-    "resourceVersion": "1107",
+    "uid": "00000000-0000-4000-8000-000000000112",
+    "resourceVersion": "1112",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
@@ -482,8 +482,8 @@
    "metadata": {
     "name": "glowworm",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000108",
-    "resourceVersion": "1108",
+    "uid": "00000000-0000-4000-8000-000000000113",
+    "resourceVersion": "1113",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
@@ -597,8 +597,8 @@
    "metadata": {
     "name": "kube-stars",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000109",
-    "resourceVersion": "1109",
+    "uid": "00000000-0000-4000-8000-000000000114",
+    "resourceVersion": "1114",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
@@ -673,8 +673,8 @@
    "metadata": {
     "name": "argo-self",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000110",
-    "resourceVersion": "1110",
+    "uid": "00000000-0000-4000-8000-000000000115",
+    "resourceVersion": "1115",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"

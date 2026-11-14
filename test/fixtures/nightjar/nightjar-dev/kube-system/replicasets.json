@@ -8,8 +8,8 @@
    "metadata": {
     "name": "coredns-9b9j",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000080",
-    "resourceVersion": "1080",
+    "uid": "00000000-0000-4000-8000-000000000085",
+    "resourceVersion": "1085",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "app": "coredns"
@@ -22,7 +22,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "coredns",
-      "uid": "00000000-0000-4000-8000-000000000079",
+      "uid": "00000000-0000-4000-8000-000000000084",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -48,8 +48,8 @@
    "metadata": {
     "name": "metrics-server-tdfo",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000084",
-    "resourceVersion": "1084",
+    "uid": "00000000-0000-4000-8000-000000000089",
+    "resourceVersion": "1089",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "app": "metrics-server"
@@ -62,7 +62,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "metrics-server",
-      "uid": "00000000-0000-4000-8000-000000000083",
+      "uid": "00000000-0000-4000-8000-000000000088",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -88,8 +88,8 @@
    "metadata": {
     "name": "traefik-fdjg",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000087",
-    "resourceVersion": "1087",
+    "uid": "00000000-0000-4000-8000-000000000092",
+    "resourceVersion": "1092",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "app": "traefik"
@@ -102,7 +102,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "traefik",
-      "uid": "00000000-0000-4000-8000-000000000086",
+      "uid": "00000000-0000-4000-8000-000000000091",
       "controller": true,
       "blockOwnerDeletion": true
      }

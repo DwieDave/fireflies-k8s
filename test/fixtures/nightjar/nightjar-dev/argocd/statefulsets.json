@@ -8,8 +8,8 @@
    "metadata": {
     "name": "argocd-application-controller",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000101",
-    "resourceVersion": "1101",
+    "uid": "00000000-0000-4000-8000-000000000106",
+    "resourceVersion": "1106",
     "creationTimestamp": "2026-10-04T12:00:00Z",
     "labels": {
      "app": "argocd-application-controller"
@@ -24,6 +24,11 @@
      }
     },
     "template": {
+     "metadata": {
+      "labels": {
+       "app": "argocd-application-controller"
+      }
+     },
      "spec": {
       "containers": [
        {

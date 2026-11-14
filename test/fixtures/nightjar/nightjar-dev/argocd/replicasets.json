@@ -8,8 +8,8 @@
    "metadata": {
     "name": "argocd-server-e0e4",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000096",
-    "resourceVersion": "1096",
+    "uid": "00000000-0000-4000-8000-000000000101",
+    "resourceVersion": "1101",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "labels": {
      "app": "argocd-server"
@@ -22,7 +22,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "argocd-server",
-      "uid": "00000000-0000-4000-8000-000000000095",
+      "uid": "00000000-0000-4000-8000-000000000100",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -48,8 +48,8 @@
    "metadata": {
     "name": "argocd-repo-server-873b",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000099",
-    "resourceVersion": "1099",
+    "uid": "00000000-0000-4000-8000-000000000104",
+    "resourceVersion": "1104",
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "labels": {
      "app": "argocd-repo-server"
@@ -62,7 +62,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "argocd-repo-server",
-      "uid": "00000000-0000-4000-8000-000000000098",
+      "uid": "00000000-0000-4000-8000-000000000103",
       "controller": true,
       "blockOwnerDeletion": true
      }

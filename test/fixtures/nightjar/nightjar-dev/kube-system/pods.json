@@ -8,8 +8,8 @@
    "metadata": {
     "name": "coredns-9b9j-uz7wp",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000081",
-    "resourceVersion": "1081",
+    "uid": "00000000-0000-4000-8000-000000000086",
+    "resourceVersion": "1086",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "coredns"
@@ -19,7 +19,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "coredns-9b9j",
-      "uid": "00000000-0000-4000-8000-000000000080",
+      "uid": "00000000-0000-4000-8000-000000000085",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -53,7 +53,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.0.67",
+    "podIP": "10.42.2.102",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -84,8 +84,8 @@
    "metadata": {
     "name": "coredns-9b9j-uz7wq",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000082",
-    "resourceVersion": "1082",
+    "uid": "00000000-0000-4000-8000-000000000087",
+    "resourceVersion": "1087",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "coredns"
@@ -95,7 +95,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "coredns-9b9j",
-      "uid": "00000000-0000-4000-8000-000000000080",
+      "uid": "00000000-0000-4000-8000-000000000085",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -129,7 +129,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.74",
+    "podIP": "10.42.0.109",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -160,8 +160,8 @@
    "metadata": {
     "name": "metrics-server-tdfo-ntd2k",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000085",
-    "resourceVersion": "1085",
+    "uid": "00000000-0000-4000-8000-000000000090",
+    "resourceVersion": "1090",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "metrics-server"
@@ -171,7 +171,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "metrics-server-tdfo",
-      "uid": "00000000-0000-4000-8000-000000000084",
+      "uid": "00000000-0000-4000-8000-000000000089",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -198,7 +198,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.95",
+    "podIP": "10.42.0.130",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -229,8 +229,8 @@
    "metadata": {
     "name": "traefik-fdjg-y8604",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000088",
-    "resourceVersion": "1088",
+    "uid": "00000000-0000-4000-8000-000000000093",
+    "resourceVersion": "1093",
     "creationTimestamp": "2026-11-10T12:00:00Z",
     "labels": {
      "app": "traefik"
@@ -240,7 +240,7 @@
       "apiVersion": "apps/v1",
       "kind": "ReplicaSet",
       "name": "traefik-fdjg",
-      "uid": "00000000-0000-4000-8000-000000000087",
+      "uid": "00000000-0000-4000-8000-000000000092",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -274,7 +274,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.116",
+    "podIP": "10.42.0.151",
     "startTime": "2026-11-10T12:00:00Z",
     "containerStatuses": [
      {
@@ -305,8 +305,8 @@
    "metadata": {
     "name": "svclb-traefik-ah5ma",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000090",
-    "resourceVersion": "1090",
+    "uid": "00000000-0000-4000-8000-000000000095",
+    "resourceVersion": "1095",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "k8s-app": "svclb-traefik"
@@ -316,7 +316,7 @@
       "apiVersion": "apps/v1",
       "kind": "DaemonSet",
       "name": "svclb-traefik",
-      "uid": "00000000-0000-4000-8000-000000000089",
+      "uid": "00000000-0000-4000-8000-000000000094",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -343,7 +343,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.0.130",
+    "podIP": "10.42.2.165",
     "startTime": "2026-09-14T12:00:00Z",
     "containerStatuses": [
      {
@@ -374,8 +374,8 @@
    "metadata": {
     "name": "svclb-traefik-ah5mb",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000091",
-    "resourceVersion": "1091",
+    "uid": "00000000-0000-4000-8000-000000000096",
+    "resourceVersion": "1096",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "k8s-app": "svclb-traefik"
@@ -385,7 +385,7 @@
       "apiVersion": "apps/v1",
       "kind": "DaemonSet",
       "name": "svclb-traefik",
-      "uid": "00000000-0000-4000-8000-000000000089",
+      "uid": "00000000-0000-4000-8000-000000000094",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -412,7 +412,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.1.137",
+    "podIP": "10.42.0.172",
     "startTime": "2026-09-14T12:00:00Z",
     "containerStatuses": [
      {
@@ -443,8 +443,8 @@
    "metadata": {
     "name": "svclb-traefik-ah5mc",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000092",
-    "resourceVersion": "1092",
+    "uid": "00000000-0000-4000-8000-000000000097",
+    "resourceVersion": "1097",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "k8s-app": "svclb-traefik"
@@ -454,7 +454,7 @@
       "apiVersion": "apps/v1",
       "kind": "DaemonSet",
       "name": "svclb-traefik",
-      "uid": "00000000-0000-4000-8000-000000000089",
+      "uid": "00000000-0000-4000-8000-000000000094",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -481,7 +481,7 @@
    },
    "status": {
     "phase": "Running",
-    "podIP": "10.42.2.144",
+    "podIP": "10.42.1.179",
     "startTime": "2026-09-14T12:00:00Z",
     "containerStatuses": [
      {

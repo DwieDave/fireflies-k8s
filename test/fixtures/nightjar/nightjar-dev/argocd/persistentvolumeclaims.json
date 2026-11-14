@@ -8,8 +8,8 @@
    "metadata": {
     "name": "data-argocd-application-controller-0",
     "namespace": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000103",
-    "resourceVersion": "1103",
+    "uid": "00000000-0000-4000-8000-000000000108",
+    "resourceVersion": "1108",
     "creationTimestamp": "2026-10-04T12:00:00Z"
    },
    "spec": {

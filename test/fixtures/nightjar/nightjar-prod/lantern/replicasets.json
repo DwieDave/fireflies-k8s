@@ -8,8 +8,8 @@
    "metadata": {
     "name": "lantern-api-n7qp",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000113",
-    "resourceVersion": "1113",
+    "uid": "00000000-0000-4000-8000-000000000118",
+    "resourceVersion": "1118",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "lantern-api"
@@ -22,7 +22,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "lantern-api",
-      "uid": "00000000-0000-4000-8000-000000000112",
+      "uid": "00000000-0000-4000-8000-000000000117",
       "controller": true,
       "blockOwnerDeletion": true
      }
@@ -48,8 +48,8 @@
    "metadata": {
     "name": "lantern-web-jipg",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000121",
-    "resourceVersion": "1121",
+    "uid": "00000000-0000-4000-8000-000000000126",
+    "resourceVersion": "1126",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "lantern-web"
@@ -62,7 +62,7 @@
       "apiVersion": "apps/v1",
       "kind": "Deployment",
       "name": "lantern-web",
-      "uid": "00000000-0000-4000-8000-000000000120",
+      "uid": "00000000-0000-4000-8000-000000000125",
       "controller": true,
       "blockOwnerDeletion": true
      }

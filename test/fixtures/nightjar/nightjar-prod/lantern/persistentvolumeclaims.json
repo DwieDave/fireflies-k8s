@@ -8,8 +8,8 @@
    "metadata": {
     "name": "data-lantern-db-0",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000127",
-    "resourceVersion": "1127",
+    "uid": "00000000-0000-4000-8000-000000000132",
+    "resourceVersion": "1132",
     "creationTimestamp": "2026-10-04T12:00:00Z"
    },
    "spec": {
@@ -37,8 +37,8 @@
    "metadata": {
     "name": "data-lantern-db-1",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000129",
-    "resourceVersion": "1129",
+    "uid": "00000000-0000-4000-8000-000000000134",
+    "resourceVersion": "1134",
     "creationTimestamp": "2026-10-04T12:00:00Z"
    },
    "spec": {
@@ -66,8 +66,8 @@
    "metadata": {
     "name": "data-lantern-db-2",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000131",
-    "resourceVersion": "1131",
+    "uid": "00000000-0000-4000-8000-000000000136",
+    "resourceVersion": "1136",
     "creationTimestamp": "2026-10-04T12:00:00Z"
    },
    "spec": {

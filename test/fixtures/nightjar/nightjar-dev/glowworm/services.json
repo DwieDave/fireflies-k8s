@@ -8,8 +8,8 @@
    "metadata": {
     "name": "glowworm-api",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000073",
-    "resourceVersion": "1073",
+    "uid": "00000000-0000-4000-8000-000000000074",
+    "resourceVersion": "1074",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "glowworm-api"
@@ -17,7 +17,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.1.199",
+    "clusterIP": "10.43.2.212",
     "ports": [
      {
       "protocol": "TCP",
@@ -28,6 +28,36 @@
     ],
     "selector": {
      "app": "glowworm-api"
+    }
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Service",
+   "metadata": {
+    "name": "glowworm-pg-rw",
+    "namespace": "glowworm",
+    "uid": "00000000-0000-4000-8000-000000000081",
+    "resourceVersion": "1081",
+    "creationTimestamp": "2026-10-26T12:00:00Z",
+    "labels": {
+     "app": "glowworm-pg-rw"
+    }
+   },
+   "spec": {
+    "type": "ClusterIP",
+    "clusterIP": "10.43.0.53",
+    "ports": [
+     {
+      "protocol": "TCP",
+      "name": "postgres",
+      "port": 5432,
+      "targetPort": 5432
+     }
+    ],
+    "selector": {
+     "cnpg.io/cluster": "glowworm-pg",
+     "cnpg.io/instanceRole": "primary"
     }
    }
   }

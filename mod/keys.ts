@@ -143,7 +143,8 @@ export const ARGO_KEYS = [
 export const FORWARD_KEYS = [
   ["enter", "where it leads"],
   ["w", "open in a web pane"],
-  ["b", "open in Databases"],
+  ["b", "open in Databases (its password's secret found in the cluster)"],
+  ["B", "open in Databases, picking the secret"],
   ["p", "peek at its terminal"],
   ["t", "give it a pane"],
   ["x", "stop it"],

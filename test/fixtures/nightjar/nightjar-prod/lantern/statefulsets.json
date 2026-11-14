@@ -8,8 +8,8 @@
    "metadata": {
     "name": "lantern-db",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000125",
-    "resourceVersion": "1125",
+    "uid": "00000000-0000-4000-8000-000000000130",
+    "resourceVersion": "1130",
     "creationTimestamp": "2026-10-04T12:00:00Z",
     "labels": {
      "app": "lantern-db"
@@ -24,6 +24,11 @@
      }
     },
     "template": {
+     "metadata": {
+      "labels": {
+       "app": "lantern-db"
+      }
+     },
      "spec": {
       "containers": [
        {

@@ -272,7 +272,9 @@ export function leadsMenu(v: K8s, f: Forward): MenuRow[] {
   if (v.databases) {
     const kinds: ("postgres" | "mysql")[] = f.db === "mysql" ? ["mysql", "postgres"] : ["postgres", "mysql"];
 
-    for (const k of kinds) rows.push({ label: `Open in Databases as ${k}`, sub: k === f.db ? "guessed from the port and the name" : null, key: k === kinds[0] ? "b" : null, go: (cx) => openDatabases(v, f, k, cx) });
+    for (const k of kinds) rows.push({ label: `Open in Databases as ${k}`, sub: k === f.db ? "guessed from the port and the name · its password's secret found in the cluster" : null, key: k === kinds[0] ? "b" : null, go: (cx) => openDatabases(v, f, k, cx) });
+
+    rows.push({ label: "Open in Databases with a secret you pick", sub: "the password's secret: found ones, or any of the namespace", key: "B", go: (cx) => openDatabases(v, f, f.db ?? "postgres", cx, true) });
   }
 
   if (!f.web) rows.push({ label: `Open http://localhost:${f.local} in a web pane anyway`, go: (cx) => openWeb(v, { ...f, web: "http" }, cx) });
@@ -304,6 +306,9 @@ export function forwardsKey(v: K8s, name: string, cx: Context): boolean {
 
  return true;
     case "b": if (f.db || v.databases) openDatabases(v, f, f.db ?? "postgres", cx);
+
+ return true;
+    case "B": openDatabases(v, f, f.db ?? "postgres", cx, true);
 
  return true;
     case "p": peekForward(f);

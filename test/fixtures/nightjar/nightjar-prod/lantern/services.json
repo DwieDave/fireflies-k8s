@@ -8,8 +8,8 @@
    "metadata": {
     "name": "lantern-api",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000132",
-    "resourceVersion": "1132",
+    "uid": "00000000-0000-4000-8000-000000000137",
+    "resourceVersion": "1137",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "lantern-api"
@@ -17,7 +17,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.6.216",
+    "clusterIP": "10.43.2.31",
     "ports": [
      {
       "protocol": "TCP",
@@ -37,8 +37,8 @@
    "metadata": {
     "name": "lantern-db",
     "namespace": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000133",
-    "resourceVersion": "1133",
+    "uid": "00000000-0000-4000-8000-000000000138",
+    "resourceVersion": "1138",
     "creationTimestamp": "2026-10-26T12:00:00Z",
     "labels": {
      "app": "lantern-db"
@@ -46,7 +46,7 @@
    },
    "spec": {
     "type": "ClusterIP",
-    "clusterIP": "10.43.7.229",
+    "clusterIP": "10.43.3.44",
     "ports": [
      {
       "protocol": "TCP",

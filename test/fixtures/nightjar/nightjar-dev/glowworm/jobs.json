@@ -8,8 +8,8 @@
    "metadata": {
     "name": "glowworm-backfill",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000074",
-    "resourceVersion": "1074",
+    "uid": "00000000-0000-4000-8000-000000000075",
+    "resourceVersion": "1075",
     "creationTimestamp": "2026-11-13T06:00:00Z",
     "labels": {
      "job-name": "glowworm-backfill"
@@ -40,8 +40,8 @@
    "metadata": {
     "name": "glowworm-seed",
     "namespace": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000076",
-    "resourceVersion": "1076",
+    "uid": "00000000-0000-4000-8000-000000000077",
+    "resourceVersion": "1077",
     "creationTimestamp": "2026-11-04T12:00:00Z",
     "labels": {
      "job-name": "glowworm-seed"

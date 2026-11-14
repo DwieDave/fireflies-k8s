@@ -250,18 +250,23 @@ describe("the ecosystem", () => {
     expect(texts(draw())).toContain("Open in Databases");
   });
 
-  test("Open in Databases: nocturne.databases with the contract's args, no secret", async () => {
+  test("Open in Databases: nocturne.databases with the contract's args, the password's secret named, never its value", async () => {
     env.files.set(`${HOME}/mods/databases/mod.json`, "{}");
     sharedMap.set("layout", "nocturne");
     const { v, press } = await open();
     env.terminals = [{ address: "t9", state: "live", labels: { "k8s.forward": JSON.stringify({ context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-db", local: 15432, remote: 5432, db: "postgres", name: "lantern-db" }) } }];
     await press("f", "b");
     const c = calls.find((x) => x.name.startsWith("nocturne.databases:"));
-    expect(JSON.parse(c?.name.slice("nocturne.databases:".length) ?? "{}")).toEqual({ kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern" });
+    expect(JSON.parse(c?.name.slice("nocturne.databases:".length) ?? "{}")).toEqual({
+      kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", database: "lantern",
+      secret: { from: "kubernetes", context: "nightjar-dev", namespace: "lantern", name: "lantern-db-auth", key: "password", userKey: "username", kubectl: KUBECTL },
+    });
+    expect(JSON.stringify(calls)).not.toContain("moth-lantern-42");
+    expect(JSON.stringify(calls)).not.toContain(Buffer.from("moth-lantern-42").toString("base64"));
     // Elsewhere (no Nocturne): the window itself, the args as its connect prop.
     sharedMap.set("layout", "main");
     await press("f", "b");
-    expect(calls.find((x) => x.name === "openOverlay")?.args).toMatchObject({ mod: "databases", key: "databases", props: { connect: { kind: "postgres", port: 15432 } } });
+    expect(calls.find((x) => x.name === "openOverlay")?.args).toMatchObject({ mod: "databases", key: "databases", props: { connect: { kind: "postgres", port: 15432, secret: { name: "lantern-db-auth", key: "password" } } } });
   });
 
   test("a web forward opens in a web pane", async () => {
@@ -276,14 +281,14 @@ describe("secrets", () => {
   test("listed by key names; x shows the values on the row only; nothing keeps them", async () => {
     const { v, press, draw } = await open();
     await press(":", "s", "e", "c", "enter");
-    expect(texts(draw()).join(" ")).not.toContain("moth-wings-at-dusk");
+    expect(texts(draw()).join(" ")).not.toContain("moth-lantern-42");
     await press("x");
-    expect(texts(draw())).toContain("moth-wings-at-dusk");
+    expect(texts(draw())).toContain("moth-lantern-42");
     await press("j");
     expect(v.secret).toBeNull();
-    expect(JSON.stringify([...sharedMap.values()])).not.toContain("moth-wings");
+    expect(JSON.stringify([...sharedMap.values()])).not.toContain("moth-lantern");
     v.close();
-    expect(JSON.stringify([...store.values(), ...sharedMap.values()])).not.toContain("moth-wings");
+    expect(JSON.stringify([...store.values(), ...sharedMap.values()])).not.toContain("moth-lantern");
   });
 
   test("a secret's YAML has its values masked", async () => {

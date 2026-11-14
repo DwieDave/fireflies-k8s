@@ -8,8 +8,8 @@
    "metadata": {
     "name": "coredns",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000079",
-    "resourceVersion": "1079",
+    "uid": "00000000-0000-4000-8000-000000000084",
+    "resourceVersion": "1084",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "generation": 1,
     "labels": {
@@ -71,8 +71,8 @@
    "metadata": {
     "name": "metrics-server",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000083",
-    "resourceVersion": "1083",
+    "uid": "00000000-0000-4000-8000-000000000088",
+    "resourceVersion": "1088",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "generation": 1,
     "labels": {
@@ -134,8 +134,8 @@
    "metadata": {
     "name": "traefik",
     "namespace": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000086",
-    "resourceVersion": "1086",
+    "uid": "00000000-0000-4000-8000-000000000091",
+    "resourceVersion": "1091",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "generation": 2,
     "labels": {

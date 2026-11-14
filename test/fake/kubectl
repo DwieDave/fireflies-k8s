@@ -6,6 +6,7 @@
 //
 //   K8S_FAKE_DOWN=<context>   that context answers as an unreachable server
 //   K8S_FAKE_NOW=<ms>         the "now" ages are shown against (tests)
+//   K8S_FAKE_FORBID_SECRET=<name>  reading that secret is forbidden (RBAC that lists but doesn't get)
 
 import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -207,9 +208,16 @@ switch (verb) {
     if (name) found = found.filter(({ o }) => o.metadata.name === name);
     if (name && !found.length) fail(`Error from server (NotFound): ${types[0]} "${name}" not found`);
     const objs = found.map(({ o }) => o);
+    if (types[0] === "secrets" && name && process.env.K8S_FAKE_FORBID_SECRET === name) fail(`Error from server (Forbidden): secrets "${name}" is forbidden: User "nightjar-dev-reader" cannot get resource "secrets" in API group "" in the namespace "${namespace}"`);
+    if (types[0] === "secrets" && name && /^go-template=.*index \. "/.test(output)) {
+      // The Databases window's read (its kube.ts): each named key's base64 on a line, an absent one empty.
+      const data = objs[0].data ?? {};
+      for (const m of output.matchAll(/index \. "([^"]+)"/g)) out(data[m[1]!] ?? "");
+      break;
+    }
     if (types[0] === "secrets" && SECRET_TEMPLATE.test(output)) {
-      // The mod's template: name, type, created, the key names (never the values).
-      for (const o of objs) out(`${o.metadata.namespace}\t${o.metadata.name}\t${o.type}\t${o.metadata.creationTimestamp}\t${Object.keys(o.data ?? {}).join(",")}`);
+      // The mod's template: name, type, created, the key names (never the values), sorted as Go's range over a map.
+      for (const o of objs) out(`${o.metadata.namespace}\t${o.metadata.name}\t${o.type}\t${o.metadata.creationTimestamp}\t${Object.keys(o.data ?? {}).sort().join(",")}`);
       break;
     }
     if (types[0] === "secrets" && output === "json" && !name) fail("fake kubectl: the mod lists secrets by go-template only (values never leave kubectl)");

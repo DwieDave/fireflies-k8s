@@ -121,7 +121,7 @@ function barKeys(v: K8s): readonly (readonly [string, string])[] {
 
   if (v.tab === "argo") return [...(v.argoPanel === "tree" ? graph : []), ["S", "sync"], ["r", "refresh"], ["D", "diff"], ["h", "history"], ["B", "rollback"], ["tab", "panel"]];
 
-  if (v.tab === "forwards") return [["enter", "leads"], ["w", "web"], ["b", "databases"], ["p", "peek"], ["x", "stop"]];
+  if (v.tab === "forwards") return [["enter", "leads"], ["w", "web"], ["b", "databases"], ["B", "pick secret"], ["p", "peek"], ["x", "stop"]];
 
   if (v.panel === "rail") return [["enter", "pick"], ["0-9", "namespace"], ["tab", "panel"]];
 
