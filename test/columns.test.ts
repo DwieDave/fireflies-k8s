@@ -100,15 +100,15 @@ describe("the header and the column keys", () => {
     expect(v.columns.sorts.get("pods")).toEqual({ col: "status", desc: false });
     expect(listRows(v)[0]?.tone).toBe("bad");
     await press("}", "}");
-    expect(v.columns.widths.get("pods")?.get("status")).toBe(128 + 32);
+    expect(v.columns.widths.get("pods")?.get("status")).toBe(128 + 48);
     await press("{");
-    expect(v.columns.widths.get("pods")?.get("status")).toBe(128 + 16);
+    expect(v.columns.widths.get("pods")?.get("status")).toBe(128 + 24);
     await press(",");
     expect(focusedColumn(v, shownColumns(v, tableWidth(v)))?.col.title).toBe("restarts");
     expect(texts(draw())).toContain("STATUS ↑");
     // A new window reads them back.
     const next = await open();
-    expect(next.v.columns.widths.get("pods")?.get("status")).toBe(144);
+    expect(next.v.columns.widths.get("pods")?.get("status")).toBe(152);
     expect(next.v.columns.sorts.get("pods")).toEqual({ col: "status", desc: false });
   });
 
@@ -151,6 +151,25 @@ describe("the header and the column keys", () => {
     handlerOf(byId(draw(), "th-1") as El, "on_mouse_down", "right")({}, cx);
     expect(v.menu?.title).toBe("columns of pods");
     expect(v.columns.at.get("pods")).toBe("ready");
+  });
+});
+
+describe("hiding", () => {
+  test("H hides the focused column (kept), the name can't go, O shows them again; the menu copies a name", async () => {
+    const { v, press } = await open({ width: 1900 });
+    await press(".", ".", ".", "H");
+    expect(shownColumns(v, tableWidth(v)).map((s) => s.col.title)).not.toContain("status");
+    expect((sharedMap.get("k8s.columns") as any).hidden.pods).toEqual(["status"]);
+    await press(",", ",", ",", ",", "H");
+    expect(v.note?.text).toBe("the name stays: it takes the rest");
+    await press("O");
+    const labels = v.menu?.rows.map((r) => r.label) ?? [];
+    expect(labels).toContain("show every hidden column (1)");
+    const copied: string[] = [];
+    v.menu?.rows.find((r) => r.label === 'copy "name"')?.go({ ...cx, write_to_clipboard: (s: string) => copied.push(s) });
+    expect(copied).toEqual(["name"]);
+    await press("O", "S");
+    expect(shownColumns(v, tableWidth(v)).map((s) => s.col.title)).toContain("status");
   });
 });
 

@@ -202,7 +202,8 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | `,` `.` | the table: the keys to the column left / right (its header underlined) |
 | `o` | sort by that column: up, down, back to the default order (or click its header) |
 | `{` `}` | that column narrower / wider (or drag its header's edge; a double click fits it) |
-| `O` | the columns menu: sort by any column, the default order, fit, every width back (or right-click a header) |
+| `H` | hide that column (`O` shows hidden ones again) |
+| `O` | the columns menu: sort by any column, the default order, hide, show the hidden ones, fit, wider / narrower, every width back, copy its name (or right-click a header) |
 | `M` | metrics: read every 2s, 5s, 15s, 30s, or paused |
 | `ctrl-t` | into a pane / out to a window |
 | `?` | every key |

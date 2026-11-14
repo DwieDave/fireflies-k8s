@@ -125,7 +125,8 @@ export const TABLE_KEYS = [
   [", .", "the keys to the column left / right (its header underlined)"],
   ["o", "sort by that column: up, down, the default order (or click its header)"],
   ["{ }", "that column narrower / wider (or drag its header's edge; a double click fits it)"],
-  ["O", "the columns menu: sort by any, the default order, fit, widths back (or right-click a header)"],
+  ["H", "hide that column (O shows hidden ones again)"],
+  ["O", "the columns menu: sort by any, the default order, hide, show hidden, fit, wider / narrower, widths back, copy its name (or right-click a header)"],
 ] as const;
 
 /** A graph's keys (the detail panel's, the Argo tree's), with the keyboard there. */

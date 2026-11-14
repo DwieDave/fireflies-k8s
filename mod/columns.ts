@@ -5,7 +5,10 @@
 // down, back to the default order). Widths and sorts are kept per kind in
 // shared `k8s.columns`, across restarts and for every copy:
 //
-//   { "widths": { "<kind>": { "<column title>": <px> } }, "sort": { "<kind>": { "col": "<title>", "desc": <bool> } } }
+//   { "widths": { "<kind>": { "<column title>": <px> } }, "sort": { "<kind>": { "col": "<title>", "desc": <bool> } },
+//     "hidden": { "<kind>": ["<column title>", …] } }
+//
+// The keys match the Databases window's grids: o sort, O the column's menu, { } width (24 px), H hide.
 
 import { setShared, shared } from "herdr";
 import type { default as K8s } from "./main.ts";
@@ -15,7 +18,7 @@ import type { Cell, Row } from "./rows.ts";
 import type { SortBy } from "./sort.ts";
 import { nextSort } from "./sort.ts";
 import { isBuiltin } from "./kinds.ts";
-import { isBoolean, isNumber, isString, nullable, object, readShared, sharedKey, writeShared } from "./guard.ts";
+import { arrayOf, isBoolean, isNumber, isString, nullable, object, readShared, sharedKey, writeShared } from "./guard.ts";
 import { mapOf, maybe } from "./guards.ts";
 import { age } from "./time.ts";
 import { cpuText, memText } from "./quantity.ts";
@@ -23,12 +26,13 @@ import { cpuText, memText } from "./quantity.ts";
 export const COLUMN_STATE = sharedKey("k8s.columns", nullable(object({}, {
   widths: maybe(mapOf(mapOf(isNumber))),
   sort: maybe(mapOf(object({ col: isString, desc: isBoolean }))),
+  hidden: maybe(mapOf(arrayOf(isString))),
 })));
 
 /** A column's narrowest and widest, and how far `{` `}` move it. */
 export const MIN_W = 36;
 export const MAX_W = 640;
-export const W_STEP = 16;
+export const W_STEP = 24;
 
 /** The name keeps at least this much when it takes the rest. */
 export const NAME_MIN = 140;
@@ -45,6 +49,7 @@ export interface ColumnDrag {
 export class ColumnState {
   widths = new Map<string, Map<string, number>>();
   sorts = new Map<string, SortBy>();
+  hidden = new Map<string, ReadonlySet<string>>();
   at = new Map<string, string>();
   drag: ColumnDrag | null = null;
 }
@@ -64,6 +69,8 @@ export function loadColumns(): ColumnState {
 
   for (const [kind, by] of Object.entries(kept?.sort ?? {})) if (by) s.sorts.set(kind, { col: by.col, desc: by.desc });
 
+  for (const [kind, cols] of Object.entries(kept?.hidden ?? {})) if (cols?.length) s.hidden.set(kind, new Set(cols));
+
   return s;
 }
 
@@ -73,9 +80,13 @@ export function saveColumns(s: ColumnState): void {
 
   for (const [kind, m] of s.widths) if (m.size) widths[kind] = Object.fromEntries(m);
 
+  const hidden: { [kind: string]: readonly string[] } = {};
+
   for (const [kind, by] of s.sorts) sort[kind] = by;
 
-  writeShared(setShared, COLUMN_STATE, { widths, sort });
+  for (const [kind, cols] of s.hidden) if (cols.size) hidden[kind] = [...cols];
+
+  writeShared(setShared, COLUMN_STATE, { widths, sort, hidden });
 }
 
 /** The shown kind's columns, as the kind defines them. */
@@ -98,7 +109,8 @@ export function widthOf(v: K8s, col: Column): number | null {
 /** The columns that fit `width`, as set, in their order: the one taking the rest keeps NAME_MIN; the details
  *  (`low`) leave first, then columns from the right. */
 export function shownColumns(v: K8s, width: number): readonly Shown[] {
-  const all = kindColumns(v).map((col, index): Shown => ({ col, index, w: widthOf(v, col) }));
+  const hidden = v.columns.hidden.get(v.kind);
+  const all = kindColumns(v).map((col, index): Shown => ({ col, index, w: widthOf(v, col) })).filter((s) => !hidden?.has(s.col.title));
   const keep = new Set<number>();
   let used = 26 + (all.some((s) => s.w === null) ? NAME_MIN : 0);
 
@@ -149,6 +161,24 @@ export function stepWidth(v: K8s, s: Shown, by: number, drawn: number): void {
 /** Every width of the shown kind back to the kind's. */
 export function resetWidths(v: K8s): void {
   v.columns.widths.delete(v.kind);
+  saveColumns(v.columns);
+}
+
+/** H: hides a column (kept); the one taking the rest stays. False when it can't go. */
+export function hideColumn(v: K8s, col: string): boolean {
+  const c = kindColumns(v).find((x) => x.title === col);
+
+  if (!c || c.w === null) return false;
+
+  v.columns.hidden.set(v.kind, new Set([...(v.columns.hidden.get(v.kind) ?? []), col]));
+  saveColumns(v.columns);
+
+  return true;
+}
+
+/** Every hidden column of the shown kind back. */
+export function showHidden(v: K8s): void {
+  v.columns.hidden.delete(v.kind);
   saveColumns(v.columns);
 }
 
