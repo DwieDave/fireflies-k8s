@@ -46,10 +46,61 @@ the keyboard first and the pointer too. Its keys follow k9s's where they fit.
 - `F` port-forwards a pod's, service's or deployment's port. An http port
   opens in a web pane; a database's (Postgres, MySQL: guessed from the port,
   the name and the image, and you pick) opens in the Databases window when
-  that mod is installed.
+  that mod is installed, connected with the password from the cluster
+  (below).
 - `e` opens the object's YAML in the editor; when you save, the window asks
   before it applies (`kubectl replace`, so a change made meanwhile is refused,
   not overwritten).
+
+### A database's password, from the cluster
+
+`b` on a database forward looks for its credentials before it opens
+Databases, reading objects and secrets' key names only, never a value:
+
+- the pod behind the forward (a service's pods, a workload's template): its
+  containers' env, the database images' variables (`POSTGRES_PASSWORD`,
+  `POSTGRES_USER`, `POSTGRES_DB`, `PGPASSWORD`, Bitnami's
+  `POSTGRES_POSTGRES_PASSWORD`, spilo's `PGPASSWORD_SUPERUSER`,
+  `MYSQL_ROOT_PASSWORD`, `MYSQL_USER` / `MYSQL_PASSWORD` / `MYSQL_DATABASE`,
+  the `MARIADB_` ones) as a secret's key, a secret's every key (`envFrom`,
+  its prefix too), or a `*_FILE` pointing into a mounted secret (Bitnami's
+  password files). A password written in the pod's spec or a config map is
+  named, not passed on.
+- the operators' secrets, by their labels: CloudNativePG (`<cluster>-app`,
+  `<cluster>-superuser`), Crunchy PGO and Percona's PG operator
+  (`<cluster>-pguser-<user>`), Zalando's postgres-operator
+  (`<user>.<cluster>.credentials.postgresql.acid.zalan.do`).
+
+One secret found: Databases opens on it and connects. Several (root and an
+app user): a picker, by keys (`j` `k`, a number, `enter`) and the pointer,
+each with where it was found. None: Databases asks for the password, as
+before. `B` (or the forward's menu) opens the picker anyway, with any secret
+of the namespace by hand: the secret, the key with the password, the key with
+the user.
+
+The contract with the Databases mod:
+
+A password in a Kubernetes secret: a Postgres or MySQL connection to a server
+on this machine (`host` 127.0.0.1, localhost or ::1, as a port-forward is)
+may name where a cluster keeps its password, never the password:
+`"secret": {"from": "kubernetes", "context": "<kubeconfig context>",
+"namespace": "<namespace>", "name": "<secret>", "key": "<the password's
+key>", "userKey"?: "<the user name's key>", "databaseKey"?: "<the database's
+key>", "kubectl"?: "kubectl" | "/abs/path/to/kubectl"}`. The window checks
+the names (a namespace and a secret's name as Kubernetes allows them, keys of
+`-._a-zA-Z0-9`, kubectl by that name only; a bad one refuses the request) and
+at every connect runs the one read it builds itself, `kubectl
+--context=<context> --namespace=<namespace> get secret <name>
+--request-timeout=10s -o go-template=…` (each named key's base64 on a line),
+decoded into its memory; a user or database read there fills `user` /
+`database`. The password then goes the way every password goes (the client's
+environment or a 0600 file), never an argument, shared state, props, the log,
+the history or a file. The connection's row and head say where it came from
+("password from secret lantern-db-auth · password (nightjar-dev/lantern),
+read with kubectl"); a failed read (no access, the secret gone, kubectl
+missing) or a password the server refuses says why and asks for it. Saved
+(`s`), it keeps the secret's place and reads again at each connect; a
+password typed in its form moves it to the keychain.
 
 Other mods open it on a resource: `openOverlay({ mod: "k8s", kind: "window",
 key: "k8s", frame: "none", scrim: true, width: 0.88, height: 0.88, props: {
@@ -129,6 +180,7 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | `g` `d` `y` `v` | graph, describe, YAML, events |
 | `l` `p` `s` | logs, previous logs, shell (in panes) |
 | `F` `f` | port-forward, the forwards |
+| `b` `B` | a database forward in Databases, its password's secret found; picked |
 | `e` | edit in the editor |
 | `S` `R` | scale, restart |
 | `x` | show a secret's values |
