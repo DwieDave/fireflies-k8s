@@ -56,9 +56,17 @@ export function byId(el: El, id: string): El | null {
   return null;
 }
 
-/** An element's handler by its builder's name (and first argument: "left"). */
+/** The handlers gpui-kit keeps one of per element (its `Behavior` holds an `Option`): a second
+ *  registration replaces the first, so a test hears only the last, as the app does. Presses and
+ *  releases are lists there (every one fires). */
+export const ONE_PER_ELEMENT: ReadonlySet<string> = new Set(["on_click", "on_mouse_move", "on_hover", "on_key_down", "on_key_up",
+  "on_scroll_wheel", "on_size_change", "on_drop", "on_mouse_down_out", "on_item_click", "on_item_secondary_click"]);
+
+/** An element's handler by its builder's name (and first argument: "left"): for the ones kept one
+ *  per element the last registered (the one the app calls), else the first. */
 export function handlerOf(el: El, name: string, arg?: string): ((...a: any[]) => unknown) {
-  const hit = el.calls.find(([m, a]) => m === name && (arg === undefined || a[0] === arg));
+  const match = ([m, a]: [string, unknown[]]) => m === name && (arg === undefined || a[0] === arg);
+  const hit = ONE_PER_ELEMENT.has(name) ? el.calls.findLast(match) : el.calls.find(match);
   if (!hit) throw new Error(`no ${name} handler`);
   return hit[1][hit[1].length - 1] as (...a: any[]) => unknown;
 }

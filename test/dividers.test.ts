@@ -7,7 +7,7 @@
 // where panels sit side by side or stacked, a drag of the rail, + and - on
 // the panel with the keys, the sizes kept per window and per pane.
 import { beforeEach, describe, expect, test } from "bun:test";
-import { El, allCalls, byId, calls, env, handlerOf, key, makeCx, sharedMap, store } from "./support/standins.ts";
+import { El, ONE_PER_ELEMENT, allCalls, byId, calls, env, handlerOf, key, makeCx, sharedMap, store } from "./support/standins.ts";
 import { KUBECTL, writeLog } from "./support/fake.ts";
 
 const { Dividers, clampSize, divider, tracking, STEP } = await import("../mod/dividers.ts");
@@ -174,10 +174,10 @@ describe("the window's panels", () => {
     const root = draw();
     const grab = byId(root, "k8s-div-rail")!;
     handlerOf(grab, "on_mouse_down", "left")({ click_count: 1, position: { x: 220, y: 300 } }, cx);
-    // The root is the frame's outer element: tracking's handlers sit on it.
-    const moves = root.calls.filter(([m]) => m === "on_mouse_move").map(([, a]) => a[a.length - 1] as (...x: unknown[]) => void);
-    moves.forEach((f) => f({ position: { x: 300, y: 300 } }, cx));
-    handlerOf(root, "on_mouse_up", "left")({}, cx);
+    // The root is the frame's outer element: tracking's handlers sit on it. gpui-kit keeps one move
+    // handler per element (the last registered), so the drag goes through that one only.
+    handlerOf(root, "on_mouse_move")({ position: { x: 300, y: 300 } }, cx);
+    for (const [m, a] of root.calls) if (m === "on_mouse_up" && a[0] === "left") (a[a.length - 1] as (...x: unknown[]) => void)({}, cx);
     expect(v.dividers.size(railDivider(v))).toBe(290);
     expect(sharedMap.get("k8s.sizes")).toEqual({ window: { rail: 290 } });
     const again = await open();
@@ -185,6 +185,34 @@ describe("the window's panels", () => {
     // A pane keeps its own.
     const pane = await open({ pane: true });
     expect(pane.v.dividers.size(railDivider(pane.v))).toBe(210);
+  });
+
+  test("a column edge's drag goes through the same root move handler as the dividers' (the release ends both, leaving ends it)", async () => {
+    const { v, draw } = await open({ width: 1900 });
+    handlerOf(byId(draw(), "th-edge-node")!, "on_mouse_down", "left")({ click_count: 1, position: { x: 500, y: 0 } }, cx);
+    const root = draw();
+    handlerOf(root, "on_mouse_move")({ position: { x: 560, y: 0 } }, cx);
+    expect(v.columns.widths.get("pods")?.get("node")).toBe(140);
+    handlerOf(root, "on_hover")(false, cx);
+    expect(v.columns.drag).toBeNull();
+    expect((sharedMap.get("k8s.columns") as any).widths.pods.node).toBe(140);
+  });
+
+  test("no element of the window registers a handler gpui-kit keeps one of twice (the second would silence the first)", async () => {
+    const { draw, press } = await open({ width: 1900 });
+    const twice = (el: El): string[] => {
+      const seen = el.calls.map(([m]) => m).filter((m) => ONE_PER_ELEMENT.has(m));
+      const dup = seen.filter((m, i) => seen.indexOf(m) !== i).map((m) => `${el.ids.join(",") || "?"}: ${m}`);
+      return [...dup, ...el.kids.flatMap(twice)];
+    };
+    // The resources tab, a graph in the detail panel, argo cd, the forwards.
+    expect(twice(draw())).toEqual([]);
+    await press("4", "d");
+    expect(twice(draw())).toEqual([]);
+    await press("esc", "]");
+    expect(twice(draw())).toEqual([]);
+    await press("]");
+    expect(twice(draw())).toEqual([]);
   });
 
   test("+ and - on the detail panel widen and narrow it; the graph is laid out for the new width", async () => {

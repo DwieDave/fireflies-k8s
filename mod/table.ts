@@ -24,6 +24,7 @@ import type { Shown } from "./columns.ts";
 import { NAME_MIN, cycleSort, fitColumn, focusedColumn, metricLine, saveColumns, setWidth, shownColumns } from "./columns.ts";
 import { columnsMenu } from "./columns-menu.ts";
 import { unzoom } from "./kit.ts";
+import type { Also } from "./dividers.ts";
 
 /** Two clicks on one row this close together open it (a virtual list reports clicks, not their count). */
 const DOUBLE_MS = 450;
@@ -113,27 +114,37 @@ function edge(v: K8s, t: Theme, s: Shown, rest: number): Element {
     });
 }
 
-/** Follows a header edge's drag over the whole window (the pointer leaves the edge at once). */
-export function columnTracking(el: Element, v: K8s): Element {
-  const d = v.columns.drag;
+/** A header edge's drag, followed over the whole window (the pointer leaves the edge at once):
+ *  handed to the root's `tracking` (dividers.ts), since gpui-kit keeps one move handler per
+ *  element and a second would replace the dividers' own. The release or the pointer leaving the
+ *  window ends it and keeps the widths. */
+export function columnDrag(v: K8s): Also {
+  const end = (): boolean => {
+    if (!v.columns.drag) return false;
 
-  return el.when(d !== null, (e) => e.cursor_col_resize())
-    .on_mouse_move((e, cx) => {
+    v.columns.drag = null;
+    saveColumns(v.columns);
+
+    return true;
+  };
+
+  return {
+    move: (e) => {
       const g = v.columns.drag;
 
-      if (!g || g.kind !== v.kind) return;
+      if (!g || g.kind !== v.kind) return false;
 
       setWidth(v, g.col, g.w + unzoom(e.position.x) - g.x, false);
-      cx.notify();
-    })
-    .on_mouse_up("left", (_e, cx) => {
-      if (!v.columns.drag) return;
 
-      v.columns.drag = null;
-      saveColumns(v.columns);
-      cx.notify();
-    });
+      return true;
+    },
+    up: end,
+    leave: end,
+  };
 }
+
+/** The resize pointer on the root while a header edge is held. */
+export const columnCursor = (el: Element, v: K8s): Element => el.when(v.columns.drag !== null, (e) => e.cursor_col_resize());
 
 /** The selected row back in sight after the order changed. */
 export function keepInView(v: K8s): void {

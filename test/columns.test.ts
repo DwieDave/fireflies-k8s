@@ -3,7 +3,7 @@
 // columns-menu.ts), widths and sorts kept per kind, CPU and memory lines in
 // the workloads' rows, and a cluster without metrics-server said once.
 import { beforeEach, describe, expect, test } from "bun:test";
-import { El, byId, handlerOf, sharedMap, texts } from "./support/standins.ts";
+import { El, ONE_PER_ELEMENT, byId, handlerOf, sharedMap, texts } from "./support/standins.ts";
 import { open, reset } from "./support/window.ts";
 
 const { sortRows, sortKey, sizeOf, spanOf, nextSort } = await import("../mod/sort.ts");
@@ -15,7 +15,10 @@ const cx: any = { stop_propagation() {}, notify() {} };
 const none = () => null;
 
 /** Every handler of that name on the element itself (the root carries the dividers' and the columns'). */
+// Every handler of a name, as the app calls them: presses and releases all fire, the ones gpui-kit
+// keeps one per element (a move) only the last registered.
 const each = (el: El, name: string, arg?: string) => (ev: unknown) => {
+  if (ONE_PER_ELEMENT.has(name)) return void handlerOf(el, name, arg)(ev, cx);
   for (const [m, a] of el.calls) if (m === name && (arg === undefined || a[0] === arg)) (a[a.length - 1] as (e: unknown, c: unknown) => void)(ev, cx);
 };
 

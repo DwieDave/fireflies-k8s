@@ -15,7 +15,7 @@ import { tabActions } from "./form-keys.ts";
 import { onKey } from "./input.ts";
 import { header, keyBar, foldRow } from "./chrome.ts";
 import { rail } from "./rail.ts";
-import { columnTracking, table } from "./table.ts";
+import { columnCursor, columnDrag, table } from "./table.ts";
 import { detail } from "./detail.ts";
 import { argoTab } from "./argo-view.ts";
 import { forwardsTab, shelf } from "./forwards-view.ts";
@@ -50,7 +50,8 @@ export function frame(v: K8s, t: Theme, _cx: Context): Element {
     .children(v.tab === "resources" ? [shelf(v, t)].flatMap((x) => (x ? [x] : [])) : [])
     .child(keyBar(v, t));
 
-  const keyed = tabActions(columnTracking(tracking(root, v.dividers), v), (e, cx) => onKey(v, e, cx));
+  // One move handler per element (gpui-kit keeps the last): the dividers' and the column edges' drags share it.
+  const keyed = tabActions(columnCursor(tracking(root, v.dividers, columnDrag(v)), v), (e, cx) => onKey(v, e, cx));
 
   return handle ? keyed.track_focus(handle) : keyed;
 }
