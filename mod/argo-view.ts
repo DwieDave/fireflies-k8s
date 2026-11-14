@@ -21,6 +21,8 @@ import { age, instant } from "./time.ts";
 import { divider } from "./dividers.ts";
 import { GAP, argoAppsDivider, argoSideDivider } from "./panels.ts";
 import type { DiffLine } from "./diff.ts";
+import type { Menu } from "./state.ts";
+import { diffApp, rollbackApp } from "./argo-actions.ts";
 import { argoNum } from "./panel-keys.ts";
 import { appMenu, nodeMenu } from "./node-menu.ts";
 
@@ -190,9 +192,31 @@ function timeline(v: K8s, t: Theme, a: Application): Element {
         v.argoPanel = "side";
         cx.notify();
       })
+      .on_mouse_down("right", (_ev, cx) => {
+        cx.stop_propagation();
+        v.histAt = i;
+        v.argoPanel = "side";
+        v.menu = historyMenu(v, a, i);
+        cx.notify();
+      })
       .child(div().relative().size(8).flex_none().when(e.revision === running, (el) => el.bg(t.done).border(1).border_color(t.done)).when(e.revision !== running, (el) => el.bg(t.ansi8)))
       .child(div().relative().w(56).flex_none().text_color(e.revision === running ? t.foreground : t.muted).child((e.revision ?? "").slice(0, 7)))
       .child(div().relative().flex_1().text_color(t.dim).child(`${age(instant(e.deployedAt))} ago${e.revision === running ? " · running" : ""}`))));
+}
+
+/** A history entry's menu (a right click; m on the picked one): roll back to it, copy its revision. */
+export function historyMenu(v: K8s, a: Application, i: number): Menu {
+  const e = historyOf(a)[i];
+  const rev = e?.revision ?? "";
+
+  return {
+    title: `${a.metadata.name} at ${rev.slice(0, 7)}`, at: 0,
+    rows: [
+      { label: "roll back to it", sub: autoSync(a) ? "refused while auto-sync is on" : "asks first", key: "B", danger: true, go: (cx) => rollbackApp(v, a, e ?? null, cx) },
+      { label: "copy the revision", sub: rev, key: "y", go: (cx) => cx.write_to_clipboard(rev) },
+      { label: "diff", key: "D", go: (cx) => diffApp(v, a, cx) },
+    ],
+  };
 }
 
 function diffView(v: K8s, t: Theme, a: Application): Element {

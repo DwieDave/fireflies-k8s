@@ -11,7 +11,8 @@ import type { Theme } from "herdr";
 import type { default as K8s } from "./main.ts";
 import { band, icon, panel, pip, stop, toneColor } from "./kit.ts";
 import type { RailItem } from "./menus.ts";
-import { railItems, pickRail } from "./menus.ts";
+import { railItems, pickRail, railMenu } from "./menus.ts";
+import { moveFavourite } from "./ns-picker.ts";
 import { looksProd } from "./contexts.ts";
 import { isBuiltin, kindInfo, titleOf } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
@@ -54,9 +55,32 @@ export function rail(v: K8s, t: Theme): Element {
 function railRow(v: K8s, t: Theme, item: RailItem, i: number, cursor: boolean): Element {
   const chosen = item.part === "context" ? item.context.name === v.context : item.part === "namespace" ? item.strip.name === v.namespace : item.kind === v.kind;
 
+  const fav = item.part === "namespace" && item.strip.name !== null && v.settings.favourites.includes(item.strip.name) ? item.strip.name : null;
+
   const row = div().id(`rail-${i}`).relative().flex_none().px(8).cursor_pointer().text_size(11)
     .hover((s) => s.bg(`${t.ansi0}55`))
-    .on_mouse_down("left", stop)
+    .on_mouse_down("left", (e, cx) => {
+      stop(e, cx);
+      // A favourite namespace drags onto another favourite's place.
+      v.railDrag = fav;
+    })
+    .on_mouse_up("left", (_e, cx) => {
+      const from = v.railDrag;
+
+      v.railDrag = null;
+
+      if (from && fav && from !== fav && moveFavourite(v, from, fav, cx)) {
+        v.say(`${from} moved to ${fav}'s place among the favourites`, "ok");
+        cx.notify();
+      }
+    })
+    .on_mouse_down("right", (_e, cx) => {
+      cx.stop_propagation();
+      v.railAt = i;
+      v.panel = "rail";
+      v.menu = railMenu(v, item);
+      cx.notify();
+    })
     .on_click((_e, cx) => {
       v.railAt = i;
       v.panel = "rail";

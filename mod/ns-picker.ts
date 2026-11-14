@@ -88,6 +88,14 @@ export function moveFavourite(v: K8s, ns: string, onto: string, cx: Context): bo
   return true;
 }
 
+/** J / K on a favourite in the rail: one place down or up among the favourites, kept. */
+export function stepFavourite(v: K8s, ns: string, by: 1 | -1, cx: Context): boolean {
+  const favs = v.settings.favourites;
+  const onto = favs[favs.indexOf(ns) + by];
+
+  return onto !== undefined && moveFavourite(v, ns, onto, cx);
+}
+
 /** A key while a find menu is open: letters narrow it, arrows (ctrl-n ctrl-p) move, digits and enter pick. */
 export function findKey(v: K8s, m: Menu, name: string, ch: string | null, cx: Context, pick: (i: number) => void): void {
   const f = m.find;

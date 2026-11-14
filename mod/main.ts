@@ -88,6 +88,8 @@ export default class K8s extends View {
   tableScroll = VirtualListScrollHandle.new();
   /** The table's rows' height as drawn (how many rows are in sight). */
   rowsHeight = 400;
+  /** A favourite namespace being dragged in the rail (dropped on another favourite: it takes that place). */
+  railDrag: string | null = null;
   /** The last click on a table row (a second one soon after opens it). */
   lastClick: { readonly key: string; readonly at: number } | null = null;
   nsScroll = ScrollHandle.new();

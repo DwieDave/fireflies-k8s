@@ -9,6 +9,8 @@ import { customOfCluster, kindCounts, strips } from "./derive.ts";
 import type { NsStrip } from "./derive.ts";
 import { setContext, setKind, setNamespace, setTab } from "./nav.ts";
 import { looksProd } from "./contexts.ts";
+import type { Context } from "gpui-kit";
+import { stepFavourite, toggleFavourite } from "./ns-picker.ts";
 import type { Context as KubeContext } from "./contexts.ts";
 
 export function contextMenu(v: K8s): Menu {
@@ -61,6 +63,38 @@ export function pickRail(v: K8s, item: RailItem): void {
     setKind(v, item.kind);
     v.panel = "table";
   }
+}
+
+/** A rail row's menu (a right click, m): a context's, a namespace's (a favourite or not, moved), a kind's. */
+export function railMenu(v: K8s, item: RailItem): Menu {
+  const copy = (name: string): MenuRow => ({ label: "copy its name", go: (cx) => cx.write_to_clipboard(name) });
+
+  if (item.part === "context") {
+    const c = item.context;
+
+    return { title: `context ${c.name}`, at: 0, rows: [{ label: "use it", sub: contextSub(v, c), key: "enter", go: () => setContext(v, c.name) }, copy(c.name)] };
+  }
+
+  if (item.part === "kind") return { title: titleOf(item.kind).toLowerCase(), at: 0, rows: [{ label: "list them", key: "enter", go: () => pickRail(v, item) }, { label: "every kind", key: "ctrl-a", go: () => {
+    v.menu = kindMenu(v);
+  } }] };
+
+  const ns = item.strip.name;
+
+  if (ns === null) return { title: "every namespace", at: 0, rows: [{ label: "show every namespace", key: "enter", go: () => setNamespace(v, null) }] };
+
+  const fav = v.settings.favourites.includes(ns);
+
+  return {
+    title: `namespace ${ns}`, at: 0,
+    rows: [
+      { label: "show it", key: "enter", go: () => setNamespace(v, ns) },
+      { label: fav ? "no longer a favourite" : "a favourite (listed first)", key: "*", go: (cx) => toggleFavourite(v, ns, cx) },
+      ...(fav ? [{ label: "move it up among the favourites", sub: "or drag it onto another favourite", key: "K", go: (cx: Context) => stepFavourite(v, ns, -1, cx) },
+        { label: "move it down", key: "J", go: (cx: Context) => stepFavourite(v, ns, 1, cx) }] : []),
+      copy(ns),
+    ],
+  };
 }
 
 /** The rail item the shown state points at (the cursor starts there). */

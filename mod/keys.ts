@@ -120,6 +120,14 @@ export const WINDOW_KEYS = [
   ["?", "keys"],
 ] as const;
 
+/** The rail's keys (panels 1 2 3). */
+export const RAIL_KEYS = [
+  ["enter", "use the context, show the namespace, list the kind (or click it)"],
+  ["m space", "its menu (or right-click it)"],
+  ["*", "a namespace a favourite or not (favourites list first; kept)"],
+  ["J K", "a favourite one place down / up (or drag it onto another favourite)"],
+] as const;
+
 /** The kind's table's column keys (the table with the keys); the header takes the pointer the same way. */
 export const TABLE_KEYS = [
   [", .", "the keys to the column left / right (its header underlined)"],

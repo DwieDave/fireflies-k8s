@@ -45,7 +45,12 @@ export function shelf(v: K8s, t: Theme): Element | null {
   return h_flex().id("k8s-shelf").relative().h(26).flex_none().px(10).gap(14).items_center().text_size(11).overflow_hidden()
     .child(div().absolute().inset_0().opacity(0.35).child(dither(t.ansi0, 1)))
     .child(div().relative().flex_none().text_size(10).text_color(t.ansi8).child("FORWARDS"))
-    .children(live.slice(0, 4).map((f, i) => h_flex().id(`shelf-${i}`).relative().flex_none().gap(6).items_center().text_color(t.muted)
+    .children(live.slice(0, 4).map((f, i) => h_flex().id(`shelf-${i}`).relative().flex_none().gap(6).items_center().text_color(t.muted).cursor_pointer()
+      .on_mouse_down("right", (_e, cx) => {
+        cx.stop_propagation();
+        v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) };
+        cx.notify();
+      })
       .child(icon("plug", t.ansi6, 11))
       .child(div().child(f.target))
       .child(div().text_color(t.ansi6).child(`:${f.remote} → localhost:${f.local}`))
@@ -69,6 +74,12 @@ export function forwardsTab(v: K8s, t: Theme): Element {
 
       if (e.click_count >= 2) v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) };
 
+      cx.notify();
+    })
+    .on_mouse_down("right", (_e, cx) => {
+      cx.stop_propagation();
+      v.forwardAt = i;
+      v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) };
       cx.notify();
     })
     .child(div().relative().child(pip(t, f.live ? "ok" : "off", 7)))

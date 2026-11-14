@@ -39,7 +39,10 @@ export function frame(v: K8s, t: Theme, _cx: Context): Element {
         cx.notify();
       }
     })
-    .on_mouse_down("left", () => handle?.focus())
+    .on_mouse_down("left", () => {
+      v.railDrag = null;
+      handle?.focus();
+    })
     .on_key_down((e, cx) => onKey(v, e, cx))
     .child(header(v, t))
     .child(v_flex().relative().flex_1().min_h(0).child(body(v, t))

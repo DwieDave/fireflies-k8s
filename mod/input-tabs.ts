@@ -8,8 +8,10 @@ import type { default as K8s } from "./main.ts";
 import { rowActionFor } from "./keys.ts";
 import { moveRow, selectAt, listRows, rowIndex, selectedRow, allApps, apps, shownApp, showRef } from "./nav.ts";
 import { filterMenu } from "./argo-filter.ts";
+import { historyMenu } from "./argo-view.ts";
 import { runRow, rowMenu } from "./actions.ts";
-import { railItems, pickRail } from "./menus.ts";
+import { railItems, pickRail, railMenu } from "./menus.ts";
+import { stepFavourite, toggleFavourite } from "./ns-picker.ts";
 import { APP_CANVAS, ROW_CANVAS, appTree, detailWidth, flipDirection, rowGraph, sideBox, stepBox, treeWidth } from "./graph-shown.ts";
 import { centreOn, panBy, panKey } from "./graph-pan.ts";
 import { scaled, toggleFit, zoomStep } from "./graph-zoom.ts";
@@ -49,18 +51,26 @@ export function resourcesKey(v: K8s, name: string, cx: Context): boolean {
     return true;
   }
 
-  if (v.panel === "rail") return railKey(v, name);
+  if (v.panel === "rail") return railKey(v, name, cx);
 
   if (v.panel === "detail" && detailKey(v, name)) return true;
 
   return tableKey(v, name, cx);
 }
 
-function railKey(v: K8s, name: string): boolean {
+function railKey(v: K8s, name: string, cx: Context): boolean {
   const items = railItems(v);
   const by = step(name);
+  const item = items[v.railAt];
+  const ns = item?.part === "namespace" ? item.strip.name : null;
 
   if (by !== null) v.railAt = Math.max(0, Math.min(items.length - 1, v.railAt + by));
+  else if ((name === "m" || name === "space") && item) v.menu = railMenu(v, item);
+  else if (name === "*" && ns !== null) toggleFavourite(v, ns, cx);
+  else if ((name === "J" || name === "K") && ns !== null) {
+    stepFavourite(v, ns, name === "J" ? 1 : -1, cx);
+    v.railAt = Math.max(0, railItems(v).findIndex((x) => x.part === "namespace" && x.strip.name === ns));
+  }
   else if (name === "g" || name === "home") v.railAt = 0;
   else if (name === "G" || name === "end") v.railAt = items.length - 1;
   else if (name === "enter" || name === "l" || name === "right") {
@@ -308,6 +318,12 @@ function argoPanelKey(v: K8s, name: string): boolean {
 
       if (r && r.kind !== "applications") showRef(v, r.kind, r.name, r.namespace);
     }) : false;
+  }
+
+  if ((name === "m" || name === "space") && a) {
+    v.menu = historyMenu(v, a, v.histAt ?? historyOf(a).length - 1);
+
+    return true;
   }
 
   if (by !== null && a) {

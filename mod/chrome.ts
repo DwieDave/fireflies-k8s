@@ -25,7 +25,8 @@ import { clusterOf } from "./writes.ts";
 import { hasArgo } from "./derive.ts";
 import { paceText } from "./metrics.ts";
 import { complete } from "./filter-terms.ts";
-import { argoCandidates } from "./input.ts";
+import { argoCandidates, pressKeys } from "./input.ts";
+import { namespaceMenu } from "./ns-picker.ts";
 
 /** The top bar. In a window it's where the window drags from: presses on it aren't stopped. */
 export function header(v: K8s, t: Theme): Element {
@@ -48,7 +49,14 @@ export function header(v: K8s, t: Theme): Element {
       .when(prod, (el) => el.child(div().flex_none().px(4).h(14).text_size(10).bg(t.blocked).text_color(t.background).child("prod")))
       .when(v.context !== null && v.settings.readonly.has(v.context), (el) => el.child(div().flex_none().px(3).h(14).text_size(10).border(1).border_color(t.working).text_color(t.working).child("ro")))
       .child(div().flex_none().text_color(t.ansi0).child("/"))
-      .child(div().flex_none().text_color(t.ansi5).child(v.namespace ?? "all"))
+      .child(div().id("k8s-where-ns").flex_none().text_color(t.ansi5).hover((s) => s.text_color(t.foreground))
+        .on_mouse_down("left", stop)
+        .on_click((_e, cx) => {
+          cx.stop_propagation();
+          v.menu = namespaceMenu(v);
+          cx.notify();
+        })
+        .child(v.namespace ?? "all"))
       .when(!narrow && v.tab === "resources", (el) => el.child(div().flex_none().text_color(t.ansi0).child("/")).child(div().truncate().text_color(t.muted).child(titleOf(v.kind).toLowerCase()))))
     .child(h_flex().relative().flex_none().gap(2).children(tabs.map(([id, label]) => chip(t, `tab-${id}`, narrow ? label.split(" ")[0] ?? label : label, v.tab === id, () => setTab(v, id)))))
     .child(div().flex_1())
@@ -103,7 +111,7 @@ export function keyBar(v: K8s, t: Theme): Element {
   const keys = barKeys(v);
 
   return bar.child(div().flex_none().text_size(10).text_color(t.ansi8).child(barTitle(v).toUpperCase()))
-    .children(keys.map(([k, w], i) => hint(t, `kb-${i}`, k, w)))
+    .children(keys.map(([k, w], i) => barHint(v, t, `kb-${i}`, k, w)))
     .child(div().flex_1())
     .when(!v.narrow() && v.tab === "resources" && !v.data.metricsMissing, (el) => el.child(hint(t, "kb-pace", "M", `metrics ${paceText(v.data.metricsEvery)}`)))
     .when(!v.narrow(), (el) => el.child(hint(t, "kb-colon", ":", "kind")).child(hint(t, "kb-slash", "/", "filter")))
@@ -111,6 +119,19 @@ export function keyBar(v: K8s, t: Theme): Element {
       v.help = !v.help;
       cx.notify();
     }));
+}
+
+/** A key in the bar; a click presses it (a single key: not "H J K L" or "0-4"). */
+function barHint(v: K8s, t: Theme, id: string, key: string, what: string): Element {
+  const one = !key.includes(" ") && !/^\d-\d$/.test(key);
+
+  return one ? hint(t, id, key, what).cursor_pointer().hover((s) => s.bg(`${t.ansi0}66`))
+    .on_mouse_down("left", stop)
+    .on_click((_e, cx) => {
+      cx.stop_propagation();
+      pressKeys(v, [key], cx);
+      cx.notify();
+    }) : hint(t, id, key, what);
 }
 
 function barTitle(v: K8s): string {
