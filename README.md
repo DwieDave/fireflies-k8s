@@ -85,6 +85,13 @@ before. `B` (or the forward's menu) opens the picker anyway, with any secret
 of the namespace by hand: the secret, the key with the password, the key with
 the user.
 
+Before anything is read, `b` looks for the client Databases runs (psql;
+mysql or mariadb) on the app's PATH. Missing, it says what installs it
+("Databases needs psql to open this: brew install libpq …; on nix
+pkgs.postgresql (libpq alone has no psql)") and stays; `b` again opens
+Databases anyway, which also looks in the space folder's direnv environment
+(a project's flake may bring its own psql).
+
 The contract with the Databases mod:
 
 A password in a Kubernetes secret: a Postgres or MySQL connection to a server

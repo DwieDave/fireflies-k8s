@@ -188,6 +188,19 @@ describe("the window's b and B", () => {
     return { v, press, cx: t.cx, settle: t.settle };
   }
 
+  test("no psql on the app's PATH: the first b says what to install and stays; a second b opens Databases anyway", async () => {
+    env.terminals = [forward("svc/lantern-db", "lantern", "postgres", 15432, 5432)];
+    env.client = false;
+    const { v, press } = await open();
+    await press("f", "b");
+    expect(sent()).toEqual([]);
+    expect(v.note?.text).toBe("Databases needs psql to open this: brew install libpq (then brew link --force libpq); on nix pkgs.postgresql (libpq alone has no psql) · b again opens it anyway (a project's flake may bring its own)");
+    expect(calls.some((c) => c.name === "closeOverlay")).toBe(false);
+    await press("b");
+    expect(sent().length).toBe(1);
+    env.client = true;
+  });
+
   test("several: the picker (by number, enter, a click), each with where it was found; the pick sent, no value", async () => {
     env.terminals = [forward("svc/moth-mysql", "moth", "mysql", 13306, 3306)];
     const { v, press } = await open();

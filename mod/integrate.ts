@@ -7,7 +7,7 @@
 // opened is where the person goes next); from a pane, it opens beside it.
 
 import type { AsyncContext, Context } from "gpui-kit";
-import { closeOverlay, hc, openOverlay, run, shared } from "herdr";
+import { closeOverlay, exec, hc, openOverlay, run, shared } from "herdr";
 import type { default as K8s } from "./main.ts";
 import { isString, readShared, sharedKey } from "./guard.ts";
 import type { PortFact, Row } from "./rows.ts";
@@ -182,6 +182,22 @@ function pickUser(v: K8s, f: ForwardNote, kind: "postgres" | "mysql", s: SecretK
   };
 }
 
+/** The client the Databases window runs for a kind and what installs it (its words, copied: an
+ *  optional mod never imports a shipped one). */
+export const CLIENT = {
+  postgres: { programs: ["psql"], install: "brew install libpq (then brew link --force libpq); on nix pkgs.postgresql (libpq alone has no psql)" },
+  mysql: { programs: ["mysql", "mariadb"], install: "brew install mysql-client; on nix pkgs.mariadb" },
+} as const;
+
+/** Whether the kind's client is on the app's PATH (a space folder's direnv may still bring one:
+ *  Databases looks there first). */
+export async function clientHere(kind: "postgres" | "mysql"): Promise<boolean> {
+  const script = 'for p in "$@"; do command -v "$p" >/dev/null 2>&1 && exit 0; done; exit 1';
+  const r = await exec("sh", ["-c", script, "k8s-client", ...CLIENT[kind].programs]).catch(() => null);
+
+  return r?.code === 0;
+}
+
 /** Opens the Databases window on a forward's database. Its password's place is looked for in the
  *  cluster first (creds.ts): one clear secret goes along; several, or `pick` (B), open the picker;
  *  none: as before, Databases asks. */
@@ -192,8 +208,22 @@ export function openDatabases(v: K8s, f: ForwardNote, kind: "postgres" | "mysql"
     return;
   }
 
-  v.say(`looking for ${f.name ?? f.target}'s credentials in ${f.context}/${f.namespace}…`, "wk");
   cx.spawn(async (cx) => {
+    // The client Databases runs, looked for first: missing, the first b says what to install and stays.
+    const key = `${f.context}/${f.namespace}/${f.target}:${f.local}`;
+
+    if (v.clientWarned !== key && !(await clientHere(kind))) {
+      v.clientWarned = key;
+      v.say(`Databases needs ${CLIENT[kind].programs.join(" or ")} to open this: ${CLIENT[kind].install} · b again opens it anyway (a project's flake may bring its own)`, "bad");
+      cx.notify();
+
+      return;
+    }
+
+    v.clientWarned = null;
+    v.say(`looking for ${f.name ?? f.target}'s credentials in ${f.context}/${f.namespace}…`, "wk");
+    cx.notify();
+
     const found = await findCredentials(v.data.exec, { context: f.context, namespace: f.namespace }, f.target, kind);
     const only = found.candidates.length === 1 ? found.candidates[0] : undefined;
 

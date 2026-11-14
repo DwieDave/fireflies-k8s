@@ -79,6 +79,8 @@ export const env = {
   files: new Map<string, string>(),
   hcResult: { code: 0, stdout: '{"address":"t9"}', stderr: "" },
   fake: {} as Record<string, string>,
+  /** Whether a database client (psql, mysql) is on the app's PATH (the b's check). */
+  client: true,
   zoom: 1,
 };
 
@@ -115,7 +117,9 @@ mock.module("gpui-base", () => ({
 }));
 
 mock.module("herdr", () => ({
-  exec: (cmd: string, args: string[]) => (cmd.endsWith("kubectl") ? fakeExec(env.fake)(args, 0) : Promise.resolve({ code: 1, stdout: "", stderr: "not here" })),
+  exec: (cmd: string, args: string[]) => (cmd.endsWith("kubectl") ? fakeExec(env.fake)(args, 0)
+    : cmd === "sh" && args[2] === "k8s-client" ? Promise.resolve({ code: env.client ? 0 : 1, stdout: "", stderr: "" })
+    : Promise.resolve({ code: 1, stdout: "", stderr: "not here" })),
   hc: (args: string[]) => { calls.push({ name: "hc", args }); return Promise.resolve(env.hcResult); },
   run: (name: string, args?: unknown) => { calls.push({ name, args }); return null; },
   openOverlay: (spec: unknown) => { calls.push({ name: "openOverlay", args: spec }); return "o9"; },

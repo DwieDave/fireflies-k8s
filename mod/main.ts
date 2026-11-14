@@ -83,6 +83,8 @@ export default class K8s extends View {
   argoDiff: Diffed | null = null;
   forwardAt = 0;
   databases = false;
+  /** The forward whose b found no database client (a second b opens Databases anyway). */
+  clientWarned: string | null = null;
   size = { width: 1100, height: 720 };
   handle: FocusHandle | null = null;
   tableScroll = VirtualListScrollHandle.new();
