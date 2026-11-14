@@ -124,7 +124,7 @@ export const WINDOW_KEYS = [
 export const TABLE_KEYS = [
   [", .", "the keys to the column left / right (its header underlined)"],
   ["o", "sort by that column: up, down, the default order (or click its header)"],
-  ["< >", "that column narrower / wider (or drag its header's edge; a double click fits it)"],
+  ["{ }", "that column narrower / wider (or drag its header's edge; a double click fits it)"],
   ["O", "the columns menu: sort by any, the default order, fit, widths back (or right-click a header)"],
 ] as const;
 

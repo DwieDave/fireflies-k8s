@@ -1,5 +1,5 @@
 // The columns by keyboard and as a menu: `,` `.` put the keys on the column
-// left or right, `<` `>` make it narrower or wider, `o` sorts by it (again:
+// left or right, `{` `}` make it narrower or wider, `o` sorts by it (again:
 // the other way; a third time: the default order), `O` (or a right click on
 // the header) opens the columns menu: sort by any column, the default order,
 // fit the focused column to what it holds, every width back.
@@ -42,17 +42,17 @@ export function columnsMenu(v: K8s, rest: number): Menu {
         if (at) fitColumn(v, listRows(v), at);
       } },
       { label: "every width back", sub: "the kind's own widths", key: "w", go: () => resetWidths(v) },
-      { label: `${focus} narrower`, key: "<", go: () => {
+      { label: `${focus} narrower`, key: "{", go: () => {
         if (at) stepWidth(v, at, -1, rest);
       } },
-      { label: `${focus} wider`, key: ">", go: () => {
+      { label: `${focus} wider`, key: "}", go: () => {
         if (at) stepWidth(v, at, 1, rest);
       } },
     ],
   };
 }
 
-/** A column key in the table (`,` `.` `<` `>` `o` `O`); false for any other key. */
+/** A column key in the table (`,` `.` `{` `}` `o` `O`); false for any other key. */
 export function columnKey(v: K8s, name: string, width: number): boolean {
   const shown = shownColumns(v, width);
   const at = focusedColumn(v, shown);
@@ -65,10 +65,10 @@ export function columnKey(v: K8s, name: string, width: number): boolean {
     case ".": stepColumn(v, shown, 1);
 
  return true;
-    case "<": if (at) stepWidth(v, at, -1, rest);
+    case "{": if (at) stepWidth(v, at, -1, rest);
 
  return true;
-    case ">": if (at) stepWidth(v, at, 1, rest);
+    case "}": if (at) stepWidth(v, at, 1, rest);
 
  return true;
     case "o": if (at) cycleSort(v, at.col.title);

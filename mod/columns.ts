@@ -1,5 +1,5 @@
 // The kind's table's columns as the person set them: each column's width
-// (dragged at its header's right edge, `<` `>` on the focused column, a
+// (dragged at its header's right edge, `{` `}` on the focused column, a
 // double click or the menu fits it to what it holds), the column the keys
 // are on (`,` `.`, a header click), the sort (a header click or `o`: up,
 // down, back to the default order). Widths and sorts are kept per kind in
@@ -25,7 +25,7 @@ export const COLUMN_STATE = sharedKey("k8s.columns", nullable(object({}, {
   sort: maybe(mapOf(object({ col: isString, desc: isBoolean }))),
 })));
 
-/** A column's narrowest and widest, and how far `<` `>` move it. */
+/** A column's narrowest and widest, and how far `{` `}` move it. */
 export const MIN_W = 36;
 export const MAX_W = 640;
 export const W_STEP = 16;
@@ -141,7 +141,7 @@ export function setWidth(v: K8s, col: string, w: number, keep = true): void {
   if (keep) saveColumns(v.columns);
 }
 
-/** `<` `>`: the focused column narrower or wider by a step (the one taking the rest starts from its drawn width). */
+/** `{` `}`: the focused column narrower or wider by a step (the one taking the rest starts from its drawn width). */
 export function stepWidth(v: K8s, s: Shown, by: number, drawn: number): void {
   setWidth(v, s.col.title, (s.w ?? drawn) + by * W_STEP);
 }

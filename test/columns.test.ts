@@ -91,7 +91,7 @@ describe("the header and the column keys", () => {
     expect(v.columns.sorts.get("deployments")).toBeUndefined();
   });
 
-  test(", . move the keys along the columns; o sorts by that one; < > narrow and widen it; kept for the next window", async () => {
+  test(", . move the keys along the columns; o sorts by that one; { } narrow and widen it; kept for the next window", async () => {
     const { v, press, draw } = await open();
     await press(".", ".", ".");
     const shown = shownColumns(v, tableWidth(v));
@@ -99,9 +99,9 @@ describe("the header and the column keys", () => {
     await press("o");
     expect(v.columns.sorts.get("pods")).toEqual({ col: "status", desc: false });
     expect(listRows(v)[0]?.tone).toBe("bad");
-    await press(">", ">");
+    await press("}", "}");
     expect(v.columns.widths.get("pods")?.get("status")).toBe(128 + 32);
-    await press("<");
+    await press("{");
     expect(v.columns.widths.get("pods")?.get("status")).toBe(128 + 16);
     await press(",");
     expect(focusedColumn(v, shownColumns(v, tableWidth(v)))?.col.title).toBe("restarts");
