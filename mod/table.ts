@@ -25,6 +25,7 @@ import { NAME_MIN, cycleSort, fitColumn, focusedColumn, metricLine, saveColumns,
 import { columnsMenu } from "./columns-menu.ts";
 import { unzoom } from "./kit.ts";
 import type { Also } from "./dividers.ts";
+import { atPress } from "./menu-anchor.ts";
 
 /** Two clicks on one row this close together open it (a virtual list reports clicks, not their count). */
 const DOUBLE_MS = 450;
@@ -82,10 +83,10 @@ function header(v: K8s, t: Theme, shown: readonly Shown[], active: boolean, rest
           keepInView(v);
           cx.notify();
         })
-        .on_mouse_down("right", (_e, cx) => {
+        .on_mouse_down("right", (e, cx) => {
           cx.stop_propagation();
           v.columns.at.set(v.kind, s.col.title);
-          v.menu = columnsMenu(v, rest);
+          atPress(v, e, () => { v.menu = columnsMenu(v, rest); });
           cx.notify();
         })
         .when(metric, (el) => el.tooltip("metrics-server isn't answering kubectl top: no readings"))
@@ -172,7 +173,7 @@ function rowList(v: K8s, t: Theme, rows: readonly Row[], at: number, active: boo
 
       cx.notify();
     })
-    .on_item_secondary_click((key, _e, cx) => {
+    .on_item_secondary_click((key, e, cx) => {
       const i = rows.findIndex((r) => r.key === key);
       const r = rows[i];
 
@@ -180,7 +181,7 @@ function rowList(v: K8s, t: Theme, rows: readonly Row[], at: number, active: boo
 
       cx.stop_propagation();
       selectAt(v, i);
-      v.menu = { title: r.ref.name, at: 0, rows: rowMenu(v, r) };
+      atPress(v, e, () => { v.menu = { title: r.ref.name, at: 0, rows: rowMenu(v, r) }; });
       cx.notify();
     })
     .track_scroll(v.tableScroll)

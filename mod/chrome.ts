@@ -27,6 +27,7 @@ import { paceText } from "./metrics.ts";
 import { complete } from "./filter-terms.ts";
 import { argoCandidates, pressKeys } from "./input.ts";
 import { namespaceMenu } from "./ns-picker.ts";
+import { atPress } from "./menu-anchor.ts";
 
 /** The top bar. In a window it's where the window drags from: presses on it aren't stopped. */
 export function header(v: K8s, t: Theme): Element {
@@ -42,7 +43,7 @@ export function header(v: K8s, t: Theme): Element {
     .child(h_flex().id("k8s-where").relative().flex_shrink(1).min_w(0).gap(5).items_center().cursor_pointer()
       .on_mouse_down("left", stop)
       .on_click((_e, cx) => {
-        v.menu = contextMenu(v);
+        atPress(v, null, () => { v.menu = contextMenu(v); });
         cx.notify();
       })
       .child(div().flex_none().text_color(t.ansi6).child(v.context ?? "…"))
@@ -53,7 +54,7 @@ export function header(v: K8s, t: Theme): Element {
         .on_mouse_down("left", stop)
         .on_click((_e, cx) => {
           cx.stop_propagation();
-          v.menu = namespaceMenu(v);
+          atPress(v, null, () => { v.menu = namespaceMenu(v); });
           cx.notify();
         })
         .child(v.namespace ?? "all"))

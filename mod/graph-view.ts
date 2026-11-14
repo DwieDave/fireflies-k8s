@@ -20,6 +20,7 @@ import { cancel, centreOn, dragTo, newView, offset, panBy, press, release, roomy
 import type { View } from "./graph-pan.ts";
 import { ZOOM, lookAt, scaled, toggleFit, zoomAt, zoomStep } from "./graph-zoom.ts";
 import { marks } from "./table.ts";
+import { atPress } from "./menu-anchor.ts";
 
 /** What a box press does: pick it (a click), open it (a double click, enter), or its menu (a right click). */
 export type BoxAct = "pick" | "open" | "menu";
@@ -60,10 +61,10 @@ export function canvas(v: K8s, t: Theme, s: Shown, _width: number, sel: string |
     cx.notify();
   };
 
-  const menuBox = (b: Placed): MouseHandler => (_e, cx) => {
+  const menuBox = (b: Placed): MouseHandler => (e, cx) => {
     cx.stop_propagation();
     cancel(view);
-    onBox(b, "menu", cx);
+    atPress(v, e, () => onBox(b, "menu", cx));
     cx.notify();
   };
 

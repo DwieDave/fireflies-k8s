@@ -3,6 +3,7 @@
 // the next opening (`k8s.state`), and the one-shot note a move between window
 // and pane carries (`k8s.handover`). No secret is ever in either.
 
+import type { Pt } from "./menu-place.ts";
 import type { Guarded } from "./guard.ts";
 import { isNumber, isString, literal, nullable, object, sharedKey } from "./guard.ts";
 import { maybe } from "./guards.ts";
@@ -56,6 +57,9 @@ export interface Menu {
   readonly find?: { readonly text: string; readonly all: readonly MenuRow[]; readonly hint?: string };
   /** A key of this menu's own (the picker's `*`); true when it took it. */
   readonly onKey?: (name: string, cx: Context) => boolean;
+  /** Where it stands (menu-place.ts): a press's place in the view (a right click); none: at what
+   *  the keys are on (menu-anchor.ts), else in the middle. */
+  readonly near?: Pt | null;
 }
 
 /** The key a menu row shows and answers to: its own; in a picker (no row has a key of its own) its place,

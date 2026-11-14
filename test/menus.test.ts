@@ -66,22 +66,23 @@ describe("a row's shown key runs it", () => {
 
 describe("a tall menu", () => {
   test("in a short pane the longest menu scrolls and says there is more; in a tall window every row shows whole", async () => {
-    const w = await open({ pane: true, height: 420 });
+    // The menu stands over the whole view: its room is the view less a margin each side (and 2 px each way).
+    const w = await open({ pane: true, height: 360 });
     await w.press("]");
     const t = appTree(w.v, treeWidth(w.v))!;
     w.v.argoNode = t.laid.boxes.find((b) => b.node.ref?.kind === "deployments")!.node.key;
     await w.press("0", "m");
     const n = w.v.menu!.rows.length;
-    expect(menuHeight(w.v.menu!)).toBeGreaterThan(420 - 90);
+    expect(menuHeight(w.v.menu!)).toBeGreaterThan(360 - 20);
     expect(texts(w.draw()).some((x) => x.startsWith(`${n} rows · ↑ ↓`))).toBe(true);
     const box = byId(w.draw(), "k8s-menu-box") as El;
-    expect(box.calls.some(([m, a]) => m === "max_h" && a[0] === 330)).toBe(true);
+    expect(box.calls.some(([m, a]) => m === "max_h" && a[0] === 340)).toBe(true);
     // A window at the size Developer's runs at (zoom 0.9): the same menu fits whole, no mark.
     const tall = await open({ height: 1170 });
     await tall.press("]");
     tall.v.argoNode = w.v.argoNode;
     await tall.press("0", "m");
-    expect(menuHeight(tall.v.menu!)).toBeLessThan(1170 - 90);
+    expect(menuHeight(tall.v.menu!)).toBeLessThan(1170 - 20);
     expect(texts(tall.draw()).some((x) => x.includes("↑ ↓ or the wheel"))).toBe(false);
   });
 });

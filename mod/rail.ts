@@ -18,6 +18,7 @@ import { isBuiltin, kindInfo, titleOf } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
 import type { Tone } from "./rows.ts";
 import { panelNum } from "./panel-keys.ts";
+import { atPress } from "./menu-anchor.ts";
 
 /** The rail: the contexts as tall as their rows (at most five shown), the namespaces and the
  *  kinds sharing the rest, each scrolling, the cursor's row kept in sight. */
@@ -74,11 +75,11 @@ function railRow(v: K8s, t: Theme, item: RailItem, i: number, cursor: boolean): 
         cx.notify();
       }
     })
-    .on_mouse_down("right", (_e, cx) => {
+    .on_mouse_down("right", (e, cx) => {
       cx.stop_propagation();
       v.railAt = i;
       v.panel = "rail";
-      v.menu = railMenu(v, item);
+      atPress(v, e, () => { v.menu = railMenu(v, item); });
       cx.notify();
     })
     .on_click((_e, cx) => {

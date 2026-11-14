@@ -25,6 +25,7 @@ import type { Menu } from "./state.ts";
 import { diffApp, rollbackApp } from "./argo-actions.ts";
 import { argoNum } from "./panel-keys.ts";
 import { appMenu, nodeMenu } from "./node-menu.ts";
+import { atPress } from "./menu-anchor.ts";
 
 export function argoTab(v: K8s, t: Theme): Element {
   const a = shownApp(v);
@@ -60,7 +61,8 @@ function chips(v: K8s, t: Theme): Element {
       setArgoFilter(v, withoutTerm(v.argoFilter, ARGO_FIELDS, i));
     })))
     .child(chip(t, "argo-chip-add", h_flex().gap(4).child(div().text_color(t.accent).child("F")).child(div().child(terms.length ? "+" : "+ filter")), false, () => {
-      v.menu = filterMenu(v, allApps(v));
+      // A click carries no position: the menu stands where the pointer was last heard.
+      atPress(v, null, () => { v.menu = filterMenu(v, allApps(v)); });
     }, t.dim))
     .when(!terms.length, (el) => el.child(div().flex_1().min_w(0).pl(4).truncate().text_color(t.ansi8).tooltip("project: sync: health: cluster: ns: repo:, labels k=v or -l a,!b, words").child("/ types one")));
 }
@@ -85,11 +87,11 @@ function appList(v: K8s, t: Theme): Element {
         v.argoPanel = e.click_count >= 2 ? "tree" : "apps";
         cx.notify();
       })
-      .on_mouse_down("right", (_e, cx) => {
+      .on_mouse_down("right", (e, cx) => {
         cx.stop_propagation();
         pickApp(v, a.metadata.name);
         v.argoPanel = "apps";
-        v.menu = appMenu(v, a);
+        atPress(v, e, () => { v.menu = appMenu(v, a); });
         cx.notify();
       })
       .child(h_flex().relative().gap(6).items_center()
@@ -192,11 +194,11 @@ function timeline(v: K8s, t: Theme, a: Application): Element {
         v.argoPanel = "side";
         cx.notify();
       })
-      .on_mouse_down("right", (_ev, cx) => {
+      .on_mouse_down("right", (ev, cx) => {
         cx.stop_propagation();
         v.histAt = i;
         v.argoPanel = "side";
-        v.menu = historyMenu(v, a, i);
+        atPress(v, ev, () => { v.menu = historyMenu(v, a, i); });
         cx.notify();
       })
       .child(div().relative().size(8).flex_none().when(e.revision === running, (el) => el.bg(t.done).border(1).border_color(t.done)).when(e.revision !== running, (el) => el.bg(t.ansi8)))

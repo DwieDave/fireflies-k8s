@@ -1,4 +1,5 @@
-// What opens over the window's body: a menu (right-click, a picker), the ask
+// What opens over the window: a menu (right-click, a picker; over the whole
+// view, at the press or at what the keys are on: menu-anchor.ts), the ask
 // card before a write (red, naming the context and namespace; a second step
 // that wants the name typed), and the keys overview (?).
 
@@ -16,6 +17,8 @@ import { clusterOf, runAsk } from "./writes.ts";
 import { looksProd } from "./contexts.ts";
 import { pickMenu } from "./input.ts";
 import { shownKey } from "./state.ts";
+import { MARGIN, placeMenu } from "./menu-place.ts";
+import { keyedAnchor } from "./menu-anchor.ts";
 
 /** A menu's width: its longest line whole (label at 11 px, a second line at 10 px, the key column and
  *  padding beside them), at least 460, at most the window less a margin. */
@@ -36,9 +39,12 @@ export function menuBox(v: K8s, t: Theme): Element | null {
 
   if (!m) return null;
 
-  // Its room: the window's body less a margin; taller menus scroll with a mark at the foot.
-  const room = Math.max(120, v.size.height - 90);
+  // Its room: the view less a margin; taller menus scroll with a mark at the foot.
+  const room = Math.max(120, v.size.height - 2 * MARGIN - 4);
   const over = menuHeight(m) > room;
+  const w = menuWidth(m, v.size.width);
+  // At the press (a right click), at what the keys are on (the table's row), else in the middle.
+  const at = placeMenu({ width: w, height: Math.min(room, menuHeight(m) + (over ? 16 : 0)) }, v.size, m.near ?? keyedAnchor(v));
 
   if (over) v.menuScroll.scroll_to_item(m.at);
 
@@ -56,14 +62,14 @@ export function menuBox(v: K8s, t: Theme): Element | null {
       // The second line whole: the box is as wide as it needs (menuWidth); narrower than that, it wraps.
       .when(Boolean(r.sub), (el) => el.child(div().text_size(10).text_color(t.dim).child(r.sub ?? "")))));
 
-  return div().id("k8s-menu").absolute().inset_0().flex().items_center().justify_center().text_size(11)
+  return div().id("k8s-menu").absolute().inset_0().text_size(11)
     .on_mouse_down("left", (_e, cx) => {
       cx.stop_propagation();
       v.menu = null;
       cx.notify();
     })
     .child(popupScrim("k8s-menu-scrim"))
-    .child(v_flex().id("k8s-menu-box").w(menuWidth(m, v.size.width)).max_h(room).bg(t.background).border(1).border_color(t.accent).py(4)
+    .child(v_flex().id("k8s-menu-box").absolute().left(at.x).top(at.y).w(w).max_h(room).bg(t.background).border(1).border_color(t.accent).py(4)
       .on_mouse_down("left", stop)
       .child(div().flex_none().px(10).pb(4).text_size(10).text_color(t.ansi8).child(m.title))
       .when(Boolean(m.find), (el) => el.child(findLine(t, m.find?.text ?? "", m.find?.hint ?? "")))

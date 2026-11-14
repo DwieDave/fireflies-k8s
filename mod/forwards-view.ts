@@ -11,6 +11,7 @@ import { band, dither, icon, panel, pip, stop } from "./kit.ts";
 import type { Forward } from "./forwards.ts";
 import { forwards, openDatabases, openWeb, stopForward } from "./integrate.ts";
 import { leadsMenu } from "./input-tabs.ts";
+import { atPress } from "./menu-anchor.ts";
 
 /** A forward's lead as a small button. */
 function lead(t: Theme, id: string, ic: string, label: string, go: (cx: Context) => void): Element {
@@ -46,9 +47,9 @@ export function shelf(v: K8s, t: Theme): Element | null {
     .child(div().absolute().inset_0().opacity(0.35).child(dither(t.ansi0, 1)))
     .child(div().relative().flex_none().text_size(10).text_color(t.ansi8).child("FORWARDS"))
     .children(live.slice(0, 4).map((f, i) => h_flex().id(`shelf-${i}`).relative().flex_none().gap(6).items_center().text_color(t.muted).cursor_pointer()
-      .on_mouse_down("right", (_e, cx) => {
+      .on_mouse_down("right", (e, cx) => {
         cx.stop_propagation();
-        v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) };
+        atPress(v, e, () => { v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) }; });
         cx.notify();
       })
       .child(icon("plug", t.ansi6, 11))
@@ -72,14 +73,14 @@ export function forwardsTab(v: K8s, t: Theme): Element {
       stop(e, cx);
       v.forwardAt = i;
 
-      if (e.click_count >= 2) v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) };
+      if (e.click_count >= 2) atPress(v, e, () => { v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) }; });
 
       cx.notify();
     })
-    .on_mouse_down("right", (_e, cx) => {
+    .on_mouse_down("right", (e, cx) => {
       cx.stop_propagation();
       v.forwardAt = i;
-      v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) };
+      atPress(v, e, () => { v.menu = { title: `forward ${f.target}`, at: 0, rows: leadsMenu(v, f) }; });
       cx.notify();
     })
     .child(div().relative().child(pip(t, f.live ? "ok" : "off", 7)))

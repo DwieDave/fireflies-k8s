@@ -14,6 +14,7 @@
 // keys; host.ts holds what differs. Data: data.ts (kubectl, polled for what's
 // shown), derive.ts (rows, strips, counts). Every write asks first (confirm.ts).
 
+import type { Pt } from "./menu-place.ts";
 import { View } from "gpui-kit";
 import { ScrollHandle, EditorState, VirtualListScrollHandle } from "gpui-base";
 import type { AsyncContext, Context, Element, FocusHandle } from "gpui-kit";
@@ -92,6 +93,10 @@ export default class K8s extends View {
   rowsHeight = 400;
   /** A favourite namespace being dragged in the rail (dropped on another favourite: it takes that place). */
   railDrag: string | null = null;
+  /** The view's inner corner in the window (window px) and the pointer over it (layout px), as the
+   *  root last heard them: where a press's menu stands (menu-anchor.ts). */
+  origin: Pt | null = null;
+  pointer: Pt | null = null;
   /** The last click on a table row (a second one soon after opens it). */
   lastClick: { readonly key: string; readonly at: number } | null = null;
   nsScroll = ScrollHandle.new();

@@ -23,6 +23,8 @@ import { askCard, helpPanel, menuBox } from "./overlays.ts";
 import { unzoom } from "./kit.ts";
 import { detailWidth } from "./graph-shown.ts";
 import { divider, tracking } from "./dividers.ts";
+import type { Also } from "./dividers.ts";
+import { originOf } from "./menu-place.ts";
 import { GAP, detailDivider, detailHeightDivider, railDivider, tableWidth } from "./panels.ts";
 
 export function frame(v: K8s, t: Theme, _cx: Context): Element {
@@ -46,14 +48,35 @@ export function frame(v: K8s, t: Theme, _cx: Context): Element {
     .on_key_down((e, cx) => onKey(v, e, cx))
     .child(header(v, t))
     .child(v_flex().relative().flex_1().min_h(0).child(body(v, t))
-      .children([menuBox(v, t), askCard(v, t), helpPanel(v, t)].flatMap((x) => (x ? [x] : []))))
+      .children([askCard(v, t), helpPanel(v, t)].flatMap((x) => (x ? [x] : []))))
     .children(v.tab === "resources" ? [shelf(v, t)].flatMap((x) => (x ? [x] : [])) : [])
-    .child(keyBar(v, t));
+    .child(keyBar(v, t))
+    // The menu over the whole view: its place is measured from the view's corner (menu-place.ts).
+    .children([menuBox(v, t)].flatMap((x) => (x ? [x] : [])));
 
   // One move handler per element (gpui-kit keeps the last): the dividers' and the column edges' drags share it.
-  const keyed = tabActions(columnCursor(tracking(root, v.dividers, columnDrag(v)), v), (e, cx) => onKey(v, e, cx));
+  const keyed = tabActions(columnCursor(tracking(root, v.dividers, follows(v)), v), (e, cx) => onKey(v, e, cx));
 
   return handle ? keyed.track_focus(handle) : keyed;
+}
+
+/** What the root follows besides the dividers: where the pointer is (and where the view sits in the
+ *  window: a press's menu stands at the press, menu-anchor.ts), then a column edge's drag. */
+function follows(v: K8s): Also {
+  const columns = columnDrag(v);
+
+  return {
+    ...columns,
+    move: (e, cx) => {
+      // The engine always says where in the view; a stand-in's move may not.
+      if (e.local_position) {
+        v.origin = originOf(e);
+        v.pointer = { x: unzoom(e.local_position.x), y: unzoom(e.local_position.y) };
+      }
+
+      return columns.move?.(e, cx) ?? false;
+    },
+  };
 }
 
 function body(v: K8s, t: Theme): Element {

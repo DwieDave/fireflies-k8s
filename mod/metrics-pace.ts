@@ -14,6 +14,7 @@ import { chip } from "./kit.ts";
 import { METRIC_PACES, paceText } from "./metrics.ts";
 import { keepSetting } from "./settings-keep.ts";
 import type { Menu } from "./state.ts";
+import { atPress } from "./menu-anchor.ts";
 
 /** What metrics-server's own pace means for a faster one. */
 const RESOLUTION = "metrics-server measures ~every 15s: often the same numbers";
@@ -48,6 +49,6 @@ export function paceChip(v: K8s, t: Theme, id: string): Element {
   return h_flex().flex_none().gap(4).items_center().text_size(10)
     .when(s > 0 && v.data.metricsSame, (el) => el.child(div().text_color(t.dim).child("same numbers")))
     .child(chip(t, id, h_flex().gap(4).child(div().text_color(t.accent).child("M")).child(div().child(s === 0 ? "paused" : `every ${paceText(s)}`)), false, () => {
-      v.menu = paceMenu(v);
+      atPress(v, null, () => { v.menu = paceMenu(v); });
     }, s === 0 ? t.working : t.dim));
 }

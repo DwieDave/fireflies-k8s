@@ -236,7 +236,7 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | `H` | hide that column (`O` shows hidden ones again) |
 | `O` | the columns menu: sort by any column, the default order, hide, show the hidden ones, fit, wider / narrower, every width back, copy its name (or right-click a header) |
 | `M` | metrics: read every 2s, 5s, 15s, 30s, or paused |
-| `m` `space` | the menu of the row, rail entry, graph box, application, history entry or forward with the keys (or right-click it) |
+| `m` `space` | the menu of the row, rail entry, graph box, application, history entry or forward with the keys (or right-click it: the menu opens at the pointer, flipped near the window's edges; by key under the table's row, elsewhere in the middle) |
 | `*` `J` `K` | in the rail: a namespace a favourite or not; a favourite down / up (or drag it onto another) |
 | `ctrl-t` | into a pane / out to a window |
 | `?` | every key |
