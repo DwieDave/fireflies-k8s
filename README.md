@@ -78,7 +78,9 @@ Databases, reading objects and secrets' key names only, never a value:
   (`<cluster>-pguser-<user>`), Zalando's postgres-operator
   (`<user>.<cluster>.credentials.postgresql.acid.zalan.do`).
 
-One secret found: Databases opens on it and connects. Several (root and an
+Every database forward sent to Databases carries its facts (`forward`,
+below), so a connection pinned there brings its forward back when the port
+is down. One secret found: Databases opens on it and connects. Several (root and an
 app user): a picker, by keys (`j` `k`, a number, `enter`) and the pointer,
 each with where it was found. None: Databases asks for the password, as
 before. `B` (or the forward's menu) opens the picker anyway, with any secret
@@ -115,6 +117,28 @@ read with kubectl"); a failed read (no access, the secret gone, kubectl
 missing) or a password the server refuses says why and asks for it. Saved
 (`s`), it keeps the secret's place and reads again at each connect; a
 password typed in its form moves it to the keychain.
+
+The port-forward it came from: a Postgres or MySQL connection to a server on
+this machine may carry the forward's facts, nothing secret: `"forward":
+{"context": "<kubeconfig context>", "namespace": "<namespace>", "target":
+"pod/<name>" | "svc/<name>" | "deploy/<name>" | "sts/<name>", "remote":
+<the target's port>, "local": <the connection's port>, "kubectl"?: "kubectl" |
+"/abs/path/to/kubectl"}`. The window checks them as it checks a secret's names
+(and `local` must be the connection's `port`; a bad one refuses the request).
+Pinned (`P`), the connection keeps them with its secret's place. Connecting to
+it looks at 127.0.0.1:<local> first; nothing there, the window asks, showing
+the context, the namespace, the target and its port → localhost:<local> and the
+command, and only when told starts the forward the way the Kubernetes mod
+starts its own: `hc run --bg --no-parent --no-notify --json --label
+k8s.forward=<{"context", "namespace", "target", "local", "remote", "db", "web":
+null, "name"} as JSON, in that order> --label "nocturne.name=forward <name>
+:<local>" -- <kubectl> --context <context> -n <namespace> port-forward
+<target> <local>:<remote> --address 127.0.0.1` (`name` is the target without
+its kind). It is a terminal of its own: the Kubernetes window lists it on its
+shelf and stops it, and it stays up when the Databases window closes. The
+window waits for the port (kubectl's own words when it fails), then connects;
+a pod that's gone is said, with the Kubernetes window offered to pick it
+again; a port another program holds is said, with another local port offered.
 
 Other mods open it on a resource: `openOverlay({ mod: "k8s", kind: "window",
 key: "k8s", frame: "none", scrim: true, width: 0.88, height: 0.88, props: {

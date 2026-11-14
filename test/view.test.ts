@@ -317,6 +317,7 @@ describe("the ecosystem", () => {
     expect(JSON.parse(c?.name.slice("nocturne.databases:".length) ?? "{}")).toEqual({
       kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", database: "lantern",
       secret: { from: "kubernetes", context: "nightjar-dev", namespace: "lantern", name: "lantern-db-auth", key: "password", userKey: "username", kubectl: KUBECTL },
+      forward: { context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-db", remote: 5432, local: 15432, kubectl: KUBECTL },
     });
     expect(JSON.stringify(calls)).not.toContain("moth-lantern-42");
     expect(JSON.stringify(calls)).not.toContain(Buffer.from("moth-lantern-42").toString("base64"));

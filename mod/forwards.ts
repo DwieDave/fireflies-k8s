@@ -113,6 +113,18 @@ export interface SecretSource {
   readonly kubectl?: string;
 }
 
+/** The forward a connection came from, as the Databases window keeps it with a pinned one and
+ *  starts it again when its port is down and Developer says so (the contract: the databases mod's
+ *  kube.ts `forward`; nothing secret). It starts it as startArgs does, word for word. */
+export interface ForwardSource {
+  readonly context: string;
+  readonly namespace: string;
+  readonly target: string;
+  readonly remote: number;
+  readonly local: number;
+  readonly kubectl?: string;
+}
+
 /** The databases mod's connection args for a forward: no secret's value, ever (its window asks for the
  *  password, or reads it from the secret `secret` names). */
 export interface ConnectArgs {
@@ -124,6 +136,7 @@ export interface ConnectArgs {
   readonly user?: string;
   readonly database?: string;
   readonly secret?: SecretSource;
+  readonly forward?: ForwardSource;
 }
 
 /** A secret picked for a forward: the secret's key, its user and database (plain or the secret's keys). */
@@ -146,6 +159,12 @@ const kubectlFor = (kubectl: string): string | null => (kubectl.startsWith("/") 
 
 export function connectArgs(f: ForwardNote, kind: "postgres" | "mysql", picked: Picked | null = null, kubectl = "kubectl"): ConnectArgs {
   const args: Draft<ConnectArgs> = { kind, name: `${f.name ?? f.target} (${f.context}/${f.namespace})`, host: "127.0.0.1", port: f.local, from: `port-forward ${f.target} in ${f.context}/${f.namespace}` };
+  const forward: Draft<ForwardSource> = { context: f.context, namespace: f.namespace, target: f.target, remote: f.remote, local: f.local };
+  const path = kubectlFor(kubectl);
+
+  if (path) forward.kubectl = path;
+
+  args.forward = forward;
 
   if (!picked) return args;
 
@@ -154,8 +173,6 @@ export function connectArgs(f: ForwardNote, kind: "postgres" | "mysql", picked: 
   if (picked.userKey) source.userKey = picked.userKey;
 
   if (picked.databaseKey) source.databaseKey = picked.databaseKey;
-
-  const path = kubectlFor(kubectl);
 
   if (path) source.kubectl = path;
 

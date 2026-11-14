@@ -150,6 +150,7 @@ test("the args: the secret's place, kubectl named by its path (or left to the wi
   expect(connectArgs(f, "postgres", picked, "/nix/store/x-kubectl/bin/kubectl")).toEqual({
     kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", database: "lantern",
     secret: { from: "kubernetes", context: "nightjar-dev", namespace: "lantern", name: "lantern-db-auth", key: "password", userKey: "username", kubectl: "/nix/store/x-kubectl/bin/kubectl" },
+    forward: { context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-db", remote: 5432, local: 15432, kubectl: "/nix/store/x-kubectl/bin/kubectl" },
   });
   expect(connectArgs(f, "postgres", picked, "kubectl").secret?.kubectl).toBeUndefined();
   expect(connectArgs(f, "postgres", picked, "kubecolor").secret?.kubectl).toBeUndefined();
@@ -223,7 +224,7 @@ describe("the window's b and B", () => {
     expect(menuWidth(v.menu!, 400)).toBe(376);
     expect(menuWidth({ title: "x", rows: [{ label: "Stop it" }] }, 1300)).toBe(460);
     await press("2");
-    expect(sent()).toEqual([{ kind: "mysql", name: "moth-mysql (nightjar-dev/moth)", host: "127.0.0.1", port: 13306, from: "port-forward svc/moth-mysql in nightjar-dev/moth", user: "moth", database: "moth", secret: { from: "kubernetes", context: "nightjar-dev", namespace: "moth", name: "moth-mysql", key: "mysql-password", kubectl: KUBECTL } }]);
+    expect(sent()).toEqual([{ kind: "mysql", name: "moth-mysql (nightjar-dev/moth)", host: "127.0.0.1", port: 13306, from: "port-forward svc/moth-mysql in nightjar-dev/moth", user: "moth", database: "moth", secret: { from: "kubernetes", context: "nightjar-dev", namespace: "moth", name: "moth-mysql", key: "mysql-password", kubectl: KUBECTL }, forward: { context: "nightjar-dev", namespace: "moth", target: "svc/moth-mysql", remote: 3306, local: 13306, kubectl: KUBECTL } }]);
     for (const value of ["moth-lantern-42", "dusk-root-77"]) {
       expect(JSON.stringify([calls, [...sharedMap], [...store], [...env.files]])).not.toContain(value);
       expect(JSON.stringify(calls)).not.toContain(Buffer.from(value).toString("base64"));
@@ -234,7 +235,7 @@ describe("the window's b and B", () => {
     env.terminals = [forward("svc/lantern-web", "lantern", "postgres", 15433, 80)];
     const { v, press } = await open();
     await press("f", "b");
-    expect(sent()).toEqual([{ kind: "postgres", name: "lantern-web (nightjar-dev/lantern)", host: "127.0.0.1", port: 15433, from: "port-forward svc/lantern-web in nightjar-dev/lantern" }]);
+    expect(sent()).toEqual([{ kind: "postgres", name: "lantern-web (nightjar-dev/lantern)", host: "127.0.0.1", port: 15433, from: "port-forward svc/lantern-web in nightjar-dev/lantern", forward: { context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-web", remote: 80, local: 15433, kubectl: KUBECTL } }]);
     calls.length = 0;
     await press("f", "B");
     expect(v.menu?.rows.map((r) => r.label)).toEqual(["No secret: Databases asks for the password", "Another secret of the namespace…"]);

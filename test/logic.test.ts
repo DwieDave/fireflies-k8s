@@ -3,6 +3,14 @@
 // feed's unchanged check and back-off, secrets' masking.
 import { describe, expect, test } from "bun:test";
 import { dbOf, forwardsIn, localPort, noteFor, startArgs, urlOf, webOf, connectArgs } from "../mod/forwards.ts";
+
+/** The forward both repositories start for pod/glowworm-pg-1 :5432 → 25432 in nightjar-dev/glowworm. */
+const FORWARD_FIXTURE = [
+  "run", "--bg", "--no-parent", "--no-notify", "--json",
+  "--label", 'k8s.forward={"context":"nightjar-dev","namespace":"glowworm","target":"pod/glowworm-pg-1","local":25432,"remote":5432,"db":"postgres","web":null,"name":"glowworm-pg-1"}',
+  "--label", "nocturne.name=forward glowworm-pg-1 :25432",
+  "--", "kubectl", "--context", "nightjar-dev", "-n", "glowworm", "port-forward", "pod/glowworm-pg-1", "25432:5432", "--address", "127.0.0.1",
+];
 import { askKey, asks, asksTwice, refusal } from "../mod/confirm.ts";
 import type { Ask } from "../mod/confirm.ts";
 import { parseSettings } from "../mod/settings.ts";
@@ -48,7 +56,14 @@ describe("forwards", () => {
     const [f] = forwardsIn([{ address: "t4", state: "live", labels: { "k8s.forward": label } }, { address: "t5", labels: { "k8s.forward": "{nope" } }, "junk"]);
     expect(f).toMatchObject({ address: "t4", live: true, db: "postgres", local: 15432 });
     expect(urlOf({ ...n, web: "http" })).toBe("http://localhost:15432");
-    expect(connectArgs(n, "postgres")).toEqual({ kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern" });
+    expect(connectArgs(n, "postgres")).toEqual({ kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", forward: { context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-db", remote: 5432, local: 15432 } });
+  });
+
+  // The contract's fixture: the Databases window starts a forward it keeps with these same
+  // arguments (fireflies scripts/databases-pin.test.ts pins the same array to its forwardStartArgs).
+  test("the start's arguments for the shared fixture (Databases builds the same)", () => {
+    const n = noteFor("nightjar-dev", "glowworm", "pod/glowworm-pg-1", { port: 5432, name: "postgresql" }, 25432);
+    expect(startArgs("kubectl", n)).toEqual(FORWARD_FIXTURE);
   });
 });
 

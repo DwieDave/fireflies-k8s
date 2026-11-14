@@ -9,6 +9,7 @@
 //   K8S_FAKE_FORBID_SECRET=<name>  reading that secret is forbidden (RBAC that lists but doesn't get)
 //   K8S_FAKE_NO_METRICS=1     no metrics-server: kubectl top answers an error
 //   K8S_FAKE_TOP_EVERY=<ms>   how often top's numbers change (metrics-server's 15 s; shots use less)
+//   K8S_FAKE_FORWARD_TO=<port>  port-forward passes its bytes on to 127.0.0.1:<port> (a throwaway database)
 
 import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -283,12 +284,38 @@ switch (verb) {
     const target = rest[0] ?? fail("error: TYPE/NAME is required");
     const pairs = rest.slice(1).filter((p) => /^\d*:?\d+$/.test(p));
     appendFileSync(LOG, JSON.stringify({ at: new Date(NOW).toISOString(), context, namespace, argv }) + "\n");
+    // A pod that isn't there fails as kubectl does (a deployment's pods change names).
+    const [kind, name] = target.split("/");
+    if (kind === "pod" && !items("pods").some((p) => p.metadata?.name === name && (p.metadata?.namespace ?? namespace) === namespace)) fail(`Error from server (NotFound): pods "${name}" not found`);
     for (const p of pairs) {
       const [local, remote] = p.includes(":") ? p.split(":") : [p, p];
       out(`Forwarding from 127.0.0.1:${local} -> ${remote}\nForwarding from [::1]:${local} -> ${remote}`);
-      // An http-looking target answers a made-up page, so a web pane has something to show.
-      if (/web|ui|api|http|server/.test(target)) {
+      const to = Number(process.env.K8S_FAKE_FORWARD_TO) || 0;
+      // K8S_FAKE_FORWARD_TO=<port>: the bytes go on to 127.0.0.1:<port> (a throwaway database stands
+      // in for the pod). Else an http-looking target answers a made-up page, so a web pane has
+      // something to show, and anything else takes the connection and never answers (a forward
+      // whose pod side doesn't speak).
+      if (to) {
+        Bun.listen<{ peer?: { write(d: Uint8Array): number; end(): void }; queue: Uint8Array[] }>({
+          hostname: "127.0.0.1", port: Number(local),
+          socket: {
+            open(sock) {
+              sock.data = { queue: [] };
+              void Bun.connect({ hostname: "127.0.0.1", port: to, socket: {
+                open(peer) { sock.data.peer = peer; for (const d of sock.data.queue) peer.write(d); sock.data.queue = []; },
+                data(_peer, d) { sock.write(d); },
+                close() { sock.end(); },
+                error() { sock.end(); },
+              } }).catch(() => sock.end());
+            },
+            data(sock, d) { if (sock.data.peer) sock.data.peer.write(d); else sock.data.queue.push(new Uint8Array(d)); },
+            close(sock) { sock.data.peer?.end(); },
+          },
+        });
+      } else if (/web|ui|api|http|server/.test(target)) {
         Bun.serve({ port: Number(local), hostname: "127.0.0.1", fetch: () => new Response(`<!doctype html><title>${target} (made up)</title><body style="background:#080808;color:#c6c6c6;font:14px monospace;padding:40px"><h1 style="color:#80a0ff">${target}</h1><p>Answered by the fake kubectl's port-forward: nightjar is a made-up cluster.</p></body>`, { headers: { "content-type": "text/html" } }) });
+      } else {
+        Bun.listen({ hostname: "127.0.0.1", port: Number(local), socket: { data() {}, open() {} } });
       }
     }
     setInterval(() => {}, 1 << 30);
