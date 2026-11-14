@@ -25,9 +25,10 @@ ln -sfn "$REPO/mod" "$H/mods/k8s"
 echo '{ "layout": "nocturne", "zoom": 1.3, "sounds": { "enabled": false } }' > "$H/settings.json"
 # No welcome card over the pictures; no panel sizes kept from an earlier run.
 [ -f "$H/shared.json" ] || echo '{}' > "$H/shared.json"
-python3 -c 'import json,sys; p=sys.argv[1]; d=json.load(open(p)); d["frame.welcomed"]="shots"; d.pop("k8s.sizes",None); json.dump(d,open(p,"w"))' "$H/shared.json"
-printf '{ "kubectl": "%s/test/fake/kubectl", "favourites": ["lantern", "moth"] }\n' "$REPO" > "$H/k8s/settings.json"
-export K8S_FAKE_LOG=/var/tmp/k8ss-writes.log
+python3 -c 'import json,sys; p=sys.argv[1]; d=json.load(open(p)); d["frame.welcomed"]="shots"; [d.pop(k,None) for k in ("k8s.sizes","k8s.columns","k8s.state")]; json.dump(d,open(p,"w"))' "$H/shared.json"
+printf '{ "kubectl": "%s/test/fake/kubectl", "favourites": ["lantern", "moth"], "metrics": 2 }\n' "$REPO" > "$H/k8s/settings.json"
+export K8S_FAKE_LOG=/var/tmp/k8ss-writes.log K8S_FAKE_TOP_EVERY=3000
+HC=$(command -v hc || echo ~/.local/bin/hc)
 # A neutral shell: its own zsh config, no user or host in its prompt or title.
 mkdir -p "$H/zdot" "$H/nightjar"
 cat > "$H/zdot/.zshrc" <<'ZSH'
@@ -44,8 +45,8 @@ T0=$(date +%s)
 rm -f "$H/herdr-app.sock"
 "$APP" > /var/tmp/k8ss.log 2>&1 &
 PID=$!
-stop() { kill $PID 2>/dev/null; sleep 1; kill -9 $PID 2>/dev/null; HC_SESSION=k8ss perl -e 'alarm 10; exec @ARGV' hc server stop >/dev/null 2>&1; pkill -f 'herdr-core/k8ss/' 2>/dev/null; echo "up $(( $(date +%s) - T0 )) s"; }
-for i in $(seq 30); do [ -S "$H/herdr-app.sock" ] && "$APP" do status >/dev/null 2>&1 && break; kill -0 $PID 2>/dev/null || { echo "app exited"; tail -5 /var/tmp/k8ss.log; exit 1; }; sleep 1; done
+stop() { kill $PID 2>/dev/null; sleep 1; kill -9 $PID 2>/dev/null; HC_SESSION=k8ss perl -e 'alarm 10; exec @ARGV' "$HC" server stop >/dev/null 2>&1; pkill -f 'herdr-core/k8ss/' 2>/dev/null; echo "up $(( $(date +%s) - T0 )) s"; }
+for i in $(seq 30); do [ -S "$H/herdr-app.sock" ] && { sleep 2; break; }; kill -0 $PID 2>/dev/null || { echo "app exited"; tail -5 /var/tmp/k8ss.log; exit 1; }; sleep 1; done
 for i in $(seq 10); do W=$(aerospace list-windows --all --format "%{window-id} %{app-pid}" 2>/dev/null | awk -v p=$PID '$2==p {print $1}'); [ -n "$W" ] && break; sleep 1; done
 [ -n "${W:-}" ] && { aerospace move-node-to-workspace --window-id "$W" 5; aerospace workspace "$P" 2>/dev/null; }
 
@@ -59,12 +60,16 @@ sleep 2
 window() { do_ mod.open '{"name":"k8s"}'; sleep 2; do_ 'k8s.open:{"as":"window","full":true}'; sleep 3; }
 window
 
-# 1 the resource list: deployments, the selected one's graph in traffic order
-do_ 'k8s.press:colon d e p l o y enter'
-shot 1-resources 2.5
+# 1 the resource list: deployments sorted by memory (the column's line and value), the selected one's graph
+do_ 'k8s.press:colon d e p l o y enter O 6 O 6'
+shot 1-resources 20
 # 2 the workload graph with the keyboard (the detail panel, top to bottom), the failing pod picked
-do_ 'k8s.press:tab j j j j j j'
+do_ 'k8s.press:4 j j j j j j'
 shot 2-workload-graph 1
+# 13 the failing pod's menu on the graph (m: its row's menu)
+do_ 'k8s.press:m'
+shot 13-graph-menu 1
+do_ 'k8s.press:escape'
 # 3 the ask before a delete (twice: the name is typed), then no
 do_ 'k8s.press:escape colon p o enter ctrl-d'
 shot 3-ask-delete 1
@@ -73,8 +78,14 @@ shot 4-ask-delete-name 1
 do_ 'k8s.press:escape'
 # 5 an Argo application's tree, and its diff
 do_ 'k8s.show:{"view":"argo","name":"lantern"}'
-do_ 'k8s.press:tab'
-shot 5-argo-tree 2.5
+sleep 3
+do_ 'k8s.press:0'
+shot 5-argo-tree 1
+# 14 the applications filtered (a chip per term, 2 of 6), the menu of what they have
+do_ 'k8s.press:1 slash t e a m = l a n t e r n enter F'
+shot 14-argo-filters 1
+do_ 'k8s.press:escape escape 0'
+
 do_ 'k8s.press:D'
 shot 6-argo-diff 3
 # 7 a port-forward of lantern-web: the forwards tab, then its page in a web pane

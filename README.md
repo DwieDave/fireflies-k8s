@@ -225,6 +225,8 @@ a double click on the empty graph), `O` turns the workload graph (top to
 bottom / left to right, kept), `enter` opens the box's object. Over a graph
 `+` `-` zoom; the panel's size there: drag its gap.
 
+![A failing pod's menu on the workload graph](docs/shots/13-graph-menu.png)
+
 Argo CD: `S` sync, `r` refresh (`R` hard), `D` diff, `h` history, `B` roll
 back to the picked revision, `o` the repository, `m` (or a right click on
 an application) its menu.
@@ -235,6 +237,8 @@ words; `tab` completes from what the applications have), `F` (or the
 "+ filter" chip) picks from a menu of what they have with counts. The terms
 show as chips over the list, a click takes one off; the list's title counts
 shown / all; `esc` clears it. It's kept for the next opening.
+
+![The applications filtered by a label, and the menu of what they have](docs/shots/14-argo-filters.png)
 
 ## Development
 
