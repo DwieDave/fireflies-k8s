@@ -20,6 +20,7 @@ import { divider } from "./dividers.ts";
 import { GAP, argoAppsDivider, argoSideDivider } from "./panels.ts";
 import type { DiffLine } from "./diff.ts";
 import { argoNum } from "./panel-keys.ts";
+import { appMenu, nodeMenu } from "./node-menu.ts";
 
 export function argoTab(v: K8s, t: Theme): Element {
   const a = shownApp(v);
@@ -61,11 +62,15 @@ function appList(v: K8s, t: Theme): Element {
       .when(sel, (el) => el.children(band(t, active)))
       .on_mouse_down("left", (e, cx) => {
         stop(e, cx);
-        v.app = a.metadata.name;
+        pickApp(v, a.metadata.name);
         v.argoPanel = e.click_count >= 2 ? "tree" : "apps";
-        v.argoNode = null;
-        v.argoDiff = null;
-        v.histAt = null;
+        cx.notify();
+      })
+      .on_mouse_down("right", (_e, cx) => {
+        cx.stop_propagation();
+        pickApp(v, a.metadata.name);
+        v.argoPanel = "apps";
+        v.menu = appMenu(v, a);
         cx.notify();
       })
       .child(h_flex().relative().gap(6).items_center()
@@ -79,6 +84,16 @@ function appList(v: K8s, t: Theme): Element {
   return panel(t, "argo-apps", "Applications", active, v_flex().id("argo-app-list").size_full().pt(4).overflow_y_scroll().children(rows), { num: argoNum("apps"), right: String(list.length) });
 }
 
+/** Shows another application (its tree's cursor, diff and history pick start over). */
+export function pickApp(v: K8s, name: string): void {
+  if (v.app === name) return;
+
+  v.app = name;
+  v.argoNode = null;
+  v.argoDiff = null;
+  v.histAt = null;
+}
+
 function tree(v: K8s, t: Theme, a: Application): Element {
   const width = treeWidth(v);
   const s = appTree(v, width);
@@ -87,13 +102,14 @@ function tree(v: K8s, t: Theme, a: Application): Element {
 
   const body = v_flex().size_full()
     .when(elsewhere, (el) => el.child(div().px(10).py(6).text_size(10).text_color(t.dim).child(`deploys to ${destinationOf(a)}: its resources as Argo reports them (what they own lives in that cluster)`)))
-    .child(v_flex().flex_1().min_h(0).min_w(0).child(s ? canvas(v, t, s, width, v.argoNode, active, (b, open, cx) => {
+    .child(v_flex().flex_1().min_h(0).min_w(0).child(s ? canvas(v, t, s, width, v.argoNode, active, (b, how, cx) => {
       v.argoNode = b.node.key;
       v.argoPanel = "tree";
 
       const r = b.node.ref;
 
-      if (open && r && r.kind !== "applications") showRef(v, r.kind, r.name, r.namespace);
+      if (how === "menu") v.menu = nodeMenu(v, b, a);
+      else if (how === "open" && r && r.kind !== "applications") showRef(v, r.kind, r.name, r.namespace);
 
       cx.notify();
     }, APP_CANVAS) : div()))

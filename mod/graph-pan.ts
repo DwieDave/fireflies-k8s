@@ -26,6 +26,8 @@ export interface View {
   y: number;
   follow: string | null;
   drag: Drag | null;
+  /** The zoom (graph-zoom.ts): positions and sizes here are the zoomed picture's. */
+  z: number;
 }
 
 /** How far a press may move and still be a click. */
@@ -35,7 +37,7 @@ export const SLOP = 4;
 export const PAN_STEP = 80;
 
 export function newView(): View {
-  return { w: 400, h: 300, measured: false, x: 0, y: 0, follow: null, drag: null };
+  return { w: 400, h: 300, measured: false, x: 0, y: 0, follow: null, drag: null, z: 1 };
 }
 
 /** The button went down at (x, y), on the box `box` (its key) or the empty canvas (null). */

@@ -7,7 +7,7 @@ import type { Guarded } from "./guard.ts";
 import { isNumber, isString, literal, nullable, object, sharedKey } from "./guard.ts";
 import { maybe } from "./guards.ts";
 import type { Context } from "gpui-kit";
-import type { Tone } from "./rows.ts";
+import type { Row, Tone } from "./rows.ts";
 
 export const isTab = literal("resources", "argo", "forwards");
 
@@ -35,6 +35,8 @@ export type ArgoPanel = "apps" | "tree" | "side";
 export interface Typing {
   readonly what: "kind" | "filter" | "scale";
   readonly text: string;
+  /** What a scale is for (from a graph's box it isn't the selected row). */
+  readonly row?: Row;
 }
 
 /** A menu over the window (right-click, a picker): rows, the cursor. */

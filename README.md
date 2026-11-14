@@ -210,9 +210,18 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 
 A graph (the detail panel's, Argo's tree), with the keys there: `j` `k` `h`
 `l` walk the boxes the way the graph reads, `H` `J` `K` `L` move it (so does
-a drag, or the wheel), `c` centres the selected box (or a double click on
-the empty graph), `O` turns the workload graph (top to bottom / left to
-right, kept), `enter` opens the box's object.
+a drag, or the wheel), `+` `-` zoom it (so do cmd-scroll and ctrl-scroll
+around the pointer, and the chips at its foot; zoomed out, a box shows its
+name on one line, then its kind's mark, the whole name on hover), `z` shows
+the whole graph (again: 100%), `m` (or a right click on a box) opens the
+box's menu: what its row offers in the list, the same entries and keys
+(logs, shell, describe, YAML, edit, forward, scale, restart, delete with its
+ask, copy its name), then "show it in the list"; on Argo's tree also its
+application's (sync, refresh, diff, history, roll back), which a right click
+on the application in the list opens too. `c` centres the selected box (or
+a double click on the empty graph), `O` turns the workload graph (top to
+bottom / left to right, kept), `enter` opens the box's object. Over a graph
+`+` `-` zoom; the panel's size there: drag its gap.
 
 Argo CD: `S` sync, `r` refresh (`R` hard), `D` diff, `h` history, `B` roll
 back to the picked revision, `o` the repository.

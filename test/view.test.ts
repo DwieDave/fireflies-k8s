@@ -511,7 +511,7 @@ describe("the workload graph's direction and pan", () => {
     for (const w of ["H J K L", "move the graph (or drag it, or the wheel)", "turn the graph: top to bottom / left to right (kept)"]) expect(help).toContain(w);
     await press("escape");
     // The bar, with the graph's keys while it has the keyboard.
-    for (const w of ["move", "centre", "turn"]) expect(texts(draw())).toContain(w);
+    for (const w of ["move", "menu", "zoom", "fit", "turn"]) expect(texts(draw())).toContain(w);
   });
 });
 

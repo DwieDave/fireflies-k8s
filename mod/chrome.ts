@@ -117,7 +117,7 @@ function barTitle(v: K8s): string {
 
 /** The keys the bar shows for what has the keyboard (the row's actions that apply, the first few). */
 function barKeys(v: K8s): readonly (readonly [string, string])[] {
-  const graph: readonly (readonly [string, string])[] = [["H J K L", "move"], ["c", "centre"]];
+  const graph: readonly (readonly [string, string])[] = [["m", "menu"], ["+ -", "zoom"], ["z", "fit"], ["H J K L", "move"]];
 
   if (v.tab === "argo") return [...(v.argoPanel === "tree" ? graph : []), ["S", "sync"], ["r", "refresh"], ["D", "diff"], ["h", "history"], ["B", "rollback"], ["tab", "panel"]];
 
@@ -131,7 +131,7 @@ function barKeys(v: K8s): readonly (readonly [string, string])[] {
 
   const max = v.narrow() ? 3 : v.size.width < 1000 ? 6 : 9;
 
-  if (v.panel === "detail" && v.detail === "graph" && hasGraph(row.ref.kind)) return [...graph, ["O", "turn"], ...rowKeys(row, max - 3)];
+  if (v.panel === "detail" && v.detail === "graph" && hasGraph(row.ref.kind)) return [...graph, ["O", "turn"], ...rowKeys(row, max - 5)];
 
   return rowKeys(row, max);
 }

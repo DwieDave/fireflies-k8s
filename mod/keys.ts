@@ -133,6 +133,9 @@ export const TABLE_KEYS = [
 export const GRAPH_KEYS = [
   ["j k h l", "walk the boxes (the way the graph reads)"],
   ["H J K L", "move the graph (or drag it, or the wheel)"],
+  ["+ -", "zoom in / out (or cmd-scroll, ctrl-scroll, a pinch; the chips at its foot); the panel's size there: drag its gap"],
+  ["z", "the whole graph in sight; again: 100% (or the fit chip)"],
+  ["m space", "the selected box's menu: its row's actions, its application's (or right-click a box)"],
   ["c", "centre the selected box (or double-click the empty graph)"],
   ["O", "turn the graph: top to bottom / left to right (kept)"],
   ["enter", "open the box's object (or double-click it)"],

@@ -189,7 +189,8 @@ describe("the window's panels", () => {
 
   test("+ and - on the detail panel widen and narrow it; the graph is laid out for the new width", async () => {
     const { v, press } = await open();
-    press("4");
+    // describe: over a graph + and - zoom it instead.
+    press("4", "d");
     expect(v.panel).toBe("detail");
     const before = detailWidth(v);
     press("+");

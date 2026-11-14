@@ -34,7 +34,7 @@ export function runRow(v: K8s, a: RowAction, row: Row, cx: Context): void {
     case "web": return openIngress(v, row, cx);
     case "edit": return editRow(v, row, cx);
     case "scale":
-      v.typing = { what: "scale", text: replicasOf(row) };
+      v.typing = { what: "scale", text: replicasOf(row), row };
 
       return;
     case "restart": return request(v, restartSpec(v, row), cx);
@@ -127,10 +127,19 @@ function reveal(v: K8s, row: Row, cx: Context): void {
   });
 }
 
-/** The right-click menu of a row: every action that applies, writes last and red. */
-export function rowMenu(v: K8s, row: Row): MenuRow[] {
+/** The right-click menu of a row (and of its box in a graph: node-menu.ts): every action that applies, then
+ *  copying its name, writes last and red. `before` runs ahead of an action (a graph's box moves to its row). */
+export function rowMenu(v: K8s, row: Row, before: (a: RowAction) => void = () => {}): MenuRow[] {
   const shown = ROW_KEYS.filter(([, a]) => applies(a, row));
-  const sorted = [...shown.filter(([, a]) => !WRITES.has(a)), ...shown.filter(([, a]) => WRITES.has(a))];
 
-  return sorted.map(([key, a, what]): MenuRow => ({ label: what, key, danger: WRITES.has(a), go: (cx) => runRow(v, a, row, cx) }));
+  const item = ([key, a, what]: (typeof shown)[number]): MenuRow => ({ label: what, key, danger: WRITES.has(a), go: (cx) => {
+    before(a);
+    runRow(v, a, row, cx);
+  } });
+
+  return [
+    ...shown.filter(([, a]) => !WRITES.has(a)).map(item),
+    { label: "copy its name", go: (cx) => cx.write_to_clipboard(row.ref.name) },
+    ...shown.filter(([, a]) => WRITES.has(a)).map(item),
+  ];
 }

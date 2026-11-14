@@ -8,6 +8,7 @@ import type { default as K8s } from "./main.ts";
 import { keysKey } from "./keyhelp.ts";
 import { askKey, asksTwice } from "./confirm.ts";
 import { pressName } from "./keys.ts";
+import type { Typing } from "./state.ts";
 import { kindCompletions, kindFor } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
 import { drillBack, selectedRow, setKind, setTab, stepTab } from "./nav.ts";
@@ -18,7 +19,7 @@ import { clusterOf, request, runAsk, scaleSpec } from "./writes.ts";
 import { contextMenu, kindMenu } from "./menus.ts";
 import { paceMenu } from "./metrics-pace.ts";
 import { panelEdges } from "./panels.ts";
-import { argoKey, forwardsKey, resourcesKey } from "./input-tabs.ts";
+import { argoKey, forwardsKey, resourcesKey, zoomKey } from "./input-tabs.ts";
 
 export function onKey(v: K8s, e: KeyEvent, cx: Context): void {
   const name = pressName(e);
@@ -138,7 +139,7 @@ function typingKey(v: K8s, name: string, ch: string | null, cx: Context): boolea
 
   if (name === "enter") {
     v.typing = null;
-    submitTyped(v, t.what, t.text, cx);
+    submitTyped(v, t, cx);
 
     return true;
   }
@@ -157,7 +158,7 @@ function typingKey(v: K8s, name: string, ch: string | null, cx: Context): boolea
 
   if (t.what === "scale" && !/^\d{0,4}$/.test(text)) return true;
 
-  v.typing = { what: t.what, text };
+  v.typing = { ...t, text };
 
   if (t.what === "filter") v.filter = text;
 
@@ -165,11 +166,13 @@ function typingKey(v: K8s, name: string, ch: string | null, cx: Context): boolea
 }
 
 /** What a finished line does: a kind for `:`, a filter for `/` (kept), a scale. */
-function submitTyped(v: K8s, what: "kind" | "filter" | "scale", text: string, cx: Context): void {
+function submitTyped(v: K8s, t: Typing, cx: Context): void {
+  const { what, text } = t;
+
   if (what === "filter") return;
 
   if (what === "scale") {
-    const row = selectedRow(v);
+    const row = t.row ?? selectedRow(v);
     const n = Number(text);
 
     if (row && text !== "" && Number.isInteger(n)) request(v, scaleSpec(v, row, n), cx);
@@ -212,10 +215,10 @@ function windowKey(v: K8s, name: string, cx: Context): boolean {
     case "]": stepTab(v, 1);
 
  return true;
-    case "+": case "=": v.dividers.stepAll(panelEdges(v), 1);
+    case "+": case "=": if (!zoomKey(v, name)) v.dividers.stepAll(panelEdges(v), 1);
 
  return true;
-    case "-": v.dividers.stepAll(panelEdges(v), -1);
+    case "-": if (!zoomKey(v, name)) v.dividers.stepAll(panelEdges(v), -1);
 
  return true;
     case "n": v.menu = namespaceMenu(v);

@@ -11,6 +11,8 @@ import { runRow, rowMenu } from "./actions.ts";
 import { railItems, pickRail } from "./menus.ts";
 import { APP_CANVAS, ROW_CANVAS, appTree, detailWidth, flipDirection, rowGraph, sideBox, stepBox, treeWidth } from "./graph-shown.ts";
 import { centreOn, panBy, panKey } from "./graph-pan.ts";
+import { scaled, toggleFit, zoomStep } from "./graph-zoom.ts";
+import { appMenu, nodeMenu } from "./node-menu.ts";
 import { saveCopy } from "./host.ts";
 import type { Shown } from "./graph-shown.ts";
 import { diffApp, pickedEntry, refreshApp, rollbackApp, syncApp } from "./argo-actions.ts";
@@ -119,6 +121,33 @@ function detailKey(v: K8s, name: string): boolean {
   return false;
 }
 
+/** The graph that has the keys now (the detail panel's, the Argo tree's), with its canvas id; else null. */
+export function keyedGraph(v: K8s): { readonly s: Shown; readonly id: string } | null {
+  if (v.tab === "argo" && v.argoPanel === "tree") {
+    const s = appTree(v, treeWidth(v));
+
+    return s ? { s, id: APP_CANVAS } : null;
+  }
+
+  if (v.tab !== "resources" || v.panel !== "detail" || v.detail !== "graph") return null;
+
+  const s = rowGraph(v, detailWidth(v));
+
+  return s ? { s, id: ROW_CANVAS } : null;
+}
+
+/** + = and - over a graph that has the keys: zoom (the panels' size keys everywhere else). */
+export function zoomKey(v: K8s, name: string): boolean {
+  const g = keyedGraph(v);
+  const view = g ? v.canvases.get(g.id) : undefined;
+
+  if (!view || (name !== "+" && name !== "=" && name !== "-")) return false;
+
+  zoomStep(view, name === "-" ? -1 : 1);
+
+  return true;
+}
+
 /** Keys over a graph: the arrows (j k h l) walk its boxes the way it reads (left to right: j k down the
  *  reading order, h l to the next column; top to bottom: j k to the next row, h l along the rows), H J K L
  *  move the picture, c centres the cursor's box, O turns the workload graph, enter opens. */
@@ -134,7 +163,21 @@ function graphKey(v: K8s, s: Shown, name: string, canvasId: string, open: (b: Pl
   }
 
   if (name === "c") {
-    if (view) centreOn(view, s.laid, at ?? s.graph.root.key);
+    if (view) centreOn(view, scaled(s.laid, view.z), at ?? s.graph.root.key);
+
+    return true;
+  }
+
+  if (name === "z") {
+    if (view) toggleFit(view, s.laid);
+
+    return true;
+  }
+
+  if (name === "m" || name === "space") {
+    const b = s.laid.boxes.find((x) => x.node.key === (at ?? s.graph.root.key));
+
+    if (b) v.menu = nodeMenu(v, b, v.tab === "argo" ? shownApp(v) : null);
 
     return true;
   }
@@ -237,6 +280,7 @@ function argoPanelKey(v: K8s, name: string): boolean {
       v.argoDiff = null;
       v.histAt = null;
     } else if (name === "enter" || name === "l") v.argoPanel = "tree";
+    else if ((name === "m" || name === "space") && a) v.menu = appMenu(v, a);
     else return false;
 
     return true;

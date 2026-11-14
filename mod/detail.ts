@@ -25,6 +25,7 @@ import { cpuText, memText } from "./quantity.ts";
 import { allocatable } from "./rows-kinds.ts";
 import { paceChip } from "./metrics-pace.ts";
 import { panelNum } from "./panel-keys.ts";
+import { nodeMenu } from "./node-menu.ts";
 
 const VIEWS: readonly (readonly [DetailView, string, string])[] = [["graph", "g", "graph"], ["describe", "d", "describe"], ["yaml", "y", "yaml"], ["events", "v", "events"]];
 
@@ -74,13 +75,14 @@ function graphView(v: K8s, t: Theme, row: Row, width: number, active: boolean): 
   const line = v.data.history.sum(keys);
 
   return v_flex().size_full()
-    .child(v_flex().flex_1().min_h(0).min_w(0).child(s ? canvas(v, t, s, width, v.graphSel ?? row.key, active, (b, open) => {
+    .child(v_flex().flex_1().min_h(0).min_w(0).child(s ? canvas(v, t, s, width, v.graphSel ?? row.key, active, (b, how) => {
       v.graphSel = b.node.key;
       v.panel = "detail";
 
       const r = b.node.ref;
 
-      if (open && r) showRef(v, r.kind, r.name, r.namespace);
+      if (how === "menu") v.menu = nodeMenu(v, b, null);
+      else if (how === "open" && r) showRef(v, r.kind, r.name, r.namespace);
     }, ROW_CANVAS) : div().p(12).text_size(11).text_color(t.dim).child("reading…")))
     .when(line.length > 0 && !v.data.metricsMissing, (el) => el.child(metrics(v, t, line.map((x) => x.cpu), line.map((x) => x.mem), width, keys.length)))
     .child(rule(t, "events"))
