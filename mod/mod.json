@@ -2,5 +2,5 @@
   "place": "none",
   "focusable": true,
   "overlay": { "kind": "window", "key": "k8s", "frame": "none", "scrim": true, "width": 0.88, "height": 0.88, "resizable": { "min": [520, 360] } },
-  "launcher": { "title": "Kubernetes", "icon": "icon.svg", "words": "k8s kubernetes cluster pods deployments argo cd port-forward kubectl", "window": true, "pane": true }
+  "launcher": { "title": "Kubernetes", "icon": "icon.svg", "words": "k8s kubernetes cluster pods deployments argo cd port-forward kubectl", "window": true, "pane": true, "key": "k" }
 }
