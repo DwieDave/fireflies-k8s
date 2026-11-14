@@ -98,7 +98,9 @@ only: Fireflies can't write its editor typings (`tsconfig.json`,
 `gpui-kit.d.ts`) into it, which only matters for editing the mod there.
 
 Fireflies loads it at once. Open it with the palette (Kubernetes) or "+ new"
-(Nocturne reads the mod's `launcher` in `mod.json`), or bind a key in your own
+(Nocturne reads the mod's `launcher` in `mod.json`: its title, icon and `"key":
+"k"`, so `k` in "+ new" opens it, shift-k on the other landing; a Kubernetes
+pane or tab wears the same icon and name), or bind a key in your own
 `~/.config/herdr-app/keys.json`:
 
 ```json
