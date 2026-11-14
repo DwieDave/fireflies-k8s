@@ -137,7 +137,7 @@ export function credsMenu(v: K8s, f: ForwardNote, kind: "postgres" | "mysql", fo
 
   const list = found.secrets;
 
-  if (list?.length) rows.push({ label: "Another secret of the namespace…", sub: `${list.length} secrets, by their key names`, go: () => {
+  if (list?.length) rows.push({ label: "Another secret of the namespace…", sub: list.length === 1 ? "1 secret, by its key names" : `${list.length} secrets, by their key names`, go: () => {
     v.menu = { title: `the secret with ${f.name ?? f.target}'s password`, at: 0, rows: secretRows(v, f, kind, list) };
   } });
 
@@ -204,6 +204,9 @@ export function openDatabases(v: K8s, f: ForwardNote, kind: "postgres" | "mysql"
       v.say(`no credentials found in the cluster${found.notes[0] ? ` (${found.notes[0]})` : ""}: Databases asks · B picks a secret`, "wk");
       sendDatabases(v, f, kind, null, cx);
     } else {
+      const n = found.candidates.length;
+
+      v.say(n ? `${n} found: pick the one with the password` : "none found: name a secret, or let Databases ask", "ok");
       v.menu = { title: `the password for ${f.name ?? f.target} · ${found.candidates.length} found in ${f.context}/${f.namespace}`, at: 0, rows: credsMenu(v, f, kind, found) };
     }
 

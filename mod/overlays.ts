@@ -16,12 +16,21 @@ import { clusterOf, runAsk } from "./writes.ts";
 import { looksProd } from "./contexts.ts";
 import { pickMenu } from "./input.ts";
 
+/** A menu's width: its longest line whole (label at 11 px, a second line at 10 px, the key column and
+ *  padding beside them), at least 460, at most the window less a margin. */
+export function menuWidth(m: { readonly title: string; readonly rows: readonly { readonly label: string; readonly sub?: string | null }[] }, room: number): number {
+  const chars = (s: string, px: number): number => [...s].length * px * 0.68;
+  const need = Math.max(chars(m.title, 10) + 20, ...m.rows.map((r) => 96 + Math.max(chars(r.label, 11), chars(r.sub ?? "", 10))));
+
+  return Math.max(Math.min(460, room - 24), Math.min(Math.ceil(need), 820, room - 24));
+}
+
 export function menuBox(v: K8s, t: Theme): Element | null {
   const m = v.menu;
 
   if (!m) return null;
 
-  const rows = m.rows.map((r, i) => h_flex().id(`menu-${i}`).relative().h(r.sub ? 32 : 22).flex_none().px(10).gap(10).items_center().cursor_pointer()
+  const rows = m.rows.map((r, i) => h_flex().id(`menu-${i}`).relative().when(!r.sub, (el) => el.h(22)).when(Boolean(r.sub), (el) => el.min_h(32).py(3)).flex_none().px(10).gap(10).items_center().cursor_pointer()
     .hover((s) => s.bg(`${t.ansi0}66`))
     .when(i === m.at, (el) => el.bg(t.ansi0).child(div().absolute().left(0).top(0).bottom(0).w(2).bg(t.accent)))
     .on_mouse_down("left", stop)
@@ -32,7 +41,8 @@ export function menuBox(v: K8s, t: Theme): Element | null {
     .child(div().w(46).flex_none().text_color(t.accent).child(r.key ?? (i < 9 ? String(i + 1) : "")))
     .child(v_flex().flex_1().min_w(0)
       .child(div().truncate().text_color(r.danger ? t.blocked : i === m.at ? t.foreground : t.muted).child(r.label))
-      .when(Boolean(r.sub), (el) => el.child(div().truncate().text_size(10).text_color(t.dim).child(r.sub ?? "")))));
+      // The second line whole: the box is as wide as it needs (menuWidth); narrower than that, it wraps.
+      .when(Boolean(r.sub), (el) => el.child(div().text_size(10).text_color(t.dim).child(r.sub ?? "")))));
 
   return div().id("k8s-menu").absolute().inset_0().flex().items_center().justify_center().text_size(11)
     .on_mouse_down("left", (_e, cx) => {
@@ -41,7 +51,7 @@ export function menuBox(v: K8s, t: Theme): Element | null {
       cx.notify();
     })
     .child(popupScrim("k8s-menu-scrim"))
-    .child(v_flex().id("k8s-menu-box").w(Math.min(460, v.size.width - 24)).max_h(Math.min(440, v.size.height - 60)).bg(t.background).border(1).border_color(t.accent).py(4).overflow_y_scroll()
+    .child(v_flex().id("k8s-menu-box").w(menuWidth(m, v.size.width)).max_h(Math.min(440, v.size.height - 60)).bg(t.background).border(1).border_color(t.accent).py(4).overflow_y_scroll()
       .on_mouse_down("left", stop)
       .child(div().px(10).pb(4).text_size(10).text_color(t.ansi8).child(m.title))
       .children(rows));

@@ -11,7 +11,7 @@ const { candidatesOf, envOf, fileRef, fromEnv, fromOperators, findCredentials, s
 const { connectArgs } = await import("../mod/forwards.ts");
 const { default: K8s } = await import("../mod/main.ts");
 const { onKey } = await import("../mod/input.ts");
-const { menuBox } = await import("../mod/overlays.ts");
+const { menuBox, menuWidth } = await import("../mod/overlays.ts");
 const { texts } = await import("./support/standins.ts");
 
 const HOME = "/home/test/.config/herdr-app";
@@ -194,14 +194,21 @@ describe("the window's b and B", () => {
     await press("f", "b");
     expect(sent()).toEqual([]);
     expect(v.menu?.title).toBe("the password for moth-mysql · 2 found in nightjar-dev/moth");
+    expect(v.note?.text).toBe("2 found: pick the one with the password");
     expect(v.menu?.rows.map((r) => [r.label, r.sub])).toEqual([
       ["secret moth-mysql · mysql-root-password", "MYSQL_ROOT_PASSWORD of moth-mysql-0 (root) · user root · database moth"],
       ["secret moth-mysql · mysql-password", "MYSQL_PASSWORD of moth-mysql-0 · user moth · database moth"],
       ["No secret: Databases asks for the password", null],
-      ["Another secret of the namespace…", "1 secrets, by their key names"],
+      ["Another secret of the namespace…", "1 secret, by its key names"],
     ]);
     const drawn = texts(menuBox(v, new Proxy({}, { get: () => "#808080" }) as never) as never);
     expect(drawn).toContain("secret moth-mysql · mysql-password");
+    // Each row's second line whole: the box as wide as the longest (70 characters at 10 px), within the window; wrapped when it can't be.
+    const longest = Math.max(...(v.menu?.rows ?? []).map((r) => (r.sub ?? "").length));
+    expect(menuWidth(v.menu!, 1300)).toBeGreaterThanOrEqual(96 + longest * 10 * 0.68);
+    expect(menuWidth(v.menu!, 1300)).toBeGreaterThan(460);
+    expect(menuWidth(v.menu!, 400)).toBe(376);
+    expect(menuWidth({ title: "x", rows: [{ label: "Stop it" }] }, 1300)).toBe(460);
     await press("2");
     expect(sent()).toEqual([{ kind: "mysql", name: "moth-mysql (nightjar-dev/moth)", host: "127.0.0.1", port: 13306, from: "port-forward svc/moth-mysql in nightjar-dev/moth", user: "moth", database: "moth", secret: { from: "kubernetes", context: "nightjar-dev", namespace: "moth", name: "moth-mysql", key: "mysql-password", kubectl: KUBECTL } }]);
     for (const value of ["moth-lantern-42", "dusk-root-77"]) {
