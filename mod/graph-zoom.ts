@@ -69,7 +69,8 @@ export function zoomStep(view: View, by: 1 | -1): boolean {
 
 /** The zoom that shows the whole picture (`l` at full size) in the canvas, never past 100%. */
 export function fitZoom(view: View, l: Laid): number {
-  const room = Math.min((view.w - 16) / Math.max(1, l.width), (view.h - 16) / Math.max(1, l.height));
+  // The zoom's chips take a row at the foot.
+  const room = Math.min((view.w - 16) / Math.max(1, l.width), (view.h - 40) / Math.max(1, l.height));
 
   return clampZoom(Math.min(1, room));
 }

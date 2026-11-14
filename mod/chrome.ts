@@ -144,7 +144,7 @@ function barTitle(v: K8s): string {
 function barKeys(v: K8s): readonly (readonly [string, string])[] {
   const graph: readonly (readonly [string, string])[] = [["m", "menu"], ["+ -", "zoom"], ["z", "fit"], ["H J K L", "move"]];
 
-  if (v.tab === "argo") return [...(v.argoPanel === "tree" ? graph : []), ["S", "sync"], ["r", "refresh"], ["D", "diff"], ["h", "history"], ["B", "rollback"], ["tab", "panel"]];
+  if (v.tab === "argo") return [...(v.argoPanel === "tree" ? graph : [["m", "menu"], ["F", "filter by"]] as const), ["S", "sync"], ["r", "refresh"], ["D", "diff"], ["h", "history"], ["B", "rollback"], ["tab", "panel"]];
 
   if (v.tab === "forwards") return [["enter", "leads"], ["w", "web"], ["b", "databases"], ["B", "pick secret"], ["p", "peek"], ["x", "stop"]];
 
