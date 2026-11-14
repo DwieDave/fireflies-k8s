@@ -7,6 +7,7 @@
 //   K8S_FAKE_DOWN=<context>   that context answers as an unreachable server
 //   K8S_FAKE_NOW=<ms>         the "now" ages are shown against (tests)
 //   K8S_FAKE_FORBID_SECRET=<name>  reading that secret is forbidden (RBAC that lists but doesn't get)
+//   K8S_FAKE_NO_METRICS=1     no metrics-server: kubectl top answers an error
 
 import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -236,6 +237,7 @@ switch (verb) {
     break;
   }
   case "top": {
+    if (process.env.K8S_FAKE_NO_METRICS) fail("error: Metrics API not available");
     const what = rest[0];
     const t = (NOW / 15000) | 0;
     const wobble = (v: number, i: number) => Math.max(1, Math.round(v * (1 + 0.18 * Math.sin(t * 0.9 + i * 1.7))));

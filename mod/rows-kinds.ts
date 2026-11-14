@@ -9,23 +9,30 @@ import { keyOf, labelsOf, podFacts, podState, replicaBlocks, restartsOf, text } 
 import { instant, span } from "./time.ts";
 import { bytes, millicores } from "./quantity.ts";
 
-/** A column: its title, its width (null: takes the rest), right-aligned or not. */
+/** A column: its title, its width (null: takes the rest), right-aligned or not, and whether it's among the
+ *  first to leave a narrow table (`low`: a detail the row reads without). */
 export interface Column {
   readonly title: string;
   readonly w: number | null;
   readonly right?: boolean;
+  readonly low?: boolean;
 }
 
 const c = (title: string, w: number | null, right = false): Column => ({ title, w, right });
+const low = (title: string, w: number, right = false): Column => ({ title, w, right, low: true });
 const NAME = c("name", null);
 const AGE = c("age", 44, true);
 
+/** CPU and memory: a line over the readings so far and the value now. */
+const CPU = c("cpu", 92);
+const MEM = c("mem", 92);
+
 export const COLUMNS = {
-  pods: [NAME, c("ready", 64), c("restarts", 64), c("status", 128), c("cpu", 70), c("mem", 70), c("node", 80), AGE],
-  deployments: [NAME, c("ready", 92), c("up-to-date", 70, true), c("available", 70, true), c("cpu", 70), AGE],
-  replicasets: [NAME, c("ready", 92), c("revision", 64, true), AGE],
-  statefulsets: [NAME, c("ready", 92), c("service", 120), c("cpu", 70), AGE],
-  daemonsets: [NAME, c("ready", 92), c("desired", 60, true), c("up-to-date", 70, true), AGE],
+  pods: [NAME, c("ready", 64), c("restarts", 64), c("status", 128), CPU, MEM, low("node", 80), AGE],
+  deployments: [NAME, c("ready", 92), low("up-to-date", 70, true), low("available", 70, true), CPU, MEM, AGE],
+  replicasets: [NAME, c("ready", 92), low("revision", 64, true), AGE],
+  statefulsets: [NAME, c("ready", 92), low("service", 120), CPU, MEM, AGE],
+  daemonsets: [NAME, c("ready", 92), low("desired", 60, true), low("up-to-date", 70, true), AGE],
   jobs: [NAME, c("completions", 92), c("status", 90), c("duration", 70, true), AGE],
   cronjobs: [NAME, c("schedule", 110), c("active", 50, true), c("last run", 70, true), AGE],
   services: [NAME, c("type", 92), c("cluster-ip", 110), c("ports", 150), AGE],
@@ -34,7 +41,7 @@ export const COLUMNS = {
   secrets: [NAME, c("type", 170), c("keys", 200), AGE],
   pvcs: [NAME, c("status", 70), c("capacity", 70, true), c("class", 100), AGE],
   events: [c("type", 64), c("reason", 120), c("object", 200), c("message", null), c("count", 44, true), AGE],
-  nodes: [NAME, c("status", 120), c("roles", 100), c("cpu", 70), c("mem", 70), c("version", 120), AGE],
+  nodes: [NAME, c("status", 120), low("roles", 100), CPU, MEM, low("version", 120), AGE],
   namespaces: [NAME, c("status", 70), AGE],
   applications: [NAME, c("sync", 90), c("health", 100), c("revision", 80), c("destination", 160), AGE],
 } as const satisfies { readonly [K in Builtin]: readonly Column[] };
@@ -85,7 +92,7 @@ export function deploymentRow(d: Deployment, owned: OwnedPods): Row {
   return {
     ...base("deployments", d), tone, status: tone === "off" ? "scaled to 0" : `${ready}/${want}`,
     cells: [text(d.metadata.name), { t: "ready", blocks: replicaBlocks(ready, want, tone === "wk" ? "wk" : "bad"), text: `${ready}/${want}` },
-      text(String(updated)), text(String(d.status?.availableReplicas ?? 0)), { t: "metric", what: "cpu", pods }, age(instant(d.metadata.creationTimestamp))],
+      text(String(updated)), text(String(d.status?.availableReplicas ?? 0)), { t: "metric", what: "cpu", pods }, { t: "metric", what: "mem", pods }, age(instant(d.metadata.creationTimestamp))],
   };
 }
 
@@ -105,11 +112,12 @@ export function statefulSetRow(s: StatefulSet, owned: OwnedPods): Row {
   const want = s.spec?.replicas ?? 1;
   const ready = s.status?.readyReplicas ?? 0;
   const tone = workloadTone(ready, want, Boolean(s.status?.updateRevision && s.status.updateRevision !== s.status.currentRevision));
+  const pods = owned(s.metadata.uid ?? null);
 
   return {
     ...base("statefulsets", s), tone, status: `${ready}/${want}`,
     cells: [text(s.metadata.name), { t: "ready", blocks: replicaBlocks(ready, want, tone === "wk" ? "wk" : "bad"), text: `${ready}/${want}` }, text(s.spec?.serviceName ?? "", null, true),
-      { t: "metric", what: "cpu", pods: owned(s.metadata.uid ?? null) }, age(instant(s.metadata.creationTimestamp))],
+      { t: "metric", what: "cpu", pods }, { t: "metric", what: "mem", pods }, age(instant(s.metadata.creationTimestamp))],
   };
 }
 

@@ -19,6 +19,8 @@ import { forwards, keepForward, openDatabases, openWeb, peekForward, stopForward
 import type { Forward } from "./forwards.ts";
 import type { MenuRow } from "./state.ts";
 import { stepPanel } from "./panel-keys.ts";
+import { columnKey } from "./columns-menu.ts";
+import { tableWidth } from "./panels.ts";
 import type { Placed } from "./graph-layout.ts";
 
 const step = (name: string): number | null => (name === "j" || name === "down" ? 1 : name === "k" || name === "up" ? -1 : name === "pagedown" ? 10 : name === "pageup" ? -10 : null);
@@ -74,6 +76,7 @@ function tableKey(v: K8s, name: string, cx: Context): boolean {
   if (by !== null) moveRow(v, by);
   else if (name === "home" || name === "g" && v.panel === "table" && !rowActionFor("g", selectedRow(v))) selectAt(v, 0);
   else if (name === "G" || name === "end") selectAt(v, rows.length - 1);
+  else if (v.panel === "table" && columnKey(v, name, tableWidth(v))) return true;
   else if (name === "m" || name === "space") {
     const row = selectedRow(v);
 

@@ -94,6 +94,17 @@ export function argoSideDivider(v: K8s): Divider {
   return { ...argoSideBase(v), max: v.size.width - 4 * GAP - MIN_TREE - v.dividers.size(argoAppsDivider(v)) };
 }
 
+/** The kind's table's width in the layout now. */
+export function tableWidth(v: K8s): number {
+  const w = v.size.width;
+
+  if (v.narrow()) return w - 16;
+
+  const rail = v.dividers.size(railDivider(v));
+
+  return wide(v) ? w - rail - v.dividers.size(detailDivider(v)) - 4 * GAP : w - rail - 3 * GAP;
+}
+
 /** The edges + and - move for the panel with the keyboard (none when narrow: one panel shows). */
 export function panelEdges(v: K8s): readonly Edge[] {
   if (v.narrow() || v.tab === "forwards") return [];

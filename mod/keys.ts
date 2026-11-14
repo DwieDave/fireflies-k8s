@@ -50,7 +50,7 @@ export const ROW_KEYS = [
   ["p", "previous", "previous logs"],
   ["s", "shell", "shell in a pane"],
   ["F", "forward", "port-forward"],
-  ["o", "web", "open in a web pane"],
+  ["w", "web", "open in a web pane"],
   ["e", "edit", "edit in the editor"],
   ["S", "scale", "scale"],
   ["R", "restart", "restart"],
@@ -118,6 +118,14 @@ export const WINDOW_KEYS = [
   ["ctrl-t", "into a pane / out to a window"],
   ["esc", "back"],
   ["?", "keys"],
+] as const;
+
+/** The kind's table's column keys (the table with the keys); the header takes the pointer the same way. */
+export const TABLE_KEYS = [
+  [", .", "the keys to the column left / right (its header underlined)"],
+  ["o", "sort by that column: up, down, the default order (or click its header)"],
+  ["< >", "that column narrower / wider (or drag its header's edge; a double click fits it)"],
+  ["O", "the columns menu: sort by any, the default order, fit, widths back (or right-click a header)"],
 ] as const;
 
 /** A graph's keys (the detail panel's, the Argo tree's), with the keyboard there. */

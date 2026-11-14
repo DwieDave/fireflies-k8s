@@ -15,7 +15,7 @@ import { tabActions } from "./form-keys.ts";
 import { onKey } from "./input.ts";
 import { header, keyBar, foldRow } from "./chrome.ts";
 import { rail } from "./rail.ts";
-import { table } from "./table.ts";
+import { columnTracking, table } from "./table.ts";
 import { detail } from "./detail.ts";
 import { argoTab } from "./argo-view.ts";
 import { forwardsTab, shelf } from "./forwards-view.ts";
@@ -23,7 +23,7 @@ import { askCard, helpPanel, menuBox } from "./overlays.ts";
 import { unzoom } from "./kit.ts";
 import { detailWidth } from "./graph-shown.ts";
 import { divider, tracking } from "./dividers.ts";
-import { GAP, detailDivider, detailHeightDivider, railDivider } from "./panels.ts";
+import { GAP, detailDivider, detailHeightDivider, railDivider, tableWidth } from "./panels.ts";
 
 export function frame(v: K8s, t: Theme, _cx: Context): Element {
   const handle = v.handle;
@@ -47,7 +47,7 @@ export function frame(v: K8s, t: Theme, _cx: Context): Element {
     .children(v.tab === "resources" ? [shelf(v, t)].flatMap((x) => (x ? [x] : [])) : [])
     .child(keyBar(v, t));
 
-  const keyed = tabActions(tracking(root, v.dividers), (e, cx) => onKey(v, e, cx));
+  const keyed = tabActions(columnTracking(tracking(root, v.dividers), v), (e, cx) => onKey(v, e, cx));
 
   return handle ? keyed.track_focus(handle) : keyed;
 }
@@ -64,7 +64,7 @@ function resources(v: K8s, t: Theme): Element {
   const w = v.size.width;
 
   if (v.narrow()) {
-    const shown = v.panel === "rail" ? rail(v, t) : v.panel === "detail" ? detail(v, t, detailWidth(v)) : table(v, t, w - 16);
+    const shown = v.panel === "rail" ? rail(v, t) : v.panel === "detail" ? detail(v, t, detailWidth(v)) : table(v, t, tableWidth(v));
 
     return v_flex().size_full().child(foldRow(v, t)).child(div().flex_1().min_h(0).p(8).child(shown));
   }
@@ -80,7 +80,7 @@ function resources(v: K8s, t: Theme): Element {
     return h_flex().size_full().px(GAP).pt(12).pb(8)
       .child(v_flex().w(rw).flex_none().h_full().child(rail(v, t)))
       .child(divider(t, "k8s-div-rail", rd, ds, GAP))
-      .child(v_flex().flex_1().min_w(0).h_full().child(table(v, t, w - rw - dw - 4 * GAP)))
+      .child(v_flex().flex_1().min_w(0).h_full().child(table(v, t, tableWidth(v))))
       .child(divider(t, "k8s-div-detail", dd, ds, GAP))
       .child(v_flex().w(dw).flex_none().h_full().child(detail(v, t, dw)));
   }
@@ -91,7 +91,7 @@ function resources(v: K8s, t: Theme): Element {
     .child(v_flex().w(rw).flex_none().h_full().child(rail(v, t)))
     .child(divider(t, "k8s-div-rail", rd, ds, GAP))
     .child(v_flex().flex_1().min_w(0).h_full()
-      .child(v_flex().flex_1().min_h(0).min_w(0).child(table(v, t, w - rw - 3 * GAP)))
+      .child(v_flex().flex_1().min_h(0).min_w(0).child(table(v, t, tableWidth(v))))
       .child(divider(t, "k8s-div-detail-h", hd, ds, 12))
       .child(div().h(ds.size(hd)).flex_none().child(detail(v, t, w - rw - 3 * GAP))));
 }

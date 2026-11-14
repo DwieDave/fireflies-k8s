@@ -39,6 +39,7 @@ import { beat, hostProps, takeOpening, command, saveCopy } from "./host.ts";
 import type { HostProps } from "./host.ts";
 import { Dividers } from "./dividers.ts";
 import { keptSizes, saveSizes } from "./panels.ts";
+import { ColumnState, loadColumns } from "./columns.ts";
 
 /** The narrow break: one column under it. */
 export const NARROW = 640;
@@ -90,6 +91,8 @@ export default class K8s extends View {
   rowsMemo = new Memo<readonly Row[]>();
   /** The panels' sizes, dragged at the gaps or stepped with + and - (panels.ts). */
   dividers = new Dividers({}, () => {});
+  /** The table's column widths, sorts and focused column per kind (columns.ts; widths and sorts kept). */
+  columns = new ColumnState();
   /** Each graph canvas's size and pan (graph-pan.ts). */
   canvases = new Map<string, CanvasView>();
   closed = false;
@@ -102,6 +105,7 @@ export default class K8s extends View {
     const inWindow = this.inWindow();
 
     this.dividers = new Dividers(keptSizes(inWindow), (sizes) => saveSizes(inWindow, sizes));
+    this.columns = loadColumns();
     takeOpening(this);
 
     const handle = cx.focus_handle();

@@ -13,8 +13,15 @@ the keyboard first and the pointer too. Its keys follow k9s's where they fit.
   with its pods as a strip of cells (a failing pod is a red cell, counted
   beside the name, before you open it), the kinds with their counts.
 - **The kind's table**: readiness as blocks, restarts as marks (bright when
-  the last one was within the hour), CPU and memory as small dithered lines
-  when the cluster runs metrics-server, ages as kubectl prints them.
+  the last one was within the hour), CPU and memory (pods, deployments,
+  stateful sets, nodes) as dithered lines over the readings so far with the
+  value now, when the cluster runs metrics-server (without it the column
+  says so once), ages as kubectl prints them. A click on a header sorts by
+  what the column means (ages by time, CPU and memory by the reading now,
+  restarts by count, a status failing first), again the other way, a third
+  time back; drag a header's edge to resize the column (a double click fits
+  it). Sorts and widths are kept per kind. The details (node, up-to-date…)
+  leave a narrow table first.
 - **The selected row**: its graph, read the way traffic flows (ingress →
   service → deployment → replica sets → pods, old replica sets faded), each
   pod with its CPU line and restarts; describe and YAML in a read-only code
@@ -183,6 +190,7 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | `g` `d` `y` `v` | graph, describe, YAML, events |
 | `l` `p` `s` | logs, previous logs, shell (in panes) |
 | `F` `f` | port-forward, the forwards |
+| `w` | an ingress in a web pane |
 | `b` `B` | a database forward in Databases, its password's secret found; picked |
 | `e` | edit in the editor |
 | `S` `R` | scale, restart |
@@ -191,6 +199,10 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | `ctrl-d` `ctrl-k` | delete, kill |
 | `[` `]`, `tab` `shift-tab` | the tabs; the next / previous panel |
 | `+` `-` | the panel with the keys wider or narrower (or drag the gap) |
+| `,` `.` | the table: the keys to the column left / right (its header underlined) |
+| `o` | sort by that column: up, down, back to the default order (or click its header) |
+| `<` `>` | that column narrower / wider (or drag its header's edge; a double click fits it) |
+| `O` | the columns menu: sort by any column, the default order, fit, every width back (or right-click a header) |
 | `M` | metrics: read every 2s, 5s, 15s, 30s, or paused |
 | `ctrl-t` | into a pane / out to a window |
 | `?` | every key |

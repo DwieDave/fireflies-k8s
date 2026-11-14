@@ -11,18 +11,24 @@ import { inThisCluster } from "./argo.ts";
 import { drillRows, filterRows, rowsOf } from "./derive.ts";
 import type { Tab } from "./state.ts";
 import { TABS } from "./state.ts";
+import { kindColumns, metricNow } from "./columns.ts";
+import { sortRows } from "./sort.ts";
 
 /** The key of the list shown now: a selection is kept per list. */
 export function listKey(v: K8s): string {
   return `${v.context ?? ""}/${v.namespace ?? "*"}/${v.kind}/${v.drill?.uid ?? ""}`;
 }
 
-/** The rows shown: the kind's, drilled into and filtered. */
+/** The rows shown: the kind's, drilled into, filtered, and sorted as the kind's sort says (columns.ts). */
 export function listRows(v: K8s): readonly Row[] {
-  return v.rowsMemo.get(v.data.version, `${listKey(v)}|${v.filter}`, () => {
-    const ns = namespaced(v.kind) ? v.namespace : null;
+  const by = v.columns.sorts.get(v.kind) ?? null;
 
-    return filterRows(drillRows(v.data, rowsOf(v.data, v.kind, ns), v.drill, ns), v.filter);
+  return v.rowsMemo.get(v.data.version, `${listKey(v)}|${v.filter}|${by ? `${by.col}|${by.desc}` : ""}`, () => {
+    const ns = namespaced(v.kind) ? v.namespace : null;
+    const rows = filterRows(drillRows(v.data, rowsOf(v.data, v.kind, ns), v.drill, ns), v.filter);
+    const index = by ? kindColumns(v).findIndex((c) => c.title === by.col) : -1;
+
+    return by && index >= 0 ? sortRows(rows, index, by.desc, (c) => metricNow(v, c)) : rows;
   });
 }
 

@@ -2,18 +2,17 @@
 // picture reads faster (readiness blocks, restart marks, CPU lines), the
 // selected row banded. Columns that don't fit leave from the right before
 // the name truncates. Click selects, a double click opens, a right click
-// lists the row's actions.
+// lists the row's actions. The header sorts (a click), resizes (its edges)
+// and opens the columns menu (a right click): columns.ts holds what's set.
 
 import { div } from "gpui-kit";
 import type { Element } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import type { Theme } from "herdr";
 import type { default as K8s } from "./main.ts";
-import type { Column } from "./rows-kinds.ts";
-import { COLUMNS, CUSTOM_COLUMNS } from "./rows-kinds.ts";
 import type { Cell, Row } from "./rows.ts";
 import { band, panel, pip, spark, stop, toneColor } from "./kit.ts";
-import { isBuiltin, titleOf } from "./kinds.ts";
+import { titleOf } from "./kinds.ts";
 import { listRows, rowIndex, selectAt } from "./nav.ts";
 import { rowMenu, runRow } from "./actions.ts";
 import { age } from "./time.ts";
@@ -21,53 +20,125 @@ import { cpuText, memText } from "./quantity.ts";
 import { HIDDEN } from "./secrets.ts";
 import { isString } from "./guard.ts";
 import { panelNum } from "./panel-keys.ts";
+import type { Shown } from "./columns.ts";
+import { NAME_MIN, cycleSort, fitColumn, focusedColumn, metricLine, saveColumns, setWidth, shownColumns } from "./columns.ts";
+import { columnsMenu } from "./columns-menu.ts";
+import { unzoom } from "./kit.ts";
 
 const ROW_H = 22;
 
-/** The columns that fit `width` (the name keeps at least 140 px). */
-export function fitColumns(cols: readonly Column[], width: number): readonly Column[] {
-  const out: Column[] = [];
-  let used = 140 + 26;
+/** The px a row spends besides its columns: padding, the pip, the gaps. */
+const chrome = (n: number): number => 16 + 8 + 10 * n;
 
-  for (const c of cols) {
-    if (c.w === null) {
-      out.push(c);
-      continue;
-    }
-
-    if (used + c.w + 10 > width) continue;
-
-    used += c.w + 10;
-    out.push(c);
-  }
-
-  return out;
+/** How wide the column taking the rest draws in a table `width` wide. */
+export function restWidth(shown: readonly Shown[], width: number): number {
+  return Math.max(NAME_MIN, width - 2 - chrome(shown.length) - shown.reduce((n, s) => n + (s.w ?? 0), 0));
 }
 
 export function table(v: K8s, t: Theme, width: number): Element {
-  const all = isBuiltin(v.kind) ? COLUMNS[v.kind] : CUSTOM_COLUMNS;
-  const cols = fitColumns(all, width);
-  const keep = cols.map((c) => all.indexOf(c));
+  const shown = shownColumns(v, width);
   const rows = listRows(v);
   const at = rowIndex(v, rows);
   const active = v.panel === "table";
   const title = v.drill ? `${titleOf(v.kind)} of ${v.drill.label}` : titleOf(v.kind);
   const right = `${rows.length ? at + 1 : 0} of ${rows.length}${v.filter ? ` · /${v.filter}` : ""}`;
   const feed = v.data.pods.error ?? v.data.snap.error;
+  const rest = restWidth(shown, width);
 
   const body = v_flex().size_full()
-    .child(header(t, cols))
+    .child(header(v, t, shown, active, rest))
     .child(v_flex().id("k8s-rows").flex_1().min_h(0).overflow_y_scroll().track_scroll(v.tableScroll)
-      .children(rows.map((r, i) => tableRow(v, t, r, i, i === at, active, cols, keep)))
+      .children(rows.map((r, i) => tableRow(v, t, r, i, i === at, active, shown)))
       .when(!rows.length, (el) => el.child(empty(v, t, feed))));
 
   return panel(t, "k8s-table", title, active, body, { num: panelNum("table"), right });
 }
 
-function header(t: Theme, cols: readonly Column[]): Element {
-  return h_flex().h(18).flex_none().px(8).gap(10).items_center().text_size(10).text_color(t.dim)
+/** A column's box: its width as set, or the rest. */
+const colBox = (el: Element, s: Shown): Element => (s.w === null ? el.flex_1().min_w(0) : el.w(s.w).flex_none());
+
+/** The header: a click sorts by the column (again: the other way; a third time: the default order), a right
+ *  click opens the columns menu, the right edge drags the width (a double click fits it). The column with the
+ *  keys (`,` `.`) is underlined while the table has them. */
+function header(v: K8s, t: Theme, shown: readonly Shown[], active: boolean, rest: number): Element {
+  const by = v.columns.sorts.get(v.kind) ?? null;
+  const focus = focusedColumn(v, shown);
+
+  return h_flex().id("k8s-thead").h(18).flex_none().px(8).gap(10).items_center().text_size(10).text_color(t.dim)
     .child(div().w(8).flex_none())
-    .children(cols.map((c, i) => div().id(`th-${i}`).when(c.w === null, (el) => el.flex_1().min_w(0)).when(c.w !== null, (el) => el.w(c.w ?? 0).flex_none()).when(Boolean(c.right), (el) => el.text_right()).child(c.title.toUpperCase())));
+    .children(shown.map((s, i) => {
+      const sorted = by?.col === s.col.title;
+      const label = `${s.col.title.toUpperCase()}${sorted ? (by?.desc ? " ↓" : " ↑") : ""}`;
+      const lit = active && focus === s;
+      const metric = (s.col.title === "cpu" || s.col.title === "mem") && v.data.metricsMissing;
+
+      return colBox(h_flex().id(`th-${i}`).relative().h_full().items_center().cursor_pointer(), s)
+        .when(Boolean(s.col.right), (el) => el.justify_end())
+        .hover((st) => st.text_color(t.foreground))
+        .on_mouse_down("left", stop)
+        .on_click((_e, cx) => {
+          cycleSort(v, s.col.title);
+          v.panel = "table";
+          keepInView(v);
+          cx.notify();
+        })
+        .on_mouse_down("right", (_e, cx) => {
+          cx.stop_propagation();
+          v.columns.at.set(v.kind, s.col.title);
+          v.menu = columnsMenu(v, rest);
+          cx.notify();
+        })
+        .when(metric, (el) => el.tooltip("metrics-server isn't answering kubectl top: no readings"))
+        .child(div().truncate().text_color(sorted ? t.accent : lit ? t.foreground : t.dim).child(label))
+        .when(lit, (el) => el.child(div().absolute().left(0).right(0).bottom(0).h(1).bg(t.accent)))
+        .child(edge(v, t, s, rest));
+    }));
+}
+
+/** A column's right edge in the header: dragged, it sets the width; a double click fits it to what it holds. */
+function edge(v: K8s, t: Theme, s: Shown, rest: number): Element {
+  const held = v.columns.drag?.col === s.col.title;
+
+  return div().id(`th-edge-${s.col.title}`).absolute().top(0).bottom(0).right(-8).w(6).cursor_col_resize()
+    .hover((st) => st.bg(`${t.accent}55`))
+    .when(held, (el) => el.bg(t.accent))
+    .on_mouse_down("left", (e, cx) => {
+      stop(e, cx);
+
+      if (e.click_count >= 2) {
+        v.columns.drag = null;
+        fitColumn(v, listRows(v), s);
+      } else v.columns.drag = { kind: v.kind, col: s.col.title, x: unzoom(e.position.x), w: s.w ?? rest };
+
+      cx.notify();
+    });
+}
+
+/** Follows a header edge's drag over the whole window (the pointer leaves the edge at once). */
+export function columnTracking(el: Element, v: K8s): Element {
+  const d = v.columns.drag;
+
+  return el.when(d !== null, (e) => e.cursor_col_resize())
+    .on_mouse_move((e, cx) => {
+      const g = v.columns.drag;
+
+      if (!g || g.kind !== v.kind) return;
+
+      setWidth(v, g.col, g.w + unzoom(e.position.x) - g.x, false);
+      cx.notify();
+    })
+    .on_mouse_up("left", (_e, cx) => {
+      if (!v.columns.drag) return;
+
+      v.columns.drag = null;
+      saveColumns(v.columns);
+      cx.notify();
+    });
+}
+
+/** The selected row back in sight after the order changed. */
+export function keepInView(v: K8s): void {
+  v.tableScroll.scroll_to_item(rowIndex(v));
 }
 
 function empty(v: K8s, t: Theme, error: string | null): Element {
@@ -76,7 +147,7 @@ function empty(v: K8s, t: Theme, error: string | null): Element {
   return div().p(16).text_size(11).text_color(error ? t.blocked : t.dim).child(text);
 }
 
-function tableRow(v: K8s, t: Theme, r: Row, i: number, sel: boolean, active: boolean, cols: readonly Column[], keep: readonly number[]): Element {
+function tableRow(v: K8s, t: Theme, r: Row, i: number, sel: boolean, active: boolean, shown: readonly Shown[]): Element {
   return h_flex().id(`row-${r.key}`).relative().h(ROW_H).flex_none().px(8).gap(10).items_center().text_size(11).cursor_pointer()
     .hover((s) => s.bg(`${t.ansi0}44`))
     .when(sel, (el) => el.children(band(t, active)))
@@ -96,16 +167,22 @@ function tableRow(v: K8s, t: Theme, r: Row, i: number, sel: boolean, active: boo
       cx.notify();
     })
     .child(div().relative().w(8).flex_none().flex().items_center().child(pip(t, r.tone, 7)))
-    .children(cols.map((c, ci) => {
-      const cell = r.cells[keep[ci] ?? -1] ?? null;
-      const box = div().relative().min_w(0).when(c.w === null, (el) => el.flex_1()).when(c.w !== null, (el) => el.w(c.w ?? 0).flex_none()).when(Boolean(c.right), (el) => el.flex().justify_end());
+    .children(shown.map((s, ci) => {
+      const cell = r.cells[s.index] ?? null;
+      const box = colBox(div().relative().min_w(0), s).when(Boolean(s.col.right), (el) => el.flex().justify_end());
 
-      return box.child(cell ? drawCell(v, t, cell, sel, `${r.key}-${ci}`) : div());
+      return box.child(cell ? drawCell(v, t, cell, sel, `${r.key}-${ci}`, { w: s.w ?? 100, first: i === 0 }) : div());
     }));
 }
 
+/** Where a cell is drawn: its column's width, whether it's the first row's. */
+interface CellAt {
+  readonly w: number;
+  readonly first: boolean;
+}
+
 /** One cell as it's drawn. */
-export function drawCell(v: K8s, t: Theme, c: Cell, sel: boolean, id: string): Element {
+export function drawCell(v: K8s, t: Theme, c: Cell, sel: boolean, id: string, at: CellAt): Element {
   switch (c.t) {
     case "text": return div().truncate().text_color(c.tone ? toneColor(t, c.tone) : c.dim ? t.dim : sel ? t.foreground : t.muted).child(c.text);
     case "age": return div().text_color(t.dim).child(age(c.at));
@@ -113,7 +190,7 @@ export function drawCell(v: K8s, t: Theme, c: Cell, sel: boolean, id: string): E
       .children(c.blocks.map((b, i) => div().id(`${id}-b${i}`).w(6).h(9).flex_none().when(b === "ok" || b === "wk" || b === "done", (el) => el.bg(toneColor(t, b))).when(b === "bad" || b === "off", (el) => el.border(1).border_color(b === "bad" ? t.blocked : t.ansi0))))
       .child(div().pl(4).text_size(10).text_color(t.dim).child(c.text));
     case "marks": return marks(t, c.count, c.recent, id);
-    case "metric": return metric(v, t, c, id);
+    case "metric": return metric(v, t, c, id, at);
     default: return div();
   }
 }
@@ -129,21 +206,23 @@ export function marks(t: Theme, count: number, recent: boolean, id: string): Ele
     .when(count > 10, (el) => el.child(div().pl(3).text_size(10).text_color(color).child(String(count))));
 }
 
-/** A CPU or memory line over the readings so far, and the value now. */
-function metric(v: K8s, t: Theme, c: Extract<Cell, { t: "metric" }>, id: string): Element {
-  if (v.data.metricsMissing) return div().text_color(t.ansi0).child("—");
+/** A CPU or memory line over the readings so far, as wide as the column lets it, and the value now. Without
+ *  metrics-server the first row says so, once, and the rest stay empty. */
+function metric(v: K8s, t: Theme, c: Extract<Cell, { t: "metric" }>, id: string, at: CellAt): Element {
+  if (v.data.metricsMissing) return at.first ? div().truncate().text_size(10).text_color(t.dim).child("no metrics-server") : div();
 
-  const keys = c.pods.map((p) => (p.startsWith("node:") ? p : p.includes("/") ? p : `${v.namespace ?? ""}/${p}`));
-  const line = v.data.history.sum(keys).map((s) => (c.what === "cpu" ? s.cpu : s.mem));
+  const line = metricLine(v, c);
   const now = line[line.length - 1];
 
   if (now === undefined) return div().text_color(t.ansi0).child("·");
 
   const color = c.what === "cpu" ? t.accent : t.ansi5;
+  const value = c.what === "cpu" ? cpuText(now) : memText(now);
+  const graph = Math.max(16, Math.min(160, at.w - 50));
 
-  return h_flex().gap(4).items_center()
-    .child(spark(t, `${id}-sp`, line, 30, 11, color))
-    .child(div().text_size(10).text_color(t.muted).child(c.what === "cpu" ? cpuText(now) : memText(now)));
+  return h_flex().gap(5).items_center()
+    .child(spark(t, `${id}-sp`, line, graph, 11, color))
+    .child(div().flex_none().text_size(10).text_color(t.muted).child(value));
 }
 
 /** A revealed secret's values, or the hidden ones. */
