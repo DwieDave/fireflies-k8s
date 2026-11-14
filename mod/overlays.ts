@@ -7,7 +7,7 @@ import type { Element } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import type { Theme } from "herdr";
 import type { default as K8s } from "./main.ts";
-import { popupScrim, stop } from "./kit.ts";
+import { dither, popupScrim, stop } from "./kit.ts";
 import { keysView } from "./keyhelp.ts";
 import type { KeySection } from "./keyhelp.ts";
 import { ARGO_KEYS, FORWARD_KEYS, GRAPH_KEYS, RAIL_KEYS, ROW_KEYS, TABLE_KEYS, WINDOW_KEYS } from "./keys.ts";
@@ -15,6 +15,7 @@ import { asksTwice, whereOf } from "./confirm.ts";
 import { clusterOf, runAsk } from "./writes.ts";
 import { looksProd } from "./contexts.ts";
 import { pickMenu } from "./input.ts";
+import { shownKey } from "./state.ts";
 
 /** A menu's width: its longest line whole (label at 11 px, a second line at 10 px, the key column and
  *  padding beside them), at least 460, at most the window less a margin. */
@@ -25,10 +26,21 @@ export function menuWidth(m: { readonly title: string; readonly rows: readonly {
   return Math.max(Math.min(460, room - 24), Math.min(Math.ceil(need), 820, room - 24));
 }
 
+/** A menu's height with every row whole: the title, the find line, each row (22, or 32 with a second line). */
+export function menuHeight(m: { readonly rows: readonly { readonly sub?: string | null }[]; readonly find?: unknown }): number {
+  return 8 + 18 + (m.find ? 26 : 0) + m.rows.reduce((n, r) => n + (r.sub ? 38 : 22), 0) + 2;
+}
+
 export function menuBox(v: K8s, t: Theme): Element | null {
   const m = v.menu;
 
   if (!m) return null;
+
+  // Its room: the window's body less a margin; taller menus scroll with a mark at the foot.
+  const room = Math.max(120, v.size.height - 90);
+  const over = menuHeight(m) > room;
+
+  if (over) v.menuScroll.scroll_to_item(m.at);
 
   const rows = m.rows.map((r, i) => h_flex().id(`menu-${i}`).relative().when(!r.sub, (el) => el.h(22)).when(Boolean(r.sub), (el) => el.min_h(32).py(3)).flex_none().px(10).gap(10).items_center().cursor_pointer()
     .hover((s) => s.bg(`${t.ansi0}66`))
@@ -38,7 +50,7 @@ export function menuBox(v: K8s, t: Theme): Element | null {
       pickMenu(v, i, cx);
       cx.notify();
     })
-    .child(div().w(46).flex_none().text_color(t.accent).child(r.key ?? (i < 9 ? String(i + 1) : "")))
+    .child(div().w(46).flex_none().text_color(t.accent).child(shownKey(m, i) ?? ""))
     .child(v_flex().flex_1().min_w(0)
       .child(div().truncate().text_color(r.danger ? t.blocked : i === m.at ? t.foreground : t.muted).child(r.label))
       // The second line whole: the box is as wide as it needs (menuWidth); narrower than that, it wraps.
@@ -51,12 +63,15 @@ export function menuBox(v: K8s, t: Theme): Element | null {
       cx.notify();
     })
     .child(popupScrim("k8s-menu-scrim"))
-    .child(v_flex().id("k8s-menu-box").w(menuWidth(m, v.size.width)).max_h(Math.min(440, v.size.height - 60)).bg(t.background).border(1).border_color(t.accent).py(4).overflow_y_scroll()
+    .child(v_flex().id("k8s-menu-box").w(menuWidth(m, v.size.width)).max_h(room).bg(t.background).border(1).border_color(t.accent).py(4)
       .on_mouse_down("left", stop)
-      .child(div().px(10).pb(4).text_size(10).text_color(t.ansi8).child(m.title))
+      .child(div().flex_none().px(10).pb(4).text_size(10).text_color(t.ansi8).child(m.title))
       .when(Boolean(m.find), (el) => el.child(findLine(t, m.find?.text ?? "", m.find?.hint ?? "")))
-      .children(rows)
-      .when(Boolean(m.find) && !m.rows.length, (el) => el.child(div().px(10).py(4).text_color(t.dim).child(`nothing holds "${m.find?.text ?? ""}" (backspace)`))));
+      .child(v_flex().id("k8s-menu-rows").flex_1().min_h(0).overflow_y_scroll().track_scroll(v.menuScroll).children(rows)
+        .when(Boolean(m.find) && !m.rows.length, (el) => el.child(div().px(10).py(4).text_color(t.dim).child(`nothing holds "${m.find?.text ?? ""}" (backspace)`))))
+      // Taller than its room: it scrolls (the cursor's row kept in sight) and says there's more.
+      .when(over, (el) => el.child(h_flex().flex_none().h(16).px(10).gap(6).items_center().text_size(10).text_color(t.dim)
+        .child(div().flex_1().h(1).relative().child(dither(t.ansi8, 1))).child(div().child(`${m.rows.length} rows · ↑ ↓ or the wheel for more`)))));
 }
 
 /** A find menu's typed line: what's typed, a caret, what the keys do. */

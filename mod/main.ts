@@ -94,6 +94,8 @@ export default class K8s extends View {
   lastClick: { readonly key: string; readonly at: number } | null = null;
   nsScroll = ScrollHandle.new();
   kindsScroll = ScrollHandle.new();
+  /** A menu taller than its room scrolls (overlays.ts). */
+  menuScroll = ScrollHandle.new();
   text: EditorState | null = null;
   shownText = "";
   rowsMemo = new Memo<readonly Row[]>();

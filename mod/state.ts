@@ -58,6 +58,16 @@ export interface Menu {
   readonly onKey?: (name: string, cx: Context) => boolean;
 }
 
+/** The key a menu row shows and answers to: its own; in a picker (no row has a key of its own) its place,
+ *  1 to 9; else none. The menu draws it and the key handler reads it, so what's shown is what's pressed. */
+export function shownKey(m: Menu, i: number): string | null {
+  const own = m.rows[i]?.key ?? null;
+
+  if (own !== null) return own;
+
+  return !m.rows.some((r) => r.key) && i < 9 ? String(i + 1) : null;
+}
+
 /** A word in the key bar for a few seconds (a write ran, a forward started). */
 export interface Note {
   readonly text: string;

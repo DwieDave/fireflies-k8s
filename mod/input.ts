@@ -9,6 +9,7 @@ import { keysKey } from "./keyhelp.ts";
 import { askKey, asksTwice } from "./confirm.ts";
 import { pressName } from "./keys.ts";
 import type { Typing } from "./state.ts";
+import { shownKey } from "./state.ts";
 import { kindCompletions, kindFor } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
 import { allApps, drillBack, selectedRow, setKind, setTab, stepTab } from "./nav.ts";
@@ -106,15 +107,14 @@ function menuKey(v: K8s, name: string, ch: string | null, cx: Context): boolean 
 
   if (m.onKey?.(name, cx)) return true;
 
-  // A row's own key (the right-click menu lists them) runs it, before the digits.
-  const own = m.rows.findIndex((r) => r.key === name);
+  // The key a row shows runs it (its own, or its place in a picker): shownKey, as the menu draws them.
+  const own = m.rows.findIndex((_r, i) => shownKey(m, i) === name);
 
   if (own >= 0) pickMenu(v, own, cx);
   else if (name === "escape" || name === "q") v.menu = null;
   else if (name === "j" || name === "down" || name === "ctrl-n") m.at = Math.min(m.rows.length - 1, m.at + 1);
   else if (name === "k" || name === "up" || name === "ctrl-p") m.at = Math.max(0, m.at - 1);
   else if (name === "enter") pickMenu(v, m.at, cx);
-  else if (/^[1-9]$/.test(name)) pickMenu(v, Number(name) - 1, cx);
 
   return true;
 }
