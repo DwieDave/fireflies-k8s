@@ -1,0 +1,33 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "postgresql.cnpg.io/v1",
+   "kind": "Cluster",
+   "metadata": {
+    "name": "hive-postgresql",
+    "namespace": "honey",
+    "uid": "00000000-0000-4000-8000-000000000210",
+    "resourceVersion": "1210",
+    "creationTimestamp": "2026-10-24T12:00:00Z"
+   },
+   "spec": {
+    "instances": 1,
+    "bootstrap": {
+     "initdb": {
+      "database": "honey",
+      "owner": "bee",
+      "secret": {
+       "name": "hive-app-auth"
+      }
+     }
+    },
+    "enableSuperuserAccess": true
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

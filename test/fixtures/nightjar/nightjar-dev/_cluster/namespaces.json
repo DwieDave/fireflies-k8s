@@ -7,8 +7,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000209",
-    "resourceVersion": "1209",
+    "uid": "00000000-0000-4000-8000-000000000214",
+    "resourceVersion": "1214",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "lantern"
@@ -23,8 +23,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "moth",
-    "uid": "00000000-0000-4000-8000-000000000210",
-    "resourceVersion": "1210",
+    "uid": "00000000-0000-4000-8000-000000000215",
+    "resourceVersion": "1215",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "moth"
@@ -39,8 +39,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "glowworm",
-    "uid": "00000000-0000-4000-8000-000000000211",
-    "resourceVersion": "1211",
+    "uid": "00000000-0000-4000-8000-000000000216",
+    "resourceVersion": "1216",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "glowworm"
@@ -55,8 +55,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000212",
-    "resourceVersion": "1212",
+    "uid": "00000000-0000-4000-8000-000000000217",
+    "resourceVersion": "1217",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "kube-system"
@@ -71,8 +71,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "argocd",
-    "uid": "00000000-0000-4000-8000-000000000213",
-    "resourceVersion": "1213",
+    "uid": "00000000-0000-4000-8000-000000000218",
+    "resourceVersion": "1218",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "argocd"
@@ -87,8 +87,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "default",
-    "uid": "00000000-0000-4000-8000-000000000214",
-    "resourceVersion": "1214",
+    "uid": "00000000-0000-4000-8000-000000000219",
+    "resourceVersion": "1219",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "default"
@@ -103,11 +103,27 @@
    "kind": "Namespace",
    "metadata": {
     "name": "hive",
-    "uid": "00000000-0000-4000-8000-000000000215",
-    "resourceVersion": "1215",
+    "uid": "00000000-0000-4000-8000-000000000220",
+    "resourceVersion": "1220",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "hive"
+    }
+   },
+   "status": {
+    "phase": "Active"
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Namespace",
+   "metadata": {
+    "name": "honey",
+    "uid": "00000000-0000-4000-8000-000000000221",
+    "resourceVersion": "1221",
+    "creationTimestamp": "2026-09-14T12:00:00Z",
+    "labels": {
+     "kubernetes.io/metadata.name": "honey"
     }
    },
    "status": {

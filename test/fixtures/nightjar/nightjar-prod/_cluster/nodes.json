@@ -7,8 +7,8 @@
    "kind": "Node",
    "metadata": {
     "name": "prod-1",
-    "uid": "00000000-0000-4000-8000-000000000216",
-    "resourceVersion": "1216",
+    "uid": "00000000-0000-4000-8000-000000000222",
+    "resourceVersion": "1222",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/hostname": "prod-1",
@@ -61,8 +61,8 @@
    "kind": "Node",
    "metadata": {
     "name": "prod-2",
-    "uid": "00000000-0000-4000-8000-000000000217",
-    "resourceVersion": "1217",
+    "uid": "00000000-0000-4000-8000-000000000223",
+    "resourceVersion": "1223",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/hostname": "prod-2"
@@ -114,8 +114,8 @@
    "kind": "Node",
    "metadata": {
     "name": "prod-3",
-    "uid": "00000000-0000-4000-8000-000000000218",
-    "resourceVersion": "1218",
+    "uid": "00000000-0000-4000-8000-000000000224",
+    "resourceVersion": "1224",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/hostname": "prod-3"
@@ -167,8 +167,8 @@
    "kind": "Node",
    "metadata": {
     "name": "prod-4",
-    "uid": "00000000-0000-4000-8000-000000000219",
-    "resourceVersion": "1219",
+    "uid": "00000000-0000-4000-8000-000000000225",
+    "resourceVersion": "1225",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/hostname": "prod-4"

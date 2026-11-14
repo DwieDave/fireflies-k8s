@@ -84,3 +84,4 @@ hive	hive-drone-242g-kemk9	400m	656Mi
 hive	hive-drone-242g-kemka	407m	667Mi
 hive	hive-drone-242g-kemkb	414m	678Mi
 hive	hive-drone-242g-kemkc	421m	689Mi
+honey	hive-postgresql-1	25m	240Mi

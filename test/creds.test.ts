@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { calls, env, key, makeCx, sharedMap, store } from "./support/standins.ts";
 import { KUBECTL, fakeExec, writeLog } from "./support/fake.ts";
 
-const { candidatesOf, envOf, fileRef, fromEnv, fromOperators, findCredentials, secretKeysOf } = await import("../mod/creds.ts");
+const { candidatesOf, cnpgFacts, envOf, fileRef, fromEnv, fromOperators, findCredentials, secretKeysOf, zalandoFacts } = await import("../mod/creds.ts");
 const { connectArgs } = await import("../mod/forwards.ts");
 const { default: K8s } = await import("../mod/main.ts");
 const { onKey } = await import("../mod/input.ts");
@@ -97,6 +97,33 @@ describe("the operators", () => {
     expect(fromOperators("postgres", new Map([["cluster-name", "acid-x"]]), zalando)).toEqual([]);
   });
 
+  test("CloudNativePG's Cluster: the bootstrap's database and the secrets it names; a person's app secret has no dbname, so the Cluster's database goes along; the superuser's dbname (*) never does", () => {
+    const cluster = (bootstrap: unknown, extra: unknown = {}) => JSON.stringify({ apiVersion: "postgresql.cnpg.io/v1", kind: "Cluster", metadata: { name: "hive-postgresql" }, spec: { instances: 1, bootstrap, ...(extra as object) } });
+    expect(cnpgFacts(cluster({ initdb: { database: "honey", owner: "bee", secret: { name: "hive-app-auth" } } }, { superuserSecret: { name: "hive-root" } }))).toEqual({ database: "honey", appSecret: "hive-app-auth", superuserSecret: "hive-root" });
+    expect(cnpgFacts(cluster({ pg_basebackup: { database: "app", source: "other" } }))).toEqual({ database: "app" });
+    expect(cnpgFacts(cluster({ recovery: { database: "wax", secret: { name: "w" } } }))).toEqual({ database: "wax", appSecret: "w" });
+    expect(cnpgFacts(cluster(undefined))).toEqual({});
+    expect(cnpgFacts("not json")).toBeNull();
+    const labels = new Map([["cnpg.io/cluster", "hive-postgresql"]]);
+    const secrets = [{ name: "hive-app-auth", keys: ["password", "username"] }, { name: "hive-postgresql-superuser", keys: ["dbname", "password", "username"] }, { name: "hive-postgresql-app", keys: ["password"] }];
+    expect(fromOperators("postgres", labels, secrets, { cnpg: { database: "honey", appSecret: "hive-app-auth" } })).toEqual([
+      { secret: "hive-app-auth", key: "password", userKey: "username", database: "honey", why: "CloudNativePG cluster hive-postgresql's app user (database honey)" },
+      { secret: "hive-postgresql-superuser", key: "password", userKey: "username", why: "CloudNativePG cluster hive-postgresql's superuser" },
+    ]);
+    // The secret's own dbname wins over the Cluster's (the same, normally).
+    expect(fromOperators("postgres", new Map([["cnpg.io/cluster", "pg"]]), [{ name: "pg-app", keys: ["dbname", "password", "username"] }], { cnpg: { database: "app" } })[0]).toMatchObject({ databaseKey: "dbname" });
+    expect(fromOperators("postgres", new Map([["cnpg.io/cluster", "pg"]]), [{ name: "pg-app", keys: ["dbname", "password", "username"] }], { cnpg: { database: "app" } })[0]?.database).toBeUndefined();
+  });
+
+  test("Zalando's postgresql: the database a user owns, when it owns exactly one", () => {
+    const facts = zalandoFacts(JSON.stringify({ apiVersion: "acid.zalan.do/v1", kind: "postgresql", spec: { databases: { lantern: "app", wax: "candle", wick: "candle" } } }));
+    expect(facts).toEqual({ databases: new Map([["lantern", "app"], ["wax", "candle"], ["wick", "candle"]]) });
+    const tail = ".acid-x.credentials.postgresql.acid.zalan.do";
+    const secrets = ["app", "candle", "postgres"].map((u) => ({ name: `${u}${tail}`, keys: ["password", "username"] }));
+    const found = fromOperators("postgres", new Map([["cluster-name", "acid-x"], ["application", "spilo"]]), secrets, facts ? { zalando: facts } : {});
+    expect(found.map((c) => [c.secret.split(".")[0], c.database ?? null])).toEqual([["app", "lantern"], ["candle", null], ["postgres", null]]);
+  });
+
   test("together: the env first, each secret's key once, one whose secret or key isn't there left out and said", () => {
     const secrets = [{ name: "pg-app", keys: ["password", "username", "dbname"] }, { name: "db-auth", keys: ["username"] }];
     const p = pod([{ name: "pg", env: [{ name: "POSTGRES_PASSWORD", ...ref("db-auth", "password") }, { name: "PGPASSWORD", ...ref("gone", "password") }] }], { "cnpg.io/cluster": "pg" });
@@ -130,6 +157,26 @@ describe("against the made-up cluster", () => {
     expect(m.candidates.map((c) => [c.secret, c.key, c.user ?? null, c.database ?? null])).toEqual([["moth-mysql", "mysql-root-password", "root", "moth"], ["moth-mysql", "mysql-password", "moth", "moth"]]);
     const g = await findCredentials(exec, dev("glowworm"), "svc/glowworm-pg-rw", "postgres");
     expect(g.candidates.map((c) => c.secret)).toEqual(["glowworm-pg-app", "glowworm-pg-superuser"]);
+  });
+
+  test("pod/hive-postgresql-1 (CloudNativePG, a person's app secret): the Cluster gives the database; without the Cluster no database is guessed", async () => {
+    const h = await findCredentials(exec, dev("honey"), "pod/hive-postgresql-1", "postgres");
+    expect(h.candidates).toEqual([
+      { secret: "hive-app-auth", key: "password", userKey: "username", database: "honey", why: "CloudNativePG cluster hive-postgresql's app user (database honey)" },
+      { secret: "hive-postgresql-superuser", key: "password", userKey: "username", why: "CloudNativePG cluster hive-postgresql's superuser" },
+    ]);
+    // The Cluster can't be read (no CRD, RBAC): the superuser's secret alone, no database (the window lists them).
+    const noCrd = async (args: readonly string[], t: number) => (args.includes("clusters.postgresql.cnpg.io") ? { code: 1, stdout: "", stderr: "error: the server doesn't have a resource type \"clusters\"" } : exec(args, t));
+    const bare = await findCredentials(noCrd, dev("honey"), "pod/hive-postgresql-1", "postgres");
+    expect(bare.candidates).toEqual([{ secret: "hive-postgresql-superuser", key: "password", userKey: "username", why: "CloudNativePG cluster hive-postgresql's superuser" }]);
+    const f = { context: "nightjar-dev", namespace: "honey", target: "pod/hive-postgresql-1", local: 25432, remote: 5432, db: "postgres" as const, name: "hive-postgresql-1" };
+    const args = connectArgs(f, "postgres", bare.candidates[0] ?? null);
+    expect(args.database).toBeUndefined();
+    expect(args.secret?.databaseKey).toBeUndefined();
+    expect(JSON.stringify(args)).not.toContain("hive-root-5");
+    // glowworm's app secret has its dbname: that key goes along (the Cluster is read too).
+    const g = await findCredentials(exec, dev("glowworm"), "svc/glowworm-pg-rw", "postgres");
+    expect(g.candidates[0]).toMatchObject({ secret: "glowworm-pg-app", databaseKey: "dbname" });
   });
 
   test("none (a web service read as a database), a target that isn't there, nothing ever read of a value", async () => {

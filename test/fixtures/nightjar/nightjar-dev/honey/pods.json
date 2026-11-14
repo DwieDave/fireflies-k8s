@@ -1,0 +1,77 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-postgresql-1",
+    "namespace": "honey",
+    "uid": "00000000-0000-4000-8000-000000000207",
+    "resourceVersion": "1207",
+    "creationTimestamp": "2026-11-04T12:00:00Z",
+    "labels": {
+     "cnpg.io/cluster": "hive-postgresql",
+     "cnpg.io/instanceRole": "primary",
+     "cnpg.io/podRole": "instance"
+    }
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "postgres",
+      "image": "ghcr.io/cloudnative-pg/postgresql:17.2",
+      "ports": [
+       {
+        "containerPort": 5432,
+        "name": "postgresql",
+        "protocol": "TCP"
+       }
+      ],
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.199",
+    "startTime": "2026-11-04T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "postgres",
+      "image": "ghcr.io/cloudnative-pg/postgresql:17.2",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-04T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

@@ -7,8 +7,8 @@
    "kind": "Node",
    "metadata": {
     "name": "lumen-a",
-    "uid": "00000000-0000-4000-8000-000000000206",
-    "resourceVersion": "1206",
+    "uid": "00000000-0000-4000-8000-000000000211",
+    "resourceVersion": "1211",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/hostname": "lumen-a",
@@ -61,8 +61,8 @@
    "kind": "Node",
    "metadata": {
     "name": "lumen-b",
-    "uid": "00000000-0000-4000-8000-000000000207",
-    "resourceVersion": "1207",
+    "uid": "00000000-0000-4000-8000-000000000212",
+    "resourceVersion": "1212",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/hostname": "lumen-b"
@@ -114,8 +114,8 @@
    "kind": "Node",
    "metadata": {
     "name": "lumen-c",
-    "uid": "00000000-0000-4000-8000-000000000208",
-    "resourceVersion": "1208",
+    "uid": "00000000-0000-4000-8000-000000000213",
+    "resourceVersion": "1213",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/hostname": "lumen-c"

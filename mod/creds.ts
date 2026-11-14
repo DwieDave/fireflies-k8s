@@ -14,12 +14,25 @@
 //     spec) or a configMapKeyRef password isn't passed on: it is named, and
 //     Databases asks. A user or database as a plain value, a config map's or
 //     the password's secret's key goes along.
-//   - CloudNativePG (`cnpg.io/cluster`): <cluster>-app (username, password,
-//     dbname) and <cluster>-superuser; Crunchy PGO v5 and Percona's PG
-//     operator (`postgres-operator.crunchydata.com/cluster`): each
+//   - CloudNativePG (`cnpg.io/cluster`; its pods are <cluster>-1, -2 …): the
+//     app user's secret (<cluster>-app, or the one the Cluster's bootstrap
+//     names: a basic-auth secret of the person's own has no dbname) and the
+//     superuser's (<cluster>-superuser, or spec.superuserSecret); the
+//     application database from the Cluster resource itself
+//     (spec.bootstrap.initdb / pg_basebackup / recovery .database; the
+//     operator's webhook writes its default `app` there) when the secret has
+//     no dbname. The superuser's dbname is `*` (any): never a database.
+//     Crunchy PGO v5 and Percona's PG operator
+//     (`postgres-operator.crunchydata.com/cluster`): each
 //     <cluster>-pguser-<user> (user, password, dbname); Zalando's operator
 //     (`cluster-name` with `application: spilo`): each
-//     <user>.<cluster>.credentials.postgresql.acid.zalan.do (username, password).
+//     <user>.<cluster>.credentials.postgresql.acid.zalan.do (username,
+//     password), the database a user owns from its postgresql resource's
+//     spec.databases (name → owner) when it owns exactly one.
+//
+// A database is only passed on when one of these names it: no guess (the
+// user's own name, `postgres`). Without one the Databases window connects
+// to the server's default and lists the server's databases.
 //
 // The secrets are listed by key names only (kubectl.ts's template) to check
 // that a candidate's secret and key are there.
@@ -234,13 +247,60 @@ export function fromEnv(kind: "postgres" | "mysql", env: ReadonlyMap<string, Ref
 
 const has = (s: SecretKeys, key: string): boolean => s.keys.includes(key);
 
-/** The operator-made secrets of the pod's cluster (labels on the pod or the service's selector). */
-export function fromOperators(kind: "postgres" | "mysql", labels: ReadonlyMap<string, string>, secrets: readonly SecretKeys[]): Candidate[] {
+/** What an operator's own resource says of its cluster (read when the pod carries its label; not
+ *  secret): CloudNativePG's Cluster, Zalando's postgresql. */
+export interface OperatorFacts {
+  /** CloudNativePG: the application database, the app user's and the superuser's secrets. */
+  readonly cnpg?: { readonly database?: string; readonly appSecret?: string; readonly superuserSecret?: string };
+  /** Zalando: each database and its owner (spec.databases). */
+  readonly zalando?: { readonly databases: ReadonlyMap<string, string> };
+}
+
+const isNamedRef = maybe(object({}, { name: maybe(isString) }));
+
+const isBootstrap = maybe(object({}, { database: maybe(isString), secret: isNamedRef }));
+
+const isCnpgCluster = object({ spec: object({}, {
+  bootstrap: maybe(object({}, { initdb: isBootstrap, pg_basebackup: isBootstrap, recovery: isBootstrap })),
+  superuserSecret: isNamedRef,
+}) });
+
+const isZalandoCluster = object({ spec: object({}, { databases: maybe(mapOf(isString)) }) });
+
+/** CloudNativePG's Cluster as the finder uses it: the database and the secrets its bootstrap names. */
+export function cnpgFacts(json: string): NonNullable<OperatorFacts["cnpg"]> | null {
+  const c = parseJson(json, isCnpgCluster);
+
+  if (!c) return null;
+
+  const b = c.spec.bootstrap;
+  const boot = b?.initdb ?? b?.pg_basebackup ?? b?.recovery;
+  const out: { -readonly [K in keyof NonNullable<OperatorFacts["cnpg"]>]: string } = {};
+
+  if (boot?.database) out.database = boot.database;
+
+  if (boot?.secret?.name) out.appSecret = boot.secret.name;
+
+  if (c.spec.superuserSecret?.name) out.superuserSecret = c.spec.superuserSecret.name;
+
+  return out;
+}
+
+/** Zalando's postgresql resource as the finder uses it: each database and its owner. */
+export function zalandoFacts(json: string): NonNullable<OperatorFacts["zalando"]> | null {
+  const c = parseJson(json, isZalandoCluster);
+
+  return c ? { databases: toMap(c.spec.databases) } : null;
+}
+
+/** The operator-made secrets of the pod's cluster (labels on the pod or the service's selector),
+ *  with what the operator's own resource says (`facts`: the database, a secret of the person's). */
+export function fromOperators(kind: "postgres" | "mysql", labels: ReadonlyMap<string, string>, secrets: readonly SecretKeys[], facts: OperatorFacts = {}): Candidate[] {
   if (kind !== "postgres") return [];
 
   const out: Candidate[] = [];
 
-  const add = (s: SecretKeys, why: string, user: string, db: string | null): void => {
+  const add = (s: SecretKeys, why: string, user: string, db: string | null, database?: string): void => {
     if (!has(s, "password")) return;
 
     const d: Draft = { secret: s.name, key: "password", why };
@@ -248,6 +308,7 @@ export function fromOperators(kind: "postgres" | "mysql", labels: ReadonlyMap<st
     if (has(s, user)) d.userKey = user;
 
     if (db && has(s, db)) d.databaseKey = db;
+    else if (database) d.database = database;
 
     out.push(d);
   };
@@ -255,11 +316,14 @@ export function fromOperators(kind: "postgres" | "mysql", labels: ReadonlyMap<st
   const cnpg = labels.get("cnpg.io/cluster");
 
   if (cnpg) {
-    for (const [suffix, role, db] of [["app", "app user", "dbname"], ["superuser", "superuser", null]] as const) {
-      const s = secrets.find((x) => x.name === `${cnpg}-${suffix}`);
+    const f = facts.cnpg ?? {};
+    const app = secrets.find((x) => x.name === (f.appSecret ?? `${cnpg}-app`));
+    const root = secrets.find((x) => x.name === (f.superuserSecret ?? `${cnpg}-superuser`));
 
-      if (s) add(s, `CloudNativePG cluster ${cnpg}'s ${role}`, "username", db);
-    }
+    if (app) add(app, `CloudNativePG cluster ${cnpg}'s app user${f.database ? ` (database ${f.database})` : ""}`, "username", "dbname", f.database);
+
+    // Its dbname is "*" (any database): the superuser lands in the server's default.
+    if (root) add(root, `CloudNativePG cluster ${cnpg}'s superuser`, "username", null);
   }
 
   const crunchy = labels.get("postgres-operator.crunchydata.com/cluster");
@@ -270,8 +334,15 @@ export function fromOperators(kind: "postgres" | "mysql", labels: ReadonlyMap<st
 
   if (zalando) {
     const tail = `.${zalando}.credentials.postgresql.acid.zalan.do`;
+    const owned = [...(facts.zalando?.databases ?? new Map<string, string>())];
 
-    for (const s of secrets.filter((x) => x.name.endsWith(tail))) add(s, `postgres-operator cluster ${zalando}'s user ${s.name.slice(0, -tail.length).split(".").at(-1) ?? ""}`, "username", null);
+    for (const s of secrets.filter((x) => x.name.endsWith(tail))) {
+      const user = s.name.slice(0, -tail.length);
+      // The database it owns, when it owns exactly one (spec.databases: name → owner).
+      const mine = owned.flatMap(([db, owner]) => (owner === user ? [db] : []));
+
+      add(s, `postgres-operator cluster ${zalando}'s user ${user.split(".").at(-1) ?? ""}`, "username", null, mine.length === 1 ? mine[0] : undefined);
+    }
   }
 
   return out;
@@ -290,7 +361,7 @@ export interface Found {
 
 /** The candidates for a pod: its containers' env first (what it really runs with), then the operators';
  *  each once, and only those whose secret and key are there (when the secrets could be listed). */
-export function candidatesOf(kind: "postgres" | "mysql", pod: PodView, extraLabels: ReadonlyMap<string, string>, secrets: readonly SecretKeys[] | null, maps: ReadonlyMap<string, ReadonlyMap<string, string>>): Finding {
+export function candidatesOf(kind: "postgres" | "mysql", pod: PodView, extraLabels: ReadonlyMap<string, string>, secrets: readonly SecretKeys[] | null, maps: ReadonlyMap<string, ReadonlyMap<string, string>>, facts: OperatorFacts = {}): Finding {
   const all: Candidate[] = [];
   const notes: string[] = [];
 
@@ -303,7 +374,7 @@ export function candidatesOf(kind: "postgres" | "mysql", pod: PodView, extraLabe
 
   const labels = new Map([...extraLabels, ...pod.labels]);
 
-  if (secrets) all.push(...fromOperators(kind, labels, secrets));
+  if (secrets) all.push(...fromOperators(kind, labels, secrets, facts));
 
   const seen = new Set<string>();
   const out: Candidate[] = [];
@@ -403,7 +474,39 @@ export async function findCredentials(exec: Exec, where: Where, target: string, 
 
   if (isString(pod)) return { candidates: [], notes: [...notes, `couldn't read ${target}: ${pod}`], secrets };
 
-  const r = candidatesOf(kind, pod.pod, pod.labels, secrets, await mapsOf(exec, where, pod.pod.spec));
+  const labels = new Map([...pod.labels, ...pod.pod.labels]);
+  const facts = kind === "postgres" ? await operatorFacts(exec, where, labels) : {};
+  const r = candidatesOf(kind, pod.pod, pod.labels, secrets, await mapsOf(exec, where, pod.pod.spec), facts);
 
   return { candidates: r.candidates, notes: [...notes, ...r.notes], secrets };
+}
+
+/** The operator's own resource for a pod's cluster (CloudNativePG's Cluster, Zalando's postgresql):
+ *  read by name, nothing secret in it; not there or not readable (no CRD, RBAC): no facts. */
+async function operatorFacts(exec: Exec, where: Where, labels: ReadonlyMap<string, string>): Promise<OperatorFacts> {
+  const read = async (resource: string, name: string): Promise<string | null> => {
+    const r = await readText(exec, [...scope(where), "get", resource, name, "-o", "json", "--request-timeout=10s"]);
+
+    return r.ok ? r.value : null;
+  };
+
+  const cnpg = labels.get("cnpg.io/cluster");
+
+  if (cnpg) {
+    const json = await read("clusters.postgresql.cnpg.io", cnpg);
+    const f = json ? cnpgFacts(json) : null;
+
+    return f ? { cnpg: f } : {};
+  }
+
+  const zalando = labels.get("application") === "spilo" ? labels.get("cluster-name") : undefined;
+
+  if (zalando) {
+    const json = await read("postgresqls.acid.zalan.do", zalando);
+    const f = json ? zalandoFacts(json) : null;
+
+    return f ? { zalando: f } : {};
+  }
+
+  return {};
 }
