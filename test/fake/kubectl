@@ -8,6 +8,7 @@
 //   K8S_FAKE_NOW=<ms>         the "now" ages are shown against (tests)
 //   K8S_FAKE_FORBID_SECRET=<name>  reading that secret is forbidden (RBAC that lists but doesn't get)
 //   K8S_FAKE_NO_METRICS=1     no metrics-server: kubectl top answers an error
+//   K8S_FAKE_TOP_EVERY=<ms>   how often top's numbers change (metrics-server's 15 s; shots use less)
 
 import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -239,7 +240,7 @@ switch (verb) {
   case "top": {
     if (process.env.K8S_FAKE_NO_METRICS) fail("error: Metrics API not available");
     const what = rest[0];
-    const t = (NOW / 15000) | 0;
+    const t = (NOW / (Number(process.env.K8S_FAKE_TOP_EVERY) || 15000)) | 0;
     const wobble = (v: number, i: number) => Math.max(1, Math.round(v * (1 + 0.18 * Math.sin(t * 0.9 + i * 1.7))));
     if (what === "nodes" || what === "node") {
       readFileSync(join(ROOT, context, "_cluster", "top-nodes.txt"), "utf8").trim().split("\n").forEach((l, i) => {
