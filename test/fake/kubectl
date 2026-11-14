@@ -35,6 +35,7 @@ const ALIASES: Record<string, string> = {
   ev: "events", event: "events", events: "events", "events.events.k8s.io": "events",
   no: "nodes", node: "nodes", nodes: "nodes", ns: "namespaces", namespace: "namespaces", namespaces: "namespaces",
   app: "applications.argoproj.io", apps: "applications.argoproj.io", application: "applications.argoproj.io", applications: "applications.argoproj.io", "applications.argoproj.io": "applications.argoproj.io",
+  "clusters.postgresql.cnpg.io": "clusters.postgresql.cnpg.io", "postgresqls.acid.zalan.do": "postgresqls.acid.zalan.do",
   certificate: "certificates.cert-manager.io", certificates: "certificates.cert-manager.io", "certificates.cert-manager.io": "certificates.cert-manager.io",
 };
 const CLUSTER = new Set(["nodes", "namespaces"]);

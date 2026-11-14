@@ -31,7 +31,7 @@ const list = (kind: string, items: Obj[]) => ({ apiVersion: "v1", kind: "List", 
 
 // ---- the cluster's contents, per context and namespace
 
-interface Ns { pods: Obj[]; deployments: Obj[]; replicasets: Obj[]; statefulsets: Obj[]; daemonsets: Obj[]; jobs: Obj[]; cronjobs: Obj[]; services: Obj[]; ingresses: Obj[]; configmaps: Obj[]; secrets: Obj[]; persistentvolumeclaims: Obj[]; events: Obj[]; "applications.argoproj.io": Obj[]; "certificates.cert-manager.io": Obj[]; top: string[] }
+interface Ns { pods: Obj[]; deployments: Obj[]; replicasets: Obj[]; statefulsets: Obj[]; daemonsets: Obj[]; jobs: Obj[]; cronjobs: Obj[]; services: Obj[]; ingresses: Obj[]; configmaps: Obj[]; secrets: Obj[]; persistentvolumeclaims: Obj[]; events: Obj[]; "applications.argoproj.io": Obj[]; "certificates.cert-manager.io": Obj[]; "clusters.postgresql.cnpg.io": Obj[]; top: string[] }
 
 const nss = new Map<string, Map<string, Ns>>();
 
@@ -39,7 +39,7 @@ function ns(ctx: string, name: string): Ns {
   let c = nss.get(ctx);
   if (!c) nss.set(ctx, (c = new Map()));
   let n = c.get(name);
-  if (!n) c.set(name, (n = { pods: [], deployments: [], replicasets: [], statefulsets: [], daemonsets: [], jobs: [], cronjobs: [], services: [], ingresses: [], configmaps: [], secrets: [], persistentvolumeclaims: [], events: [], "applications.argoproj.io": [], "certificates.cert-manager.io": [], top: [] }));
+  if (!n) c.set(name, (n = { pods: [], deployments: [], replicasets: [], statefulsets: [], daemonsets: [], jobs: [], cronjobs: [], services: [], ingresses: [], configmaps: [], secrets: [], persistentvolumeclaims: [], events: [], "applications.argoproj.io": [], "certificates.cert-manager.io": [], "clusters.postgresql.cnpg.io": [], top: [] }));
   return n;
 }
 
@@ -338,6 +338,21 @@ const write = (path: string, data: unknown) => {
   writeFileSync(join(ROOT, path), typeof data === "string" ? data : JSON.stringify(data, null, 1) + "\n");
 };
 
+// ---- added last, so the objects above keep their uids
+
+/** A CloudNativePG Cluster resource: its bootstrap's database (the webhook writes the default `app`), the secrets it names. */
+function cnpgCluster(ctx: string, n: string, name: string, bootstrap: Obj, extra: Obj = {}) {
+  ns(ctx, n)["clusters.postgresql.cnpg.io"].push({ apiVersion: "postgresql.cnpg.io/v1", kind: "Cluster", metadata: meta(name, n, 20 * D), spec: { instances: 1, bootstrap: { initdb: bootstrap }, ...extra } });
+}
+cnpgCluster(DEV, "glowworm", "glowworm-pg", { database: "app", owner: "app" });
+// Another in its own namespace, named as a Helm release names one (<release>-postgresql, its pods -1, -2): the app user's secret is
+// its own basic-auth one (username and password only), so the database is the Cluster's (honey), not the secret's.
+const HIVE_PG = { "cnpg.io/cluster": "hive-postgresql", "cnpg.io/instanceRole": "primary", "cnpg.io/podRole": "instance" };
+pod(DEV, "honey", "hive-postgresql-1", null, { image: "ghcr.io/cloudnative-pg/postgresql:17.2", ports: [{ containerPort: 5432, name: "postgresql" }], containers: ["postgres"], labels: HIVE_PG, cpu: 25, mem: 240, age: 9 * D });
+secret(DEV, "honey", "hive-app-auth", "kubernetes.io/basic-auth", { username: "bee", password: "hive-bee-77" });
+secret(DEV, "honey", "hive-postgresql-superuser", "kubernetes.io/basic-auth", { username: "postgres", password: "hive-root-5", dbname: "*" });
+cnpgCluster(DEV, "honey", "hive-postgresql", { database: "honey", owner: "bee", secret: { name: "hive-app-auth" } }, { enableSuperuserAccess: true });
+
 for (const [ctx, spaces] of nss) {
   const nodeNames = ctx === DEV ? ["lumen-a", "lumen-b", "lumen-c"] : ["prod-1", "prod-2", "prod-3", "prod-4"];
   write(`${ctx}/_cluster/nodes.json`, list("Node", nodes(ctx, nodeNames)));
@@ -346,6 +361,8 @@ for (const [ctx, spaces] of nss) {
   for (const [n, s] of spaces) {
     for (const [res, items] of Object.entries(s)) {
       if (res === "top") continue;
+      // An operator's resources only where the operator runs.
+      if (res === "clusters.postgresql.cnpg.io" && !(items as Obj[]).length) continue;
       write(`${ctx}/${n}/${res}.json`, list("List", items as Obj[]));
     }
     top.push(...s.top);

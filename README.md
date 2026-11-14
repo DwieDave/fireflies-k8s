@@ -77,6 +77,15 @@ Databases, reading objects and secrets' key names only, never a value:
   `<cluster>-superuser`), Crunchy PGO and Percona's PG operator
   (`<cluster>-pguser-<user>`), Zalando's postgres-operator
   (`<user>.<cluster>.credentials.postgresql.acid.zalan.do`).
+- the database, where the secret has none: CloudNativePG's `Cluster`
+  resource (`clusters.postgresql.cnpg.io`, read by name: its bootstrap's
+  `database`, and the app secret it names when it's one of your own, a
+  basic-auth secret without `dbname`; `spec.superuserSecret`), Zalando's
+  `postgresql` resource (`spec.databases`: the one database a user owns).
+  The superuser's database is never filled in (CloudNativePG writes `*`
+  there). No database is guessed (the user's own name, `postgres`): without
+  one, Databases connects to the server's default, says so, and lists the
+  server's databases (`b` there).
 
 Every database forward sent to Databases carries its facts (`forward`,
 below), so a connection pinned there brings its forward back when the port
