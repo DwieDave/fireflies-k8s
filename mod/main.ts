@@ -15,7 +15,7 @@
 // shown), derive.ts (rows, strips, counts). Every write asks first (confirm.ts).
 
 import { View } from "gpui-kit";
-import { ScrollHandle, EditorState } from "gpui-base";
+import { ScrollHandle, EditorState, VirtualListScrollHandle } from "gpui-base";
 import type { AsyncContext, Context, Element, FocusHandle } from "gpui-kit";
 import type { Props } from "gpui-shell";
 import { appHome, exec, nextCommand, readTextFile, settings as appSettings, theme } from "herdr";
@@ -83,7 +83,11 @@ export default class K8s extends View {
   databases = false;
   size = { width: 1100, height: 720 };
   handle: FocusHandle | null = null;
-  tableScroll = ScrollHandle.new();
+  tableScroll = VirtualListScrollHandle.new();
+  /** The table's rows' height as drawn (how many rows are in sight). */
+  rowsHeight = 400;
+  /** The last click on a table row (a second one soon after opens it). */
+  lastClick: { readonly key: string; readonly at: number } | null = null;
   nsScroll = ScrollHandle.new();
   kindsScroll = ScrollHandle.new();
   text: EditorState | null = null;

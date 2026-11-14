@@ -7,13 +7,13 @@
 
 import { div } from "gpui-kit";
 import type { Element } from "gpui-kit";
-import { h_flex, v_flex } from "gpui-base";
+import { h_flex, v_flex, v_virtual_list, Scrollbar } from "gpui-base";
 import type { Theme } from "herdr";
 import type { default as K8s } from "./main.ts";
 import type { Cell, Row } from "./rows.ts";
 import { band, panel, pip, spark, stop, toneColor } from "./kit.ts";
 import { titleOf } from "./kinds.ts";
-import { listRows, rowIndex, selectAt } from "./nav.ts";
+import { ROW_H, listRows, revealRow, rowIndex, selectAt } from "./nav.ts";
 import { rowMenu, runRow } from "./actions.ts";
 import { age } from "./time.ts";
 import { cpuText, memText } from "./quantity.ts";
@@ -25,7 +25,8 @@ import { NAME_MIN, cycleSort, fitColumn, focusedColumn, metricLine, saveColumns,
 import { columnsMenu } from "./columns-menu.ts";
 import { unzoom } from "./kit.ts";
 
-const ROW_H = 22;
+/** Two clicks on one row this close together open it (a virtual list reports clicks, not their count). */
+const DOUBLE_MS = 450;
 
 /** The px a row spends besides its columns: padding, the pip, the gaps. */
 const chrome = (n: number): number => 16 + 8 + 10 * n;
@@ -47,9 +48,7 @@ export function table(v: K8s, t: Theme, width: number): Element {
 
   const body = v_flex().size_full()
     .child(header(v, t, shown, active, rest))
-    .child(v_flex().id("k8s-rows").flex_1().min_h(0).overflow_y_scroll().track_scroll(v.tableScroll)
-      .children(rows.map((r, i) => tableRow(v, t, r, i, i === at, active, shown)))
-      .when(!rows.length, (el) => el.child(empty(v, t, feed))));
+    .child(rows.length ? rowList(v, t, rows, at, active, shown) : empty(v, t, feed));
 
   return panel(t, "k8s-table", title, active, body, { num: panelNum("table"), right });
 }
@@ -138,7 +137,55 @@ export function columnTracking(el: Element, v: K8s): Element {
 
 /** The selected row back in sight after the order changed. */
 export function keepInView(v: K8s): void {
-  v.tableScroll.scroll_to_item(rowIndex(v));
+  revealRow(v, rowIndex(v));
+}
+
+/** The rows as a virtual list: only the rows in sight are built, each frame one call. A click selects (a
+ *  second within the double-click time opens), a right press opens the row's menu. */
+function rowList(v: K8s, t: Theme, rows: readonly Row[], at: number, active: boolean, shown: readonly Shown[]): Element {
+  const list = v_virtual_list("k8s-rows", rows.length, ROW_H, (i) => rows[i]?.key ?? String(i),
+    (range) => rows.slice(range.start, range.end).map((r, k) => tableRow(v, t, r, range.start + k, range.start + k === at, active, shown)))
+    .on_item_click((key, cx) => {
+      const i = rows.findIndex((r) => r.key === key);
+      const r = rows[i];
+
+      if (!r) return;
+
+      const twice = v.lastClick?.key === key && Date.now() - v.lastClick.at < DOUBLE_MS;
+
+      selectAt(v, i);
+      v.panel = "table";
+      v.lastClick = twice ? null : { key, at: Date.now() };
+
+      if (twice) runRow(v, "open", r, cx);
+
+      cx.notify();
+    })
+    .on_item_secondary_click((key, _e, cx) => {
+      const i = rows.findIndex((r) => r.key === key);
+      const r = rows[i];
+
+      if (!r) return;
+
+      cx.stop_propagation();
+      selectAt(v, i);
+      v.menu = { title: r.ref.name, at: 0, rows: rowMenu(v, r) };
+      cx.notify();
+    })
+    .track_scroll(v.tableScroll)
+    .size_full();
+
+  return div().id("k8s-rows").relative().flex_1().min_h(0)
+    .on_size_change((size, cx) => {
+      const h = Math.round(unzoom(size.height));
+
+      if (h !== v.rowsHeight) {
+        v.rowsHeight = h;
+        cx.notify();
+      }
+    })
+    .child(list)
+    .child(Scrollbar.vertical("k8s-rows").absolute().inset_0());
 }
 
 function empty(v: K8s, t: Theme, error: string | null): Element {
@@ -151,21 +198,6 @@ function tableRow(v: K8s, t: Theme, r: Row, i: number, sel: boolean, active: boo
   return h_flex().id(`row-${r.key}`).relative().h(ROW_H).flex_none().px(8).gap(10).items_center().text_size(11).cursor_pointer()
     .hover((s) => s.bg(`${t.ansi0}44`))
     .when(sel, (el) => el.children(band(t, active)))
-    .on_mouse_down("left", (e, cx) => {
-      stop(e, cx);
-      selectAt(v, i);
-      v.panel = "table";
-
-      if (e.click_count >= 2) runRow(v, "open", r, cx);
-
-      cx.notify();
-    })
-    .on_mouse_down("right", (_e, cx) => {
-      cx.stop_propagation();
-      selectAt(v, i);
-      v.menu = { title: r.ref.name, at: 0, rows: rowMenu(v, r) };
-      cx.notify();
-    })
     .child(div().relative().w(8).flex_none().flex().items_center().child(pip(t, r.tone, 7)))
     .children(shown.map((s, ci) => {
       const cell = r.cells[s.index] ?? null;

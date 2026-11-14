@@ -7,8 +7,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "lantern",
-    "uid": "00000000-0000-4000-8000-000000000156",
-    "resourceVersion": "1156",
+    "uid": "00000000-0000-4000-8000-000000000220",
+    "resourceVersion": "1220",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "lantern"
@@ -23,8 +23,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "kube-system",
-    "uid": "00000000-0000-4000-8000-000000000157",
-    "resourceVersion": "1157",
+    "uid": "00000000-0000-4000-8000-000000000221",
+    "resourceVersion": "1221",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "kube-system"
@@ -39,8 +39,8 @@
    "kind": "Namespace",
    "metadata": {
     "name": "default",
-    "uid": "00000000-0000-4000-8000-000000000158",
-    "resourceVersion": "1158",
+    "uid": "00000000-0000-4000-8000-000000000222",
+    "resourceVersion": "1222",
     "creationTimestamp": "2026-09-14T12:00:00Z",
     "labels": {
      "kubernetes.io/metadata.name": "default"

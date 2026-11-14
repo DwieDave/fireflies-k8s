@@ -8,14 +8,14 @@
 // aren't zoomed as lengths are (gpui-kit applies them as they come): the
 // pulses' are multiplied by the zoom here.
 
-import { div } from "gpui-kit";
+import { div, Background } from "gpui-kit";
 import type { Context, Element, MouseButtonEvent } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import type { Theme } from "herdr";
 import type { default as K8s } from "./main.ts";
 import type { Shown } from "./graph-shown.ts";
 import type { Dims, Placed } from "./graph-layout.ts";
-import { dither, icon, pip, spark, stop, toneColor, unzoom, zoom } from "./kit.ts";
+import { dither, dotCell, icon, layer, pip, spark, stop, toneColor, unzoom, zoom } from "./kit.ts";
 import { cancel, centreOn, dragTo, newView, offset, panBy, press, release, roomy } from "./graph-pan.ts";
 import { marks } from "./table.ts";
 
@@ -37,6 +37,11 @@ export function canvas(v: K8s, t: Theme, s: Shown, _width: number, sel: string |
 
   const at = offset(l, shown, view);
   const grab = roomy(l, view);
+  // Only what's in sight (and a margin) is built: a graph of sixty pods costs what the panel shows.
+  const seen = inSight(at, view);
+  const boxes = l.boxes.filter((b) => seen(b.x, b.y, d.w, d.h));
+  const segs = l.segs.map((g, i) => ({ g, i })).filter(({ g }) => seen(g.x, g.y, g.w, g.h));
+  const line = (live: boolean) => layer(segs.filter(({ g }) => g.live === live).map(({ g }) => ({ x: g.x, y: g.y, w: Math.max(1, g.w), h: Math.max(1, g.h) })), Background.checkerboard(live ? t.working : t.ansi8, dotCell()), l.width, l.height);
   const pointer = (e: { readonly position: { readonly x: number; readonly y: number } }) => [unzoom(e.position.x), unzoom(e.position.y)] as const;
 
   const pressBox = (b: Placed): MouseHandler => (e, cx) => {
@@ -91,10 +96,16 @@ export function canvas(v: K8s, t: Theme, s: Shown, _width: number, sel: string |
       if (!h && cancel(view)) cx.notify();
     })
     .child(div().absolute().left(-at.x).top(-at.y).w(l.width).h(l.height)
-      .children(l.segs.map((g, i) => div().id(`${id}-s${i}`).absolute().left(g.x).top(g.y).w(Math.max(1, g.w)).h(Math.max(1, g.h)).child(dither(g.live ? t.working : t.ansi8, 1))))
-      .children(l.segs.filter((g) => g.live && g.h === 1 && g.w > 8).map((g, i) => div().id(`${id}-p${i}`).absolute().top(g.y - 1).w(5).h(3).bg(t.working).loop("left", { from: g.x * zoom(), to: (g.x + g.w - 5) * zoom(), period: 1100, easing: "linear" })))
-      .children(l.segs.filter((g) => g.live && g.w === 1 && g.h > 8).map((g, i) => div().id(`${id}-q${i}`).absolute().left(g.x - 1).w(3).h(5).bg(t.working).loop("top", { from: g.y * zoom(), to: (g.y + g.h - 5) * zoom(), period: 900, easing: "linear" })))
-      .children(l.boxes.map((b) => box(v, t, b, d, b.node.key === sel, active, pressBox(b), id))));
+      // The lines as two painted layers (still and live), not an element each.
+      .children(line(false)).children(line(true))
+      .children(segs.filter(({ g }) => g.live && g.h === 1 && g.w > 8).map(({ g, i }) => div().id(`${id}-p${i}`).absolute().top(g.y - 1).w(5).h(3).bg(t.working).loop("left", { from: g.x * zoom(), to: (g.x + g.w - 5) * zoom(), period: 1100, easing: "linear" })))
+      .children(segs.filter(({ g }) => g.live && g.w === 1 && g.h > 8).map(({ g, i }) => div().id(`${id}-q${i}`).absolute().left(g.x - 1).w(3).h(5).bg(t.working).loop("top", { from: g.y * zoom(), to: (g.y + g.h - 5) * zoom(), period: 900, easing: "linear" })))
+      .children(boxes.map((b) => box(v, t, b, d, b.node.key === sel, active, pressBox(b), id))));
+}
+
+/** Whether a rectangle of the picture shows in the canvas moved by `at` (with a margin for a quick pan). */
+export function inSight(at: { readonly x: number; readonly y: number }, view: { readonly w: number; readonly h: number }, margin = 120): (x: number, y: number, w: number, h: number) => boolean {
+  return (x, y, w, h) => x + w >= at.x - margin && x <= at.x + view.w + margin && y + h >= at.y - margin && y <= at.y + view.h + margin;
 }
 
 function box(v: K8s, t: Theme, b: Placed, d: Dims, sel: boolean, active: boolean, onPress: MouseHandler, id: string): Element {

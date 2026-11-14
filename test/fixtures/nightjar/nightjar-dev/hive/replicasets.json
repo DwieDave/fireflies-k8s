@@ -1,0 +1,49 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "ReplicaSet",
+   "metadata": {
+    "name": "hive-drone-242g",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000144",
+    "resourceVersion": "1144",
+    "creationTimestamp": "2026-11-01T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "3"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "hive-drone",
+      "uid": "00000000-0000-4000-8000-000000000143",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "replicas": 60,
+    "selector": {
+     "matchLabels": {
+      "app": "hive-drone"
+     }
+    }
+   },
+   "status": {
+    "replicas": 60,
+    "readyReplicas": 60,
+    "availableReplicas": 60
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

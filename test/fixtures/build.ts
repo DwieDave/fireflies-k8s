@@ -318,6 +318,11 @@ service(PROD, "lantern", "lantern-db", [{ name: "postgres", port: 5432, targetPo
 deployment(PROD, "kube-system", "coredns", { image: "rancher/mirrored-coredns-coredns:1.12.0", replicas: 2, rev: 1, age: 200 * D, cpu: 5, mem: 25 });
 ns(PROD, "default");
 
+// ---- a busy namespace: a long list, for the table's and the graphs' cost
+
+deployment(DEV, "hive", "hive-drone", { image: "nightjar/hive-drone:2.3.0", replicas: 60, rev: 3, age: 12 * D, cpu: 8, mem: 40 });
+service(DEV, "hive", "hive-drone", [{ name: "http", port: 8080, targetPort: 8080 }], { app: "hive-drone" });
+
 // ---- nodes, namespaces, contexts
 
 function nodes(ctx: string, names: string[]) {

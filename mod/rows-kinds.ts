@@ -64,12 +64,14 @@ export function podRow(p: Pod, now: number): Row {
   const facts = podFacts(p);
   const r = restartsOf(p.status?.containerStatuses ?? [], now);
   const blocks = facts.containers.map((x): Tone => (x.ready ? "ok" : x.tone === "bad" ? "bad" : x.tone === "done" ? "done" : "wk"));
+  // The metrics' key: namespace and name, so every namespace's list finds its pods' readings.
+  const key = `${p.metadata.namespace ?? ""}/${p.metadata.name}`;
 
   return {
     ...base("pods", p), tone: st.tone, status: st.word, pod: facts,
     ports: facts.containers.flatMap((x) => x.ports), images: facts.containers.map((x) => x.image),
     cells: [text(p.metadata.name), { t: "ready", blocks, text: `${blocks.filter((b) => b === "ok").length}/${blocks.length}` }, { t: "marks", count: r.count, recent: r.recent },
-      text(st.word, st.tone), { t: "metric", what: "cpu", pods: [p.metadata.name] }, { t: "metric", what: "mem", pods: [p.metadata.name] }, text(facts.node ?? "", null, true), age(instant(p.metadata.creationTimestamp))],
+      text(st.word, st.tone), { t: "metric", what: "cpu", pods: [key] }, { t: "metric", what: "mem", pods: [key] }, text(facts.node ?? "", null, true), age(instant(p.metadata.creationTimestamp))],
   };
 }
 

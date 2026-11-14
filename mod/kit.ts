@@ -5,7 +5,7 @@
 // graphs (as procs' system graphs: dithered columns with a 1 px head).
 
 import { div, svg, PathBuilder, Background } from "gpui-kit";
-import type { Color, Context, Element, MouseButtonEvent } from "gpui-kit";
+import type { Color, Context, Element, MouseButtonEvent, Path } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import { settings, window as appWindow } from "herdr";
 import type { Theme } from "herdr";
@@ -127,7 +127,7 @@ export function chip(t: Theme, id: string, label: string | Element, on: boolean,
 }
 
 /** A rectangle in a graph's px. */
-interface Rect {
+export interface Rect {
   readonly x: number;
   readonly y: number;
   readonly w: number;
@@ -135,7 +135,7 @@ interface Rect {
 }
 
 /** Rectangles as one painted layer (percentages of the box, so the zoom never shifts them). */
-function layer(rects: readonly Rect[], fill: Background, w: number, h: number): Element[] {
+export function layer(rects: readonly Rect[], fill: Background, w: number, h: number): Element[] {
   if (!rects.length) return [];
 
   const px = (v: number): `${number}%` => `${(v / w) * 100}%`;
@@ -147,27 +147,55 @@ function layer(rects: readonly Rect[], fill: Background, w: number, h: number): 
   return [window.paint_path(b.build(), fill).absolute().top(0).left(0).size_full()];
 }
 
+/** A spark's two shapes: the dithered area under the readings and their 1 px heads. */
+interface SparkPaths {
+  readonly area: Path;
+  readonly head: Path;
+}
+
+/** Built shapes by what they draw (the readings, the size, the scale): a redraw with the same numbers
+ *  builds none. Emptied when it grows past a few hundred (old readings scroll off). */
+const sparkCache = new Map<string, SparkPaths>();
+
+/** The area as one stepped polygon and the heads as one band along its top (two polygons, not one per
+ *  column: each polygon is a call into the app). Percentages of the box, so the zoom never shifts them. */
+function sparkPaths(shown: readonly number[], w: number, h: number, max: number, slot: number): SparkPaths {
+  const key = `${w}x${h}/${max}/${shown.join(",")}`;
+  const hit = sparkCache.get(key);
+
+  if (hit) return hit;
+
+  const px = (v: number): `${number}%` => `${(v / w) * 100}%`;
+  const py = (v: number): `${number}%` => `${(v / h) * 100}%`;
+  const x0 = w - shown.length * slot;
+  const tops = shown.map((v) => h - Math.max(1, Math.round(Math.min(1, v / max) * (h - 1))));
+  const steps = tops.flatMap((y, i): (readonly [number, number])[] => [[x0 + i * slot, y], [x0 + (i + 1) * slot, y]]);
+  const area: (readonly [`${number}%`, `${number}%`])[] = [[px(x0), py(h)], ...steps.map(([x, y]) => [px(x), py(y)] as const), [px(w), py(h)]];
+  const band = [...steps, ...[...steps].reverse().map(([x, y]) => [x, y + 1] as const)].map(([x, y]) => [px(x), py(y)] as const);
+  const paths = { area: PathBuilder.fill().add_polygon(area, true).build(), head: PathBuilder.fill().add_polygon(band, true).build() };
+
+  if (sparkCache.size > 600) sparkCache.clear();
+
+  sparkCache.set(key, paths);
+
+  return paths;
+}
+
 /** A small dithered line graph: `values` (any scale, scaled to `top` or their own max), the newest at
  *  the right, 2 px a reading; a 1 px head on each column. */
 export function spark(t: Theme, id: string, values: readonly number[], w: number, h: number, color: Color, top: number | null = null): Element {
   const box = div().id(id).relative().w(w).h(h).flex_none()
-    .child(div().absolute().left(0).right(0).bottom(0).h(1).opacity(0.7).child(dither(t.ansi0, 1)));
+    .child(div().absolute().left(0).right(0).bottom(0).h(1).opacity(0.7).bg(t.ansi0));
 
   if (!values.length) return box;
 
-  const max = top ?? Math.max(1e-9, ...values);
   const slot = 2;
   const shown = values.slice(-Math.floor(w / slot));
-
-  const cols = shown.map((v, i): Rect => {
-    const tall = Math.max(1, Math.round(Math.min(1, v / max) * (h - 1)));
-
-    return { x: w - (shown.length - i) * slot, y: h - tall, w: slot, h: tall };
-  });
+  const p = sparkPaths(shown, w, h, top ?? Math.max(1e-9, ...shown), slot);
 
   return box
-    .children(layer(cols, Background.checkerboard(color, dotCell()), w, h))
-    .children(layer(cols.map((r) => ({ ...r, h: 1 })), Background.solid(color), w, h));
+    .child(window.paint_path(p.area, Background.checkerboard(color, dotCell())).absolute().top(0).left(0).size_full())
+    .child(window.paint_path(p.head, Background.solid(color)).absolute().top(0).left(0).size_full());
 }
 
 /** A horizontal bar: `part` of `whole`, dithered in `color` over a dim track. */

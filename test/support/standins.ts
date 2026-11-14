@@ -101,6 +101,15 @@ mock.module("gpui-base", () => ({
   h_flex: () => new El(),
   v_flex: () => new El(),
   ScrollHandle: { new: () => ({ scroll_to_item() {}, release: () => true }) },
+  VirtualListScrollHandle: { new: () => ({ scroll_to_item() {}, scroll_to_bottom() {}, offset: () => ({ x: 0, y: 0 }), release: () => true }) },
+  // A virtual list builds every row (a test reads them all); its handlers are on the list.
+  v_virtual_list: (id: string, n: number, _size: unknown, _key: unknown, render: (r: { start: number; end: number }) => unknown[]) => {
+    const el = new El();
+    el.ids.push(id);
+    for (const k of render({ start: 0, end: n })) el.add(k);
+    return el;
+  },
+  Scrollbar: { vertical: () => new El(), horizontal: () => new El() },
   EditorState: { new: () => ({ value: "", set_value(v: string) { this.value = v; }, focused: () => false, top_line: () => 0, scroll_to_line() {}, release: () => true }) },
   Editor: { new: () => new El("[editor]") },
 }));

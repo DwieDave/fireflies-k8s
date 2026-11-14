@@ -1,0 +1,72 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "apps/v1",
+   "kind": "Deployment",
+   "metadata": {
+    "name": "hive-drone",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000143",
+    "resourceVersion": "1143",
+    "creationTimestamp": "2026-11-01T12:00:00Z",
+    "generation": 3,
+    "labels": {
+     "app": "hive-drone"
+    },
+    "annotations": {
+     "deployment.kubernetes.io/revision": "3"
+    }
+   },
+   "spec": {
+    "replicas": 60,
+    "selector": {
+     "matchLabels": {
+      "app": "hive-drone"
+     }
+    },
+    "strategy": {
+     "type": "RollingUpdate"
+    },
+    "template": {
+     "metadata": {
+      "labels": {
+       "app": "hive-drone"
+      }
+     },
+     "spec": {
+      "containers": [
+       {
+        "name": "hive-drone",
+        "image": "nightjar/hive-drone:2.3.0"
+       }
+      ]
+     }
+    }
+   },
+   "status": {
+    "observedGeneration": 3,
+    "replicas": 60,
+    "updatedReplicas": 60,
+    "readyReplicas": 60,
+    "availableReplicas": 60,
+    "conditions": [
+     {
+      "type": "Available",
+      "status": "True",
+      "reason": "MinimumReplicasAvailable"
+     },
+     {
+      "type": "Progressing",
+      "status": "True",
+      "reason": "NewReplicaSetAvailable"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}

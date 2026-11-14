@@ -13,6 +13,7 @@ import type { Tab } from "./state.ts";
 import { TABS } from "./state.ts";
 import { kindColumns, metricNow } from "./columns.ts";
 import { sortRows } from "./sort.ts";
+import { zoom } from "./kit.ts";
 
 /** The key of the list shown now: a selection is kept per list. */
 export function listKey(v: K8s): string {
@@ -46,6 +47,18 @@ export function selectedRow(v: K8s): Row | null {
   return rows[rowIndex(v, rows)] ?? null;
 }
 
+/** A table row's height. */
+export const ROW_H = 22;
+
+/** Scrolls the table's list just enough to show row `i` (rows already in sight stay put). */
+export function revealRow(v: K8s, i: number): void {
+  const top = Math.max(0, Math.round(-v.tableScroll.offset().y / zoom() / ROW_H));
+  const fit = Math.max(1, Math.floor(v.rowsHeight / ROW_H));
+
+  if (i < top) v.tableScroll.scroll_to_item(i, "top");
+  else if (i >= top + fit) v.tableScroll.scroll_to_item(Math.max(0, i - fit + 1), "top");
+}
+
 /** Selects the row at `i` (clamped). */
 export function selectAt(v: K8s, i: number): void {
   const rows = listRows(v);
@@ -57,7 +70,7 @@ export function selectAt(v: K8s, i: number): void {
 
   v.sel.set(listKey(v), r.key);
   v.graphSel = null;
-  v.tableScroll.scroll_to_item(Math.max(0, Math.min(rows.length - 1, i)));
+  revealRow(v, Math.max(0, Math.min(rows.length - 1, i)));
 }
 
 export function moveRow(v: K8s, by: number): void {

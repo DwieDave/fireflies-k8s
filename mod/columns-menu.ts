@@ -7,7 +7,7 @@
 import type { default as K8s } from "./main.ts";
 import type { Menu, MenuRow } from "./state.ts";
 import { cycleSort, fitColumn, focusedColumn, kindColumns, resetWidths, setSort, shownColumns, stepColumn, stepWidth, widthOf } from "./columns.ts";
-import { listRows, rowIndex } from "./nav.ts";
+import { listRows, revealRow, rowIndex } from "./nav.ts";
 import { titleOf } from "./kinds.ts";
 import { restWidth } from "./table.ts";
 
@@ -15,7 +15,7 @@ import { restWidth } from "./table.ts";
 export function columnsMenu(v: K8s, rest: number): Menu {
   const by = v.columns.sorts.get(v.kind) ?? null;
   const focus = v.columns.at.get(v.kind) ?? kindColumns(v)[0]?.title ?? "";
-  const keep = () => v.tableScroll.scroll_to_item(rowIndex(v));
+  const keep = () => revealRow(v, rowIndex(v));
 
   const sorts = kindColumns(v).map((c): MenuRow => {
     const now = by?.col === c.title ? (by.desc ? "  ·  sorted ↓ (again: ↑)" : "  ·  sorted ↑ (again: ↓)") : "";
@@ -73,7 +73,7 @@ export function columnKey(v: K8s, name: string, width: number): boolean {
  return true;
     case "o": if (at) cycleSort(v, at.col.title);
 
- v.tableScroll.scroll_to_item(rowIndex(v));
+ revealRow(v, rowIndex(v));
 
  return true;
     case "O": v.menu = columnsMenu(v, rest);

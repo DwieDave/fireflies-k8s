@@ -1,0 +1,4149 @@
+{
+ "apiVersion": "v1",
+ "kind": "List",
+ "items": [
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti54",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000145",
+    "resourceVersion": "1145",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.15",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti55",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000146",
+    "resourceVersion": "1146",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.22",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti56",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000147",
+    "resourceVersion": "1147",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.29",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti57",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000148",
+    "resourceVersion": "1148",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.36",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti58",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000149",
+    "resourceVersion": "1149",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.43",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti59",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000150",
+    "resourceVersion": "1150",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.50",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti5a",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000151",
+    "resourceVersion": "1151",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.57",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti5b",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000152",
+    "resourceVersion": "1152",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.64",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti5c",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000153",
+    "resourceVersion": "1153",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.71",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-1ti5d",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000154",
+    "resourceVersion": "1154",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.78",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgn",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000155",
+    "resourceVersion": "1155",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.85",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgo",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000156",
+    "resourceVersion": "1156",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.92",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgp",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000157",
+    "resourceVersion": "1157",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.99",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgq",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000158",
+    "resourceVersion": "1158",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.106",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgr",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000159",
+    "resourceVersion": "1159",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.113",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgs",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000160",
+    "resourceVersion": "1160",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.120",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgt",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000161",
+    "resourceVersion": "1161",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.127",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgu",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000162",
+    "resourceVersion": "1162",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.134",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgv",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000163",
+    "resourceVersion": "1163",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.141",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemgw",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000164",
+    "resourceVersion": "1164",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.148",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhi",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000165",
+    "resourceVersion": "1165",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.155",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhj",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000166",
+    "resourceVersion": "1166",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.162",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhk",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000167",
+    "resourceVersion": "1167",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.169",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhl",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000168",
+    "resourceVersion": "1168",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.176",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhm",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000169",
+    "resourceVersion": "1169",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.183",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhn",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000170",
+    "resourceVersion": "1170",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.190",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemho",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000171",
+    "resourceVersion": "1171",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.197",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhp",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000172",
+    "resourceVersion": "1172",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.204",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhq",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000173",
+    "resourceVersion": "1173",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.211",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemhr",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000174",
+    "resourceVersion": "1174",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.218",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemid",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000175",
+    "resourceVersion": "1175",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.225",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemie",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000176",
+    "resourceVersion": "1176",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.232",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemif",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000177",
+    "resourceVersion": "1177",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.239",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemig",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000178",
+    "resourceVersion": "1178",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.246",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemih",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000179",
+    "resourceVersion": "1179",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.3",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemii",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000180",
+    "resourceVersion": "1180",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.10",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemij",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000181",
+    "resourceVersion": "1181",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.17",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemik",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000182",
+    "resourceVersion": "1182",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.24",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemil",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000183",
+    "resourceVersion": "1183",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.31",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemim",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000184",
+    "resourceVersion": "1184",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.38",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemj8",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000185",
+    "resourceVersion": "1185",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.45",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemj9",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000186",
+    "resourceVersion": "1186",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.52",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemja",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000187",
+    "resourceVersion": "1187",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.59",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemjb",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000188",
+    "resourceVersion": "1188",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.66",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemjc",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000189",
+    "resourceVersion": "1189",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.73",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemjd",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000190",
+    "resourceVersion": "1190",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.80",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemje",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000191",
+    "resourceVersion": "1191",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.87",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemjf",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000192",
+    "resourceVersion": "1192",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.94",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemjg",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000193",
+    "resourceVersion": "1193",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.101",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemjh",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000194",
+    "resourceVersion": "1194",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.108",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemk3",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000195",
+    "resourceVersion": "1195",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.115",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemk4",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000196",
+    "resourceVersion": "1196",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.122",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemk5",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000197",
+    "resourceVersion": "1197",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.129",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemk6",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000198",
+    "resourceVersion": "1198",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.136",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemk7",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000199",
+    "resourceVersion": "1199",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.143",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemk8",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000200",
+    "resourceVersion": "1200",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.150",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemk9",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000201",
+    "resourceVersion": "1201",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.157",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemka",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000202",
+    "resourceVersion": "1202",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-a",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.1.164",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemkb",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000203",
+    "resourceVersion": "1203",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-b",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.2.171",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  },
+  {
+   "apiVersion": "v1",
+   "kind": "Pod",
+   "metadata": {
+    "name": "hive-drone-242g-kemkc",
+    "namespace": "hive",
+    "uid": "00000000-0000-4000-8000-000000000204",
+    "resourceVersion": "1204",
+    "creationTimestamp": "2026-11-10T12:00:00Z",
+    "labels": {
+     "app": "hive-drone"
+    },
+    "ownerReferences": [
+     {
+      "apiVersion": "apps/v1",
+      "kind": "ReplicaSet",
+      "name": "hive-drone-242g",
+      "uid": "00000000-0000-4000-8000-000000000144",
+      "controller": true,
+      "blockOwnerDeletion": true
+     }
+    ]
+   },
+   "spec": {
+    "nodeName": "lumen-c",
+    "containers": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "resources": {
+       "requests": {
+        "cpu": "100m",
+        "memory": "128Mi"
+       },
+       "limits": {
+        "cpu": "500m",
+        "memory": "512Mi"
+       }
+      }
+     }
+    ]
+   },
+   "status": {
+    "phase": "Running",
+    "podIP": "10.42.0.178",
+    "startTime": "2026-11-10T12:00:00Z",
+    "containerStatuses": [
+     {
+      "name": "hive-drone",
+      "image": "nightjar/hive-drone:2.3.0",
+      "ready": true,
+      "restartCount": 0,
+      "started": true,
+      "state": {
+       "running": {
+        "startedAt": "2026-11-10T12:00:00Z"
+       }
+      },
+      "lastState": {}
+     }
+    ],
+    "conditions": [
+     {
+      "type": "Ready",
+      "status": "True"
+     }
+    ]
+   }
+  }
+ ],
+ "metadata": {
+  "resourceVersion": ""
+ }
+}
