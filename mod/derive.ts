@@ -27,9 +27,9 @@ export interface NsStrip {
   readonly bad: number;
 }
 
-/** Rows of every kind for the shown namespace (null: all). */
-export function rowsOf(d: Data, kind: KindRef, ns: string | null, now = Date.now()): readonly Row[] {
-  const snap = d.snap.value ?? EMPTY;
+/** Rows of every kind for the shown namespace (null: all); `from` another snapshot (the Argo tab's). */
+export function rowsOf(d: Data, kind: KindRef, ns: string | null, now = Date.now(), from: Snapshot | null = null): readonly Row[] {
+  const snap = from ?? d.snap.value ?? EMPTY;
   const pods = inNs(d.pods.value ?? [], ns);
   const owners = ownersOf(pods);
 

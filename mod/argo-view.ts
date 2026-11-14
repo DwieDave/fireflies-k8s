@@ -55,14 +55,14 @@ export function argoTab(v: K8s, t: Theme): Element {
 function chips(v: K8s, t: Theme): Element {
   const terms = parseTerms(v.argoFilter, ARGO_FIELDS);
 
-  return h_flex().id("argo-chips").flex_none().flex_wrap().px(6).py(3).gap(3).text_size(10)
+  return h_flex().id("argo-chips").flex_none().flex_wrap().min_w(0).overflow_hidden().px(6).py(3).gap(3).text_size(10)
     .children(terms.map((x, i) => chip(t, `argo-chip-${i}`, h_flex().gap(4).child(div().child(termText(x))).child(div().text_color(t.dim).child("×")), true, () => {
       setArgoFilter(v, withoutTerm(v.argoFilter, ARGO_FIELDS, i));
     })))
     .child(chip(t, "argo-chip-add", h_flex().gap(4).child(div().text_color(t.accent).child("F")).child(div().child(terms.length ? "+" : "+ filter")), false, () => {
       v.menu = filterMenu(v, allApps(v));
     }, t.dim))
-    .when(!terms.length, (el) => el.child(div().pl(4).text_color(t.ansi8).child("/ types one: project: sync: health: cluster: ns: repo: k=v")));
+    .when(!terms.length, (el) => el.child(div().flex_1().min_w(0).pl(4).truncate().text_color(t.ansi8).tooltip("project: sync: health: cluster: ns: repo:, labels k=v or -l a,!b, words").child("/ types one")));
 }
 
 function appList(v: K8s, t: Theme): Element {

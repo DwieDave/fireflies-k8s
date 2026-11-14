@@ -10,6 +10,7 @@ import { h_flex, v_flex } from "gpui-base";
 import { settings, window as appWindow } from "herdr";
 import type { Theme } from "herdr";
 import type { Tone } from "./rows.ts";
+import { KEEP } from "./metrics.ts";
 
 /** The mod's folder under the app's: its icons are drawn from there. */
 export const HOME = "mods/k8s";
@@ -182,14 +183,15 @@ function sparkPaths(shown: readonly number[], w: number, h: number, max: number,
 }
 
 /** A small dithered line graph: `values` (any scale, scaled to `top` or their own max), the newest at
- *  the right, 2 px a reading; a 1 px head on each column. */
+ *  the right, 2 px a reading or as many as fill the box with the readings kept; a 1 px head on each column. */
 export function spark(t: Theme, id: string, values: readonly number[], w: number, h: number, color: Color, top: number | null = null): Element {
   const box = div().id(id).relative().w(w).h(h).flex_none()
     .child(div().absolute().left(0).right(0).bottom(0).h(1).opacity(0.7).bg(t.ansi0));
 
   if (!values.length) return box;
 
-  const slot = 2;
+  // A reading's step widens with the box, so the readings kept (KEEP) fill it.
+  const slot = Math.max(2, Math.floor(w / KEEP));
   const shown = values.slice(-Math.floor(w / slot));
   const p = sparkPaths(shown, w, h, top ?? Math.max(1e-9, ...shown), slot);
 

@@ -24,9 +24,11 @@ import { diffApp, pickedEntry, refreshApp, rollbackApp, syncApp } from "./argo-a
 /** The actions that show something in the window: they move to the object's row first. */
 const VIEWS: ReadonlySet<RowAction> = new Set(["open", "graph", "describe", "yaml", "events"]);
 
-/** The row the window has read for what a box points at, if any. */
-export function rowOf(v: K8s, ref: Ref): Row | null {
-  return rowsOf(v.data, ref.kind, ref.namespace).find((r) => r.ref.name === ref.name) ?? null;
+/** The row the window has read for what a box points at, if any (an Argo box's from the Argo tab's reads). */
+export function rowOf(v: K8s, ref: Ref, argo = false): Row | null {
+  const from = argo ? v.data.argoSnap.value : null;
+
+  return rowsOf(v.data, ref.kind, ref.namespace, Date.now(), from).find((r) => r.ref.name === ref.name) ?? null;
 }
 
 /** What a box's menu offers beyond its row's: showing it in the list. */
@@ -50,7 +52,7 @@ export function nodeMenu(v: K8s, b: Placed, app: Application | null): Menu {
 
   if (!ref || ref.kind === "applications") return app ? appMenu(v, app) : { title: b.node.label, at: 0, rows: [] };
 
-  const row = rowOf(v, ref);
+  const row = rowOf(v, ref, app !== null);
 
   const own = row ? rowMenu(v, row, (a) => {
     if (VIEWS.has(a)) showRef(v, ref.kind, ref.name, ref.namespace);

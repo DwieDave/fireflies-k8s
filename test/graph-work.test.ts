@@ -169,6 +169,8 @@ describe("a box's menu", () => {
     await press("m");
     const labels = v.menu?.rows.map((r) => r.label) ?? [];
     expect(labels).toContain("show it in the list");
+    // Its row's menu, read in the Argo tab: the deployment's logs and scale too.
+    expect(labels).toEqual(expect.arrayContaining(["logs in a pane", "scale", "restart", "delete"]));
     expect(labels.some((l) => l.startsWith("sync (application"))).toBe(true);
     await press("escape");
     // The applications list: a right click opens the application's menu.
