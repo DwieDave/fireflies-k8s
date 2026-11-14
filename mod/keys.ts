@@ -143,6 +143,9 @@ export const GRAPH_KEYS = [
 
 /** The Argo tab's keys. */
 export const ARGO_KEYS = [
+  ["/", "filter: words, project: sync: health: cluster: ns: repo:, labels k=v (-l a=b,c,!d); tab completes; the Resources tab's syntax"],
+  ["F", "filter by what the applications have (a menu with counts; or the + filter chip; a chip clicks off)"],
+  ["m space", "the application's menu (or right-click it)"],
   ["S", "sync"],
   ["r", "refresh (R hard)"],
   ["D", "diff"],

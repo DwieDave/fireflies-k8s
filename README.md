@@ -182,7 +182,7 @@ Settings, all optional, in `~/.config/herdr-app/k8s/settings.json`:
 | key | what |
 |---|---|
 | `:` | jump to a kind (k9s's aliases: `po`, `deploy`, `svc`, `ing`, `cm`, `sec`, `no`, `ev`, `sts`, `ds`, `cj`, `pvc`, custom kinds by name; `ctx`, `pf`, `argo`) |
-| `/` | filter (`-l app=web` by label, `!x` everything but) |
+| `/` | filter: words in the name, `!x` not x, labels `app=web` `app!=web` (or kubectl's `-l app=web,tier,!canary`), `status:` `ns:` `node:`; every term must match. The Argo CD tab takes the same syntax. |
 | `n` | namespace: a picker (type to narrow it, `0` all, `1`-`9` the first nine shown, `*` makes one a favourite; favourites first) |
 | `1` `2` `3` `0` `4` | the panels by number, as in the Databases window: context, namespaces, kinds, the table, detail (Argo CD: applications `1`, tree `0`, status `2`) |
 | `ctrl-a` | every kind |
@@ -224,7 +224,15 @@ bottom / left to right, kept), `enter` opens the box's object. Over a graph
 `+` `-` zoom; the panel's size there: drag its gap.
 
 Argo CD: `S` sync, `r` refresh (`R` hard), `D` diff, `h` history, `B` roll
-back to the picked revision, `o` the repository.
+back to the picked revision, `o` the repository, `m` (or a right click on
+an application) its menu.
+
+The applications filter: `/` types it (`project:` `sync:` `health:`
+`cluster:` `ns:` `repo:`, labels `team=lantern`, `-l tier,!canary`, free
+words; `tab` completes from what the applications have), `F` (or the
+"+ filter" chip) picks from a menu of what they have with counts. The terms
+show as chips over the list, a click takes one off; the list's title counts
+shown / all; `esc` clears it. It's kept for the next opening.
 
 ## Development
 

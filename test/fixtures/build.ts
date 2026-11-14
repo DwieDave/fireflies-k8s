@@ -187,13 +187,13 @@ function event(ctx: string, n: string, obj: Obj, type: "Normal" | "Warning", rea
   ns(ctx, n).events.push({ apiVersion: "v1", kind: "Event", metadata: meta(`${obj.metadata.name}.${hash(reason + age, 16)}`, n, age), involvedObject: { kind: obj.kind, name: obj.metadata.name, namespace: n, uid: obj.metadata.uid }, reason, message, type, count, firstTimestamp: ago(age + (count - 1) * 30), lastTimestamp: ago(age), source: { component: "kubelet" } });
 }
 
-interface AppSpec { name: string; ns: string; dest: string; server?: string; path: string; sync: string; health: string; rev: string; resources: [string, string, string, string, string?][]; history: [string, number][]; auto?: boolean; op?: Obj }
+interface AppSpec { name: string; ns: string; dest: string; server?: string; path: string; sync: string; health: string; rev: string; resources: [string, string, string, string, string?][]; history: [string, number][]; auto?: boolean; op?: Obj; project?: string; labels?: Record<string, string>; repo?: string }
 
 function application(ctx: string, a: AppSpec) {
   ns(ctx, "argocd")["applications.argoproj.io"].push({
     apiVersion: "argoproj.io/v1alpha1", kind: "Application",
-    metadata: meta(a.name, "argocd", 30 * D, { finalizers: ["resources-finalizer.argocd.argoproj.io"] }),
-    spec: { project: "default", source: { repoURL: "https://git.nightjar.test/nightjar/deploy.git", path: a.path, targetRevision: "main" }, destination: { server: a.server ?? "https://kubernetes.default.svc", namespace: a.dest }, ...(a.auto ? { syncPolicy: { automated: { prune: true, selfHeal: true } } } : { syncPolicy: {} }) },
+    metadata: meta(a.name, "argocd", 30 * D, { finalizers: ["resources-finalizer.argocd.argoproj.io"], ...(a.labels ? { labels: a.labels } : {}) }),
+    spec: { project: a.project ?? "default", source: { repoURL: a.repo ?? "https://git.nightjar.test/nightjar/deploy.git", path: a.path, targetRevision: "main" }, destination: { server: a.server ?? "https://kubernetes.default.svc", namespace: a.dest }, ...(a.auto ? { syncPolicy: { automated: { prune: true, selfHeal: true } } } : { syncPolicy: {} }) },
     status: {
       sync: { status: a.sync, revision: a.rev, comparedTo: { source: { repoURL: "https://git.nightjar.test/nightjar/deploy.git", path: a.path, targetRevision: "main" } } },
       health: { status: a.health },
@@ -289,20 +289,20 @@ service(DEV, "argocd", "argocd-server", [{ name: "https", port: 443, targetPort:
 
 ns(DEV, "default");
 
-application(DEV, { name: "lantern", ns: "argocd", dest: "lantern", path: "lantern/overlays/dev", sync: "OutOfSync", health: "Progressing", rev: "e18b2c4f0a9d7e6b5c3a1f2e4d6b8a0c9e7f5d3b",
+application(DEV, { name: "lantern", ns: "argocd", project: "lantern", labels: { team: "lantern", env: "dev", tier: "web" }, dest: "lantern", path: "lantern/overlays/dev", sync: "OutOfSync", health: "Progressing", rev: "e18b2c4f0a9d7e6b5c3a1f2e4d6b8a0c9e7f5d3b",
   resources: [["ConfigMap", "lantern-flags", "OutOfSync", ""], ["ConfigMap", "lantern-config", "Synced", ""], ["Service", "lantern-api", "Synced", "Healthy"], ["Service", "lantern-web", "Synced", "Healthy"], ["Service", "lantern-db", "Synced", "Healthy"],
     ["Deployment", "lantern-api", "Synced", "Progressing", "apps"], ["Deployment", "lantern-web", "Synced", "Healthy", "apps"], ["StatefulSet", "lantern-db", "Synced", "Healthy", "apps"], ["Ingress", "lantern", "Synced", "Healthy", "networking.k8s.io"], ["Ingress", "lantern-dark-sky", "OutOfSync", "Missing", "networking.k8s.io"]],
   history: [["a41c7d2e", 3 * D], ["5c10b3f9", 2 * D], ["9e02aa41", D], ["c7d3e810", 20 * H], ["e18b2c4f0a9d7e6b5c3a1f2e4d6b8a0c9e7f5d3b", 2 * H]],
   op: { phase: "Running", message: "waiting for healthy state of apps/Deployment/lantern-api", startedAt: ago(2 * H), operation: { sync: { revision: "e18b2c4f0a9d7e6b5c3a1f2e4d6b8a0c9e7f5d3b" } } } });
-application(DEV, { name: "lantern-prod", ns: "argocd", dest: "lantern", server: "https://prod.nightjar.test:6443", path: "lantern/overlays/prod", sync: "Synced", health: "Healthy", rev: "c7d3e810", auto: true,
+application(DEV, { name: "lantern-prod", ns: "argocd", project: "lantern", labels: { team: "lantern", env: "prod", tier: "web" }, dest: "lantern", server: "https://prod.nightjar.test:6443", path: "lantern/overlays/prod", sync: "Synced", health: "Healthy", rev: "c7d3e810", auto: true,
   resources: [["Service", "lantern-api", "Synced", "Healthy"], ["Deployment", "lantern-api", "Synced", "Healthy", "apps"], ["Deployment", "lantern-web", "Synced", "Healthy", "apps"]], history: [["5c10b3f9", 2 * D], ["c7d3e810", 20 * H]] });
-application(DEV, { name: "moth", ns: "argocd", dest: "moth", path: "moth", sync: "Synced", health: "Healthy", rev: "77a0c1d2", auto: true,
+application(DEV, { name: "moth", ns: "argocd", labels: { team: "moth", env: "dev" }, dest: "moth", path: "moth", sync: "Synced", health: "Healthy", rev: "77a0c1d2", auto: true,
   resources: [["Deployment", "moth-queue", "Synced", "Healthy", "apps"], ["Deployment", "moth-ui", "Synced", "Healthy", "apps"], ["StatefulSet", "moth-mysql", "Synced", "Healthy", "apps"], ["Service", "moth-ui", "Synced", "Healthy"], ["Service", "moth-queue", "Synced", "Healthy"], ["Service", "moth-mysql", "Synced", "Healthy"]], history: [["77a0c1d2", 5 * D]] });
-application(DEV, { name: "glowworm", ns: "argocd", dest: "glowworm", path: "glowworm", sync: "Synced", health: "Degraded", rev: "1f9e0b33",
+application(DEV, { name: "glowworm", ns: "argocd", labels: { team: "glow", env: "dev", tier: "data" }, dest: "glowworm", path: "glowworm", sync: "Synced", health: "Degraded", rev: "1f9e0b33",
   resources: [["Deployment", "glowworm-api", "Synced", "Healthy", "apps"], ["Job", "glowworm-backfill", "Synced", "Degraded", "batch"], ["Service", "glowworm-api", "Synced", "Healthy"]], history: [["0b11c2aa", 9 * D], ["1f9e0b33", 6 * H]] });
-application(DEV, { name: "kube-stars", ns: "argocd", dest: "stars", path: "stars", sync: "OutOfSync", health: "Missing", rev: "",
+application(DEV, { name: "kube-stars", ns: "argocd", project: "platform", repo: "https://git.nightjar.test/platform/stars.git", labels: { team: "platform", env: "dev" }, dest: "stars", path: "stars", sync: "OutOfSync", health: "Missing", rev: "",
   resources: [["Namespace", "stars", "OutOfSync", "Missing"], ["Deployment", "stars-api", "OutOfSync", "Missing", "apps"]], history: [], op: { phase: "Failed", message: 'one or more objects failed to apply: namespaces "stars" is forbidden', startedAt: ago(H), finishedAt: ago(H - 5) } });
-application(DEV, { name: "argo-self", ns: "argocd", dest: "argocd", path: "argocd", sync: "Synced", health: "Healthy", rev: "0a11fe90", auto: true,
+application(DEV, { name: "argo-self", ns: "argocd", project: "platform", repo: "https://git.nightjar.test/platform/argocd.git", labels: { team: "platform" }, dest: "argocd", path: "argocd", sync: "Synced", health: "Healthy", rev: "0a11fe90", auto: true,
   resources: [["Deployment", "argocd-server", "Synced", "Healthy", "apps"], ["Deployment", "argocd-repo-server", "Synced", "Healthy", "apps"], ["StatefulSet", "argocd-application-controller", "Synced", "Healthy", "apps"]], history: [["0a11fe90", 30 * D]] });
 
 ns(DEV, "lantern")["certificates.cert-manager.io"].push({ apiVersion: "cert-manager.io/v1", kind: "Certificate", metadata: meta("lantern-tls", "lantern", 18 * D), spec: { secretName: "lantern-tls", dnsNames: ["lantern.nightjar.test"] }, status: { conditions: [{ type: "Ready", status: "True", reason: "Ready" }], notAfter: ago(-60 * D) } });

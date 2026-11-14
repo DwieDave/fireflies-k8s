@@ -9,10 +9,12 @@ import type { Color, Element } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import type { Theme } from "herdr";
 import type { default as K8s } from "./main.ts";
-import { band, dither, icon, panel, stop, toneColor } from "./kit.ts";
+import { band, chip, dither, icon, panel, stop, toneColor } from "./kit.ts";
 import type { Application } from "./argo.ts";
 import { autoSync, destinationOf, healthTone, historyOf, inThisCluster, sourceOf, syncTone } from "./argo.ts";
-import { apps, shownApp, showRef } from "./nav.ts";
+import { allApps, apps, shownApp, showRef } from "./nav.ts";
+import { ARGO_FIELDS, filterMenu, setArgoFilter } from "./argo-filter.ts";
+import { parseTerms, termText, withoutTerm } from "./filter-terms.ts";
 import { APP_CANVAS, appTree, treeWidth } from "./graph-shown.ts";
 import { canvas, rule } from "./graph-view.ts";
 import { age, instant } from "./time.ts";
@@ -26,7 +28,7 @@ export function argoTab(v: K8s, t: Theme): Element {
   const a = shownApp(v);
   const narrow = v.narrow();
 
-  if (!apps(v).length) return div().size_full().p(20).text_size(11).text_color(v.data.apps.error ? t.blocked : t.dim)
+  if (!allApps(v).length) return div().size_full().p(20).text_size(11).text_color(v.data.apps.error ? t.blocked : t.dim)
     .child(v.data.apps.error ? `kubectl: ${v.data.apps.error}` : v.data.apps.at === 0 ? "reading applications…" : "no Argo CD applications in this cluster");
 
   if (narrow) {
@@ -47,8 +49,23 @@ export function argoTab(v: K8s, t: Theme): Element {
     .child(v_flex().w(ds.size(sd)).flex_none().h_full().child(a ? side(v, t, a) : div()));
 }
 
+/** The filter's chips over the list: each term clicks off, "+ filter" opens what the applications have. */
+function chips(v: K8s, t: Theme): Element {
+  const terms = parseTerms(v.argoFilter, ARGO_FIELDS);
+
+  return h_flex().id("argo-chips").flex_none().flex_wrap().px(6).py(3).gap(3).text_size(10)
+    .children(terms.map((x, i) => chip(t, `argo-chip-${i}`, h_flex().gap(4).child(div().child(termText(x))).child(div().text_color(t.dim).child("×")), true, () => {
+      setArgoFilter(v, withoutTerm(v.argoFilter, ARGO_FIELDS, i));
+    })))
+    .child(chip(t, "argo-chip-add", h_flex().gap(4).child(div().text_color(t.accent).child("F")).child(div().child(terms.length ? "+" : "+ filter")), false, () => {
+      v.menu = filterMenu(v, allApps(v));
+    }, t.dim))
+    .when(!terms.length, (el) => el.child(div().pl(4).text_color(t.ansi8).child("/ types one: project: sync: health: cluster: ns: repo: k=v")));
+}
+
 function appList(v: K8s, t: Theme): Element {
   const list = apps(v);
+  const all = allApps(v).length;
   const shown = shownApp(v)?.metadata.name;
   const active = v.argoPanel === "apps";
 
@@ -81,7 +98,12 @@ function appList(v: K8s, t: Theme): Element {
       .child(div().relative().pl(34).text_size(10).truncate().text_color(t.dim).child(`${sync} · ${health} · ${destinationOf(a)}`));
   });
 
-  return panel(t, "argo-apps", "Applications", active, v_flex().id("argo-app-list").size_full().pt(4).overflow_y_scroll().children(rows), { num: argoNum("apps"), right: String(list.length) });
+  const body = v_flex().size_full()
+    .child(chips(v, t))
+    .child(v_flex().id("argo-app-list").flex_1().min_h(0).pt(4).overflow_y_scroll().children(rows)
+      .when(!list.length, (el) => el.child(div().p(12).text_size(11).text_color(t.dim).child(`nothing matches ${v.argoFilter} (esc clears it, or click a chip off)`))));
+
+  return panel(t, "argo-apps", "Applications", active, body, { num: argoNum("apps"), right: list.length === all ? String(all) : `${list.length} of ${all}` });
 }
 
 /** Shows another application (its tree's cursor, diff and history pick start over). */

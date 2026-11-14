@@ -18,6 +18,7 @@ import { EMPTY } from "./snapshot.ts";
 import { applicationRow } from "./argo.ts";
 import { instant } from "./time.ts";
 import type { Drill } from "./state.ts";
+import { matches, parseTerms } from "./filter-terms.ts";
 
 /** A namespace in the rail: its name and its pods' tones (failing first). */
 export interface NsStrip {
@@ -63,27 +64,25 @@ function builtinRows(d: Data, kind: Builtin, snap: Snapshot, pods: readonly Pod[
 
 export const inNs = (pods: readonly Pod[], ns: string | null): readonly Pod[] => (ns === null ? pods : pods.filter((p) => p.metadata.namespace === ns));
 
-/** A filter as k9s takes it: words in the name, `-l k=v[,k2=v2]` labels, `!x` everything but. */
+/** The `/` filter (filter-terms.ts, one syntax with the Argo tab): words in the name, `!x` not x, `k=v` and
+ *  `-l k=v,k2,!k3` labels, `status:` `ns:` `node:`. */
 export function filterRows(rows: readonly Row[], filter: string): readonly Row[] {
-  const f = filter.trim();
+  const terms = parseTerms(filter, ROW_FIELDS);
 
-  if (!f) return rows;
+  if (!terms.length) return rows;
 
-  if (f.startsWith("-l ")) {
-    const terms = f.slice(3).split(",").map((t) => t.trim().split("=")).filter((t) => t[0]);
+  return rows.filter((r) => matches({ text: `${r.ref.name} ${r.status} ${r.ref.namespace ?? ""}`, labels: r.labels, fields: (f) => rowField(r, f) }, terms));
+}
 
-    return rows.filter((r) => terms.every(([k, v]) => (v === undefined ? r.labels.has(k ?? "") : r.labels.get(k ?? "") === v)));
-  }
+/** The fields the Resources filter knows (filter-terms.ts: the Argo tab's syntax). */
+export const ROW_FIELDS: readonly string[] = ["status", "ns", "node"];
 
-  const not = f.startsWith("!");
-  const words = (not ? f.slice(1) : f).toLowerCase().split(/\s+/).filter(Boolean);
+function rowField(r: Row, f: string): readonly string[] {
+  if (f === "status") return [r.status];
 
-  return rows.filter((r) => {
-    const hay = `${r.ref.name} ${r.status} ${r.ref.namespace ?? ""}`.toLowerCase();
-    const hit = words.every((w) => hay.includes(w));
+  if (f === "ns") return [r.ref.namespace ?? ""];
 
-    return not ? !hit : hit;
-  });
+  return f === "node" && r.pod?.node ? [r.pod.node] : [];
 }
 
 /** Rows narrowed to a drill-in's (a workload's pods). */

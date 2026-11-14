@@ -33,7 +33,7 @@ export type ArgoPanel = "apps" | "tree" | "side";
 
 /** A line being typed at the foot: a kind for `:`, a filter for `/`, a number for scale. */
 export interface Typing {
-  readonly what: "kind" | "filter" | "scale";
+  readonly what: "kind" | "filter" | "argo" | "scale";
   readonly text: string;
   /** What a scale is for (from a graph's box it isn't the selected row). */
   readonly row?: Row;
@@ -76,7 +76,7 @@ export interface Drill {
 }
 
 /** What the next opening starts from (shared: every copy writes it as it changes). */
-export const isKept = object({ context: nullable(isString), namespace: nullable(isString), kind: isString }, { tab: maybe(isTab), detail: maybe(isDetailView), graph: maybe(isGraphDir) });
+export const isKept = object({ context: nullable(isString), namespace: nullable(isString), kind: isString }, { tab: maybe(isTab), detail: maybe(isDetailView), graph: maybe(isGraphDir), argo: maybe(isString) });
 
 export type Kept = Guarded<typeof isKept>;
 

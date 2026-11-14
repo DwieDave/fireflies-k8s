@@ -11,7 +11,9 @@ import { pressName } from "./keys.ts";
 import type { Typing } from "./state.ts";
 import { kindCompletions, kindFor } from "./kinds.ts";
 import { customOfCluster } from "./derive.ts";
-import { drillBack, selectedRow, setKind, setTab, stepTab } from "./nav.ts";
+import { allApps, drillBack, selectedRow, setKind, setTab, stepTab } from "./nav.ts";
+import { ARGO_FIELDS, facets, setArgoFilter } from "./argo-filter.ts";
+import { complete, completed } from "./filter-terms.ts";
 import { panelByNumber } from "./panel-keys.ts";
 import { findKey, namespaceMenu } from "./ns-picker.ts";
 import { closeCopy, closeWindow, move } from "./host.ts";
@@ -132,7 +134,20 @@ function typingKey(v: K8s, name: string, ch: string | null, cx: Context): boolea
   if (name === "escape") {
     if (t.what === "filter") v.filter = "";
 
+    if (t.what === "argo") setArgoFilter(v, "");
+
     v.typing = null;
+
+    return true;
+  }
+
+  if (name === "tab" && t.what === "argo") {
+    const first = complete(t.text, argoCandidates(v))[0];
+
+    if (first) {
+      v.typing = { ...t, text: completed(t.text, first) };
+      v.argoFilter = v.typing.text;
+    }
 
     return true;
   }
@@ -162,6 +177,8 @@ function typingKey(v: K8s, name: string, ch: string | null, cx: Context): boolea
 
   if (t.what === "filter") v.filter = text;
 
+  if (t.what === "argo") v.argoFilter = text;
+
   return true;
 }
 
@@ -169,7 +186,9 @@ function typingKey(v: K8s, name: string, ch: string | null, cx: Context): boolea
 function submitTyped(v: K8s, t: Typing, cx: Context): void {
   const { what, text } = t;
 
-  if (what === "filter") return;
+  if (what === "argo") setArgoFilter(v, text.trim());
+
+  if (what === "filter" || what === "argo") return;
 
   if (what === "scale") {
     const row = t.row ?? selectedRow(v);
@@ -253,9 +272,15 @@ function windowKey(v: K8s, name: string, cx: Context): boolean {
   return false;
 }
 
+/** What tab completes in the Argo filter: every term the applications have, and the field names. */
+export function argoCandidates(v: K8s): readonly string[] {
+  return [...ARGO_FIELDS.map((f) => `${f}:`), ...facets(allApps(v)).map((f) => f.term)];
+}
+
 /** esc backs out one step: a filter, a drill-in, the detail panel, another tab; at the top a window closes (a pane never). */
 function escape(v: K8s): boolean {
-  if (v.filter) v.filter = "";
+  if (v.tab === "argo" && v.argoFilter) setArgoFilter(v, "");
+  else if (v.filter) v.filter = "";
   else if (drillBack(v)) return true;
   else if (v.tab === "resources" && v.panel !== "table") v.panel = "table";
   else if (v.tab !== "resources") setTab(v, "resources");

@@ -13,10 +13,15 @@
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
-    ]
+    ],
+    "labels": {
+     "team": "lantern",
+     "env": "dev",
+     "tier": "web"
+    }
    },
    "spec": {
-    "project": "default",
+    "project": "lantern",
     "source": {
      "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
      "path": "lantern/overlays/dev",
@@ -227,10 +232,15 @@
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
-    ]
+    ],
+    "labels": {
+     "team": "lantern",
+     "env": "prod",
+     "tier": "web"
+    }
    },
    "spec": {
-    "project": "default",
+    "project": "lantern",
     "source": {
      "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
      "path": "lantern/overlays/prod",
@@ -347,7 +357,11 @@
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
-    ]
+    ],
+    "labels": {
+     "team": "moth",
+     "env": "dev"
+    }
    },
    "spec": {
     "project": "default",
@@ -487,7 +501,12 @@
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
-    ]
+    ],
+    "labels": {
+     "team": "glow",
+     "env": "dev",
+     "tier": "data"
+    }
    },
    "spec": {
     "project": "default",
@@ -602,12 +621,16 @@
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
-    ]
+    ],
+    "labels": {
+     "team": "platform",
+     "env": "dev"
+    }
    },
    "spec": {
-    "project": "default",
+    "project": "platform",
     "source": {
-     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "repoURL": "https://git.nightjar.test/platform/stars.git",
      "path": "stars",
      "targetRevision": "main"
     },
@@ -678,12 +701,15 @@
     "creationTimestamp": "2026-10-14T12:00:00Z",
     "finalizers": [
      "resources-finalizer.argocd.argoproj.io"
-    ]
+    ],
+    "labels": {
+     "team": "platform"
+    }
    },
    "spec": {
-    "project": "default",
+    "project": "platform",
     "source": {
-     "repoURL": "https://git.nightjar.test/nightjar/deploy.git",
+     "repoURL": "https://git.nightjar.test/platform/argocd.git",
      "path": "argocd",
      "targetRevision": "main"
     },

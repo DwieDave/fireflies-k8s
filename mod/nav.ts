@@ -14,6 +14,7 @@ import { TABS } from "./state.ts";
 import { kindColumns, metricNow } from "./columns.ts";
 import { sortRows } from "./sort.ts";
 import { zoom } from "./kit.ts";
+import { filterApps } from "./argo-filter.ts";
 
 /** The key of the list shown now: a selection is kept per list. */
 export function listKey(v: K8s): string {
@@ -127,9 +128,14 @@ export function stepTab(v: K8s, by: number): void {
   if (next) setTab(v, next[0]);
 }
 
-/** The Argo applications listed, and the one shown. */
-export function apps(v: K8s): readonly Application[] {
+/** Every Argo application read, by name. */
+export function allApps(v: K8s): readonly Application[] {
   return [...(v.data.apps.value ?? [])].sort((a, b) => a.metadata.name.localeCompare(b.metadata.name));
+}
+
+/** The Argo applications listed (the filter's), and the one shown. */
+export function apps(v: K8s): readonly Application[] {
+  return filterApps(allApps(v), v.argoFilter);
 }
 
 export function shownApp(v: K8s): Application | null {

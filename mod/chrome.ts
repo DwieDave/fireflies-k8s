@@ -24,6 +24,8 @@ import { looksProd } from "./contexts.ts";
 import { clusterOf } from "./writes.ts";
 import { hasArgo } from "./derive.ts";
 import { paceText } from "./metrics.ts";
+import { complete } from "./filter-terms.ts";
+import { argoCandidates } from "./input.ts";
 
 /** The top bar. In a window it's where the window drags from: presses on it aren't stopped. */
 export function header(v: K8s, t: Theme): Element {
@@ -86,12 +88,14 @@ export function keyBar(v: K8s, t: Theme): Element {
     .child(div().absolute().left(0).right(0).top(0).h(2).child(dither(t.ansi0, 1)));
 
   if (v.typing) {
-    const label = v.typing.what === "kind" ? ":" : v.typing.what === "filter" ? "/" : "scale to ";
+    const label = v.typing.what === "kind" ? ":" : v.typing.what === "filter" || v.typing.what === "argo" ? "/" : "scale to ";
+    const hints = v.typing.what === "argo" ? complete(v.typing.text, argoCandidates(v)).slice(0, 4) : [];
 
     return bar.child(div().text_color(t.accent).child(label)).child(div().text_color(t.foreground).child(v.typing.text))
       .child(div().w(6).h(12).bg(t.accent).loop("opacity", { from: 0.2, to: 1, period: 900 }))
+      .children(hints.map((h, i) => div().id(`k-hint-${i}`).flex_none().text_color(i === 0 ? t.muted : t.dim).child(h)))
       .child(div().flex_1())
-      .child(hint(t, "k-enter", "enter", v.typing.what === "kind" ? "go" : "keep")).when(v.typing.what === "kind", (el) => el.child(hint(t, "k-tab", "tab", "complete"))).child(hint(t, "k-esc", "esc", "cancel"));
+      .child(hint(t, "k-enter", "enter", v.typing.what === "kind" ? "go" : "keep")).when(v.typing.what === "kind" || hints.length > 0, (el) => el.child(hint(t, "k-tab", "tab", "complete"))).child(hint(t, "k-esc", "esc", "cancel"));
   }
 
   if (v.note) return bar.child(pip(t, v.note.tone, 6)).child(div().flex_1().truncate().text_color(v.note.tone === "bad" ? t.blocked : t.foreground).child(v.note.text));

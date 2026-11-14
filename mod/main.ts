@@ -77,6 +77,8 @@ export default class K8s extends View {
   app: string | null = null;
   argoPanel: ArgoPanel = "apps";
   argoNode: string | null = null;
+  /** The Argo CD tab's filter (argo-filter.ts; kept). */
+  argoFilter = "";
   histAt: number | null = null;
   argoDiff: Diffed | null = null;
   forwardAt = 0;

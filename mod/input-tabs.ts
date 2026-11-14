@@ -6,7 +6,8 @@ import type { Context } from "gpui-kit";
 import { run } from "herdr";
 import type { default as K8s } from "./main.ts";
 import { rowActionFor } from "./keys.ts";
-import { moveRow, selectAt, listRows, rowIndex, selectedRow, apps, shownApp, showRef } from "./nav.ts";
+import { moveRow, selectAt, listRows, rowIndex, selectedRow, allApps, apps, shownApp, showRef } from "./nav.ts";
+import { filterMenu } from "./argo-filter.ts";
 import { runRow, rowMenu } from "./actions.ts";
 import { railItems, pickRail } from "./menus.ts";
 import { APP_CANVAS, ROW_CANVAS, appTree, detailWidth, flipDirection, rowGraph, sideBox, stepBox, treeWidth } from "./graph-shown.ts";
@@ -227,6 +228,19 @@ export function argoKey(v: K8s, name: string, cx: Context): boolean {
 
   if (name === "tab" || name === "shift-tab") {
     stepPanel(v, name === "tab" ? 1 : -1);
+
+    return true;
+  }
+
+  if (name === "/") {
+    v.typing = { what: "argo", text: v.argoFilter };
+    v.argoPanel = "apps";
+
+    return true;
+  }
+
+  if (name === "F") {
+    v.menu = filterMenu(v, allApps(v));
 
     return true;
   }
