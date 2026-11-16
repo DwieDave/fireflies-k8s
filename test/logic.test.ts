@@ -56,7 +56,7 @@ describe("forwards", () => {
     const [f] = forwardsIn([{ address: "t4", state: "live", labels: { "k8s.forward": label } }, { address: "t5", labels: { "k8s.forward": "{nope" } }, "junk"]);
     expect(f).toMatchObject({ address: "t4", live: true, db: "postgres", local: 15432 });
     expect(urlOf({ ...n, web: "http" })).toBe("http://localhost:15432");
-    expect(connectArgs(n, "postgres")).toEqual({ kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", forward: { context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-db", remote: 5432, local: 15432 } });
+    expect(connectArgs(n, "postgres")).toEqual({ kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", sslmode: "disable", forward: { context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-db", remote: 5432, local: 15432 } });
   });
 
   // The contract's fixture: the Databases window starts a forward it keeps with these same

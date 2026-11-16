@@ -315,7 +315,7 @@ describe("the ecosystem", () => {
     await press("f", "b");
     const c = calls.find((x) => x.name.startsWith("nocturne.databases:"));
     expect(JSON.parse(c?.name.slice("nocturne.databases:".length) ?? "{}")).toEqual({
-      kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", database: "lantern",
+      kind: "postgres", name: "lantern-db (nightjar-dev/lantern)", host: "127.0.0.1", port: 15432, from: "port-forward svc/lantern-db in nightjar-dev/lantern", database: "lantern", sslmode: "disable",
       secret: { from: "kubernetes", context: "nightjar-dev", namespace: "lantern", name: "lantern-db-auth", key: "password", userKey: "username", kubectl: KUBECTL },
       forward: { context: "nightjar-dev", namespace: "lantern", target: "svc/lantern-db", remote: 5432, local: 15432, kubectl: KUBECTL },
     });
@@ -324,7 +324,7 @@ describe("the ecosystem", () => {
     // Elsewhere (no Nocturne): the window itself, the args as its connect prop.
     sharedMap.set("layout", "main");
     await press("f", "b");
-    expect(calls.find((x) => x.name === "openOverlay")?.args).toMatchObject({ mod: "databases", key: "databases", props: { connect: { kind: "postgres", port: 15432, secret: { name: "lantern-db-auth", key: "password" } } } });
+    expect(calls.find((x) => x.name === "openOverlay")?.args).toMatchObject({ mod: "databases", key: "databases", props: { connect: { kind: "postgres", port: 15432, sslmode: "disable", secret: { name: "lantern-db-auth", key: "password" } } } });
   });
 
   test("a web forward opens in a web pane", async () => {

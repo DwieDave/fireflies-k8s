@@ -125,6 +125,9 @@ export interface ForwardSource {
   readonly kubectl?: string;
 }
 
+/** How a connection asks for TLS (the contract: the databases mod's kinds.ts, libpq's names). */
+export type SslMode = "disable" | "allow" | "prefer" | "require" | "verify-ca" | "verify-full";
+
 /** The databases mod's connection args for a forward: no secret's value, ever (its window asks for the
  *  password, or reads it from the secret `secret` names). */
 export interface ConnectArgs {
@@ -137,6 +140,9 @@ export interface ConnectArgs {
   readonly database?: string;
   readonly secret?: SecretSource;
   readonly forward?: ForwardSource;
+  /** Always "disable" from a forward: psql's default (prefer) fails at once through a forward that
+   *  closes the connection on its TLS request, where a plain one goes through. */
+  readonly sslmode?: SslMode;
 }
 
 /** A secret picked for a forward: the secret's key, its user and database (plain or the secret's keys). */
@@ -158,7 +164,7 @@ export type PickedDraft = Draft<Picked>;
 const kubectlFor = (kubectl: string): string | null => (kubectl.startsWith("/") && kubectl.endsWith("/kubectl") ? kubectl : null);
 
 export function connectArgs(f: ForwardNote, kind: "postgres" | "mysql", picked: Picked | null = null, kubectl = "kubectl"): ConnectArgs {
-  const args: Draft<ConnectArgs> = { kind, name: `${f.name ?? f.target} (${f.context}/${f.namespace})`, host: "127.0.0.1", port: f.local, from: `port-forward ${f.target} in ${f.context}/${f.namespace}` };
+  const args: Draft<ConnectArgs> = { kind, name: `${f.name ?? f.target} (${f.context}/${f.namespace})`, host: "127.0.0.1", port: f.local, from: `port-forward ${f.target} in ${f.context}/${f.namespace}`, sslmode: "disable" };
   const forward: Draft<ForwardSource> = { context: f.context, namespace: f.namespace, target: f.target, remote: f.remote, local: f.local };
   const path = kubectlFor(kubectl);
 

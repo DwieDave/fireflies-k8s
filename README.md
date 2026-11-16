@@ -127,6 +127,15 @@ missing) or a password the server refuses says why and asks for it. Saved
 (`s`), it keeps the secret's place and reads again at each connect; a
 password typed in its form moves it to the keychain.
 
+Every forward's connection asks for no TLS: `"sslmode": "disable"` (libpq's
+names, the databases mod's contract: `"disable" | "allow" | "prefer" |
+"require" | "verify-ca" | "verify-full"`, another value refuses the request).
+Without it psql's default, prefer, sends Postgres' TLS request first, and
+through a forward that closes the connection on it psql fails at once
+("server closed the connection unexpectedly") instead of going on in plain. In
+the Databases window the connection's form turns it back on (its `ssl`
+toggle) for a server that takes TLS only.
+
 The port-forward it came from: a Postgres or MySQL connection to a server on
 this machine may carry the forward's facts, nothing secret: `"forward":
 {"context": "<kubeconfig context>", "namespace": "<namespace>", "target":
