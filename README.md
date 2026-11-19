@@ -34,6 +34,19 @@ the keyboard first and the pointer too. Its keys follow k9s's where they fit.
   settings. metrics-server itself measures about every 15 s: a faster read
   that answers its last numbers again adds nothing to the lines, and the
   chip says "same numbers".
+- **The cluster's load, always in sight**: the header sums the nodes' CPU
+  and memory over the context's nodes against what they can take
+  (allocatable), on every tab: `cpu 1.9/12 16% ▬ · mem 10.2/23.0Gi 44% ▬`
+  (a narrower window keeps the percents and bars, a narrow pane the
+  percents; yellow from 75%, red from 90%). A click shows the nodes. They
+  come from the nodes table's own two reads (`kubectl top nodes` at the
+  metrics' pace, `get nodes` for allocatable, once a minute away from the
+  table): nothing is read for them alone, and nothing while paused or
+  closed. Without metrics-server nothing shows there and no room is taken;
+  a later read that fails leaves the last totals dimmed and marked
+  `stale`; another context shows none until it answers. A node without
+  metrics (just joined, not ready) is left out of both sums ("2 of 3
+  nodes").
 - **Panels**: drag the gap between two panels to resize them (a double click
   puts it back), or `+` and `-` on the panel with the keys; the sizes are
   kept, a window's and a pane's apart.

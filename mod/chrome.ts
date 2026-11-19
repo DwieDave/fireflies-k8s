@@ -1,7 +1,7 @@
-// The window's chrome: the top bar (mark, where it is, the tabs, how fresh
-// the reads are, the forwards' count, the move button, a window's ✕), the key
-// bar at the foot (or the line being typed, or a note), and the narrow
-// layout's fold row. What's window-only (✕, the drag) is decided here and
+// The window's chrome: the top bar (mark, where it is, the tabs, the nodes'
+// summed metrics (node-totals.ts), how fresh the reads are, the forwards'
+// count, the move button, a window's ✕), the key bar at the foot (or the
+// line being typed, or a note), and the narrow layout's fold row. What's window-only (✕, the drag) is decided here and
 // nowhere else.
 
 import { div } from "gpui-kit";
@@ -24,6 +24,7 @@ import { looksProd } from "./contexts.ts";
 import { clusterOf } from "./writes.ts";
 import { hasArgo } from "./derive.ts";
 import { paceText } from "./metrics.ts";
+import { totalsStrip } from "./node-totals.ts";
 import { complete } from "./filter-terms.ts";
 import { argoCandidates, pressKeys } from "./input.ts";
 import { namespaceMenu } from "./ns-picker.ts";
@@ -61,6 +62,7 @@ export function header(v: K8s, t: Theme): Element {
       .when(!narrow && v.tab === "resources", (el) => el.child(div().flex_none().text_color(t.ansi0).child("/")).child(div().truncate().text_color(t.muted).child(titleOf(v.kind).toLowerCase()))))
     .child(h_flex().relative().flex_none().gap(2).children(tabs.map(([id, label]) => chip(t, `tab-${id}`, narrow ? label.split(" ")[0] ?? label : label, v.tab === id, () => setTab(v, id)))))
     .child(div().flex_1())
+    .children([totalsStrip(v, t)].flatMap((x) => (x ? [x] : [])))
     .child(status(v, t))
     .when(live > 0, (el) => el.child(chip(t, "k8s-fw", h_flex().gap(5).items_center().child(icon("plug", t.ansi6, 11)).child(String(live)), false, () => setTab(v, "forwards"))))
     .child(chip(t, "k8s-move", v.inWindow() ? "◧" : "⧉", false, (cx) => move(v, cx)))

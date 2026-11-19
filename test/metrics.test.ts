@@ -62,7 +62,8 @@ describe("the feed's pace", () => {
   });
 });
 
-/** A Data whose kubectl answers `top` from a list, counting the reads; everything else empty. */
+/** A Data whose kubectl answers `top pods` from a list, counting the reads; `top nodes` (read for the
+ *  header's totals on every view) the same line each time; everything else empty. */
 function cluster(tops: string[]) {
   const seen: string[][] = [];
   let pending: (() => void)[] = [];
@@ -71,7 +72,7 @@ function cluster(tops: string[]) {
     seen.push([...args]);
     if (args.includes("top")) {
       if (hold) await new Promise<void>((r) => pending.push(r));
-      return { code: 0, stdout: tops.shift() ?? tops[0] ?? "", stderr: "" };
+      return { code: 0, stdout: args.includes("nodes") ? NODES_TOP : tops.shift() ?? tops[0] ?? "", stderr: "" };
     }
     return { code: 0, stdout: args.includes("config") ? "" : '{"items":[]}', stderr: "" };
   });
@@ -80,10 +81,12 @@ function cluster(tops: string[]) {
   const cx: any = { spawn: (fn: (cx: unknown) => Promise<unknown>) => tasks.push(fn(cx)), notify: () => notified++ };
   const wants: Wants = { context: "nightjar-dev", namespace: "lantern", kind: "pods", tab: "resources", detail: "graph", row: null, appNamespace: null };
   const settle = async () => { for (let i = 0; i < 5; i++) await Promise.allSettled(tasks); };
-  const topReads = () => seen.filter((a) => a.includes("top")).length;
-  return { data, cx, wants, settle, topReads, notified: () => notified, holdTop: (h: boolean) => { hold = h; if (!h) { pending.forEach((r) => r()); pending = []; } } };
+  const topReads = () => seen.filter((a) => a.includes("top") && a.includes("pods")).length;
+  const nodeTopReads = () => seen.filter((a) => a.includes("top") && a.includes("nodes")).length;
+  return { data, cx, wants, settle, topReads, nodeTopReads, notified: () => notified, holdTop: (h: boolean) => { hold = h; if (!h) { pending.forEach((r) => r()); pending = []; } } };
 }
 
+const NODES_TOP = "lumen-a 620m 15% 3100Mi 40%\n";
 const TOP_A = "lantern lantern-api-1 100m 200Mi\n";
 const TOP_B = "lantern lantern-api-1 140m 210Mi\n";
 
@@ -106,12 +109,15 @@ describe("reading the metrics", () => {
     c.data.tick(c.wants, c.cx, now + 2500);
     c.data.tick(c.wants, c.cx, now + 5000);
     expect(c.topReads()).toBe(2);
+    // The nodes' (the header's totals) go at the same pace, never doubled.
+    expect(c.nodeTopReads()).toBe(2);
     c.holdTop(false);
     await c.settle();
     c.data.paceMetrics(0);
     c.data.tick(c.wants, c.cx, now + 60000);
     await c.settle();
     expect(c.topReads()).toBe(2);
+    expect(c.nodeTopReads()).toBe(2);
   });
 
   test("the same numbers again aren't added to the lines and don't redraw, past flipping 'same numbers' once", async () => {

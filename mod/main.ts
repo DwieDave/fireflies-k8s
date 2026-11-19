@@ -26,6 +26,7 @@ import { Data } from "./data.ts";
 import type { Wants } from "./data.ts";
 import type { KindRef } from "./kinds.ts";
 import type { Row } from "./rows.ts";
+import type { Totals } from "./node-totals.ts";
 import type { Settings } from "./settings.ts";
 import { DEFAULTS, SETTINGS_PATH, parseSettings } from "./settings.ts";
 import type { ArgoPanel, DetailView, Drill, GraphDir, Menu, Note, Panel, Tab, Typing } from "./state.ts";
@@ -106,6 +107,8 @@ export default class K8s extends View {
   text: EditorState | null = null;
   shownText = "";
   rowsMemo = new Memo<readonly Row[]>();
+  /** The header's node totals (node-totals.ts), made again when something read changes. */
+  totalsMemo = new Memo<Totals | null>();
   /** The panels' sizes, dragged at the gaps or stepped with + and - (panels.ts). */
   dividers = new Dividers({}, () => {});
   /** The table's column widths, sorts and focused column per kind (columns.ts; widths and sorts kept). */

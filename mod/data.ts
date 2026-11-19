@@ -41,6 +41,10 @@ export interface Wants {
   readonly appNamespace: string | null;
 }
 
+/** The nodes list's pace on the nodes table, and away from it (the totals' allocatable only). */
+const NODES_EVERY = 15000;
+const NODES_AWAY = 60000;
+
 /** One text read (describe or YAML) for the detail panel. */
 type TextMode = "describe" | "yaml";
 
@@ -52,7 +56,7 @@ export class Data {
   readonly snap = new Feed<Snapshot>(3000);
   readonly secrets = new Feed<readonly Row[]>(10000);
   readonly events = new Feed<readonly KEvent[]>(5000);
-  readonly nodes = new Feed<readonly KNode[]>(15000);
+  readonly nodes = new Feed<readonly KNode[]>(NODES_EVERY);
   readonly custom = new Feed<readonly AnyObject[]>(5000);
   readonly apps = new Feed<readonly Application[]>(4000);
   readonly argoSnap = new Feed<Snapshot>(4000);
@@ -131,11 +135,7 @@ export class Data {
 
     if (resources && kind === "events") go(this.events, key(here), () => readList(this.exec, listArgs(here, "events"), isEvent), versions);
 
-    if (resources && kind === "nodes") {
-      go(this.nodes, context, () => readList(this.exec, listArgs(all, "nodes"), isNode), versions);
-
-      if (this.metricsEvery > 0) go(this.topNodes, context, () => readText(this.exec, topNodesArgs(context)), (v) => v, (v, changed) => this.takeTopNodes(v, changed));
-    }
+    this.tickNodes(context, resources && kind === "nodes", go);
 
     const custom = customOf(kind);
 
@@ -150,6 +150,20 @@ export class Data {
     }
 
     this.tickRow(w, here, go);
+  }
+
+  /** The nodes and their metrics: the nodes table's reads, which the header's totals (node-totals.ts)
+   *  share on every view, so they add no call of their own. Away from the table: no `top nodes` once
+   *  `top pods` has found no metrics-server, the list (for allocatable, which rarely changes) only
+   *  after `top nodes` has answered for this context, and at a slower pace. */
+  private tickNodes(context: string, table: boolean, go: Go): void {
+    const metrics = this.metricsEvery > 0 && (table || !this.metricsMissing);
+
+    if (metrics) go(this.topNodes, context, () => readText(this.exec, topNodesArgs(context)), (v) => v, (v, changed) => this.takeTopNodes(v, changed));
+
+    this.nodes.pace(table ? NODES_EVERY : NODES_AWAY);
+
+    if (table || (metrics && this.topNodes.scope === context && this.topNodes.value !== null)) go(this.nodes, context, () => readList(this.exec, listArgs({ context, namespace: null }, "nodes"), isNode), versions);
   }
 
   /** The selected row's own reads: its text (describe / YAML) and its events. */
